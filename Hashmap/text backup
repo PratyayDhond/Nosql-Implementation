@@ -1,0 +1,87 @@
+  // AVLTree ANode = (*tnode);
+    // AVLTree BNode = (*tnode) -> right;
+    // AVLTree BNodeLeft = BNode -> left;
+    // BNode -> left = ANode;
+
+    // ANode -> right = BNodeLeft;
+
+    // BNode -> parent = ANode -> parent;
+
+    // if(BNodeLeft)
+    //     BNodeLeft -> parent = ANode;
+
+    // ANode -> parent = BNode;
+    // BNode -> bf = ANode -> bf = 0;
+
+    // if((*mainTNode) == ANode){
+    //     *mainTNode = BNode;
+    //     return;
+
+    // }
+   
+    // if(!BNode -> parent){
+    //     return ;
+    // }
+    // if( BNode -> parent -> left == ANode)
+    //     BNode -> parent -> left = BNode;
+
+    // else
+    //     BNode -> parent -> right = BNode;
+    // reassignBalanceFactor(&ANode);
+    // return;
+
+
+    //LL
+
+
+     // AVLTree ANode = (*tnode);
+    // AVLTree BNode = (*tnode) -> left;
+    // AVLTree BNodeRight = BNode -> right;
+
+    // BNode -> right = ANode;
+    // ANode -> left = BNodeRight;
+    // BNode -> parent = ANode -> parent;
+
+    // if(BNodeRight){
+    //     BNodeRight -> parent = ANode;
+    // }
+    // BNode -> bf = ANode -> bf = 0;
+    // ANode -> parent = BNode;
+    // if((*mainTNode) == ANode){
+    //     *mainTNode = BNode;
+    //     return;
+    // }
+   
+    // if( BNode -> parent -> left == ANode){
+    //     BNode -> parent -> left = BNode;
+    // }
+    // else{
+    //     BNode -> parent -> right = BNode;
+    // }
+    // reassignBalanceFactor(&ANode);          //We have rotated the tree using pointers , now reassingning its bf
+    // return;
+
+
+    //recursivelu delete
+
+    // avlTree* temp ;
+        // avlTree* preecedingPointer;
+        // temp = p ;
+        // preecedingPointer = p -> left;                               //Recursively Delete Node
+        // avlTree* iterate = preecedingPointer -> right;
+        // if(!iterate){
+        //         p -> data = (char*)malloc(sizeof(preecedingPointer -> data));
+        //         strcpy(p -> data,preecedingPointer -> data);
+        //         // printf("Data %s ",p -> data);
+        //         removeNode(&(*tnode) -> left,preecedingPointer -> data);
+        // }
+        // else{
+        //     while(iterate -> right){
+        //         iterate = iterate -> right;
+        //     }
+        //         p -> data = (char*)malloc(sizeof(preecedingPointer -> data));
+        //         strcpy(p -> data,iterate -> data);
+
+        //       removeNode(&(*tnode) -> left,iterate -> data);
+
+        // }
