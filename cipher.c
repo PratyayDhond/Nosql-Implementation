@@ -1,0 +1,73 @@
+#include "cipher.h"
+#include <stdio.h>
+#include<stdlib.h>
+
+#define MODULO 122
+
+typedef struct Key{
+    char * key;
+    int length;
+}Key;
+
+void initKey(Key * key, int length){
+    key->key = (char *) malloc(sizeof(char) * length); 
+    key->length = length;
+    return;
+}
+
+Key * getPolyAlphabeticKey(Key * key){
+    FILE * fptr = fopen(".encryptKey","r"); 
+
+    // Moving pointer to end of file
+    fseek(fptr, 0L, SEEK_END);
+    int length = ftell(fptr);
+    initKey(key,length);    
+    fseek(fptr, 0L, SEEK_SET);
+    fscanf(fptr,"%s",key->key);
+    fclose(fptr);
+    return key;
+}
+
+int getLength(char * str){
+    int l = 0;
+    char * p = str;
+    while(*p != '\0'){
+        p++;
+        l++;
+    }
+    return l+1;
+}
+
+char * Encrypt(char * str){
+    
+    int length = getLength(str);
+    Key key;
+    getPolyAlphabeticKey(&key);
+    char * encryptedKey = (char *) malloc( sizeof(char) * length);
+    for(int i = 0, j = 0; i < length; i++,j++){
+        encryptedKey[i] = ((str[i] + key.key[j])) % MODULO;
+        // encryptedKey[i] = (((str[i] - MODULO) + (key.key[j] - MODULO)) % 26) + MODULO;
+        if(j >= key.length)
+            j %= key.length;
+    }
+    encryptedKey[length-1] = '\0';
+    free(key.key);      
+    return encryptedKey;
+}
+
+char * Decrypt(char * str){
+    
+    int length = getLength(str);
+    Key key;
+    getPolyAlphabeticKey(&key);
+    char * decryptedKey = (char *) malloc( sizeof(char) * length);
+    for(int i = 0, j = 0; i < length; i++,j++){
+        decryptedKey[i] = (str[i] - key.key[j] + MODULO) % MODULO;   
+        if(j >= key.length)
+            j %= key.length;
+    }
+    free(key.key);  
+    decryptedKey[length-1] = '\0';    
+    return decryptedKey;
+}
+
