@@ -1,23 +1,41 @@
 #include<stdio.h>
 #include<stdlib.h>
-#ifndef MAIN_H
-#define MAIN_H
-#include "HashMap.h"
+#include "Collections.h"
 #include<limits.h>
 #include<string.h>
-#endif
 
-int getCount(HashMap tnode){
+int getCount(Collections tnode){
     if(!tnode)
     return 0;
     return 1 + getCount(tnode -> left) + getCount(tnode -> right);
 }
-int main(){
-    HashMap t;
-    initHashMap(&t);
+void initDocumentsIntoCollections(Collections* t){
+    FILE* fp;
+    char ch;
+    char data[1000][1000];
+    int k = 0; 
+    fp = fopen("names", "r");
+     if (NULL == fp) {
+        return ;
+    }
+  char str[1000];
+      int i = 0;
 
-    insertIntoHashMap(&t,"sar");
-    insertIntoHashMap(&t,"sar");
+    while (fscanf(fp, "%s", data[k]) != EOF) {
+        setDocuments(t,data[k]);
+        k++;
+        i++;
+    }
+    k = 0 , i = 0 ;
+    fclose(fp);
+}
+int main(){
+    Collections t;
+    initCollections(&t);
+    initDocumentsIntoCollections(&t);
+
+    // setDocuments(&t,"sar");
+    // setDocuments(&t,"sar");
     // printf("%s",getDocument(t,"sar"));
     // insertIntoHashMap(&t,"kul");
 
