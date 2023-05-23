@@ -1,9 +1,17 @@
-left right parent key value type 
+left right parent key value type -----------Done
 
-init()
-destroy
-get
-set
-clear
+init()  -----------Done
+destroy -----------Done
+get -----------Done
+set -------Done
+clear   -----------Done
+display()-----------Done
+search ---------Done
+getdocument  -----------Done
 
-display()
+getCollection  -----------Done
+
+setDocuments   -----------Done
+
+IMPLMENENT COLLECTIONS  -----------Done
+

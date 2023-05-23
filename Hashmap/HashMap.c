@@ -4,6 +4,19 @@
 #include <string.h>
 #include <limits.h>
 
+int max(int a, int b)
+{
+   return a > b ? a : b;
+}
+
+int heightOfTree(HashMap tNode)
+{
+    if (!tNode)
+        return -1;
+
+    return 1 + max(heightOfTree(tNode->left), heightOfTree(tNode->right));
+}
+
 HashMap mallocateANode(HashMap *tnode, char *data)
 {
     Node *newnode = (Node*)malloc(sizeof(Node)); // Mallocating a node and initializing the structure
@@ -116,7 +129,6 @@ void getBalancedTree(HashMap* tnode,Node* ImbalancedNode){
   
     if (!imBalancedNode)
         return;
-    
     // printf("\nImbalaned Node : %s , bf : %d\n", imBalancedNode->data, imBalancedNode->bf);
     if (imBalancedNode->bf == -2)
     {
@@ -135,7 +147,7 @@ void getBalancedTree(HashMap* tnode,Node* ImbalancedNode){
     return ;
 }
 
-void insertIntoTree(HashMap *tnode, char *data)
+void insertIntoHashMap(HashMap *tnode, char *data)
 {
     Node* newnode = mallocateANode(tnode, data);
     if (!*tnode)
@@ -152,6 +164,8 @@ void insertIntoTree(HashMap *tnode, char *data)
         int result = strcmp(p->data, data);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
+            p -> data = (char*)malloc(sizeof(data));
+            strcpy(p -> data,data);
             free(newnode);
             return;
         }
@@ -163,7 +177,6 @@ void insertIntoTree(HashMap *tnode, char *data)
     int res = strcmp(q->data, data);
     if (res > 0)
         q->left = newnode;
-
     else
         q->right = newnode;
 
@@ -194,18 +207,6 @@ void preOrder(HashMap tnode)
 
     preOrder(tnode->left);
     preOrder(tnode->right);
-}
-
-int max(int a, int b)
-{
-   return a > b ? a : b;
-}
-int heightOfTree(HashMap tNode)
-{
-    if (!tNode)
-        return -1;
-
-    return 1 + max(heightOfTree(tNode->left), heightOfTree(tNode->right));
 }
 
 void removeNodeHelper(HashMap* parent,HashMap* tnode)
@@ -367,4 +368,19 @@ void destroyTree(HashMap *tnode)
     free(*tnode);
     *tnode = NULL;
     return;
+}
+
+char* getDocument(HashMap tnode,char* data){
+    Node* p = tnode;
+    while(p){
+        int result = strcmp(data,tnode -> data);
+        if(result == 0){
+            return data; 
+        }
+        else if(result > 0)
+            p = p -> left;
+        else 
+            p = p -> right;
+    }
+    return NULL;
 }
