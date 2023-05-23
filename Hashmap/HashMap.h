@@ -23,7 +23,7 @@ void initHashMap(HashMap* tree);
 void insertIntoTree(HashMap *tnode,char* data);
 void insertRecursivelyIntoTree(HashMap* tnode,int data);
 HashMap removeNodeRecursive(HashMap *root , char* data);
-void removeNodeHelper(HashMap* parent);
+void removeNodeHelper(HashMap* parent,HashMap*);
 void destroyTree(HashMap* tnode);
 
 int heightOfTree(HashMap tNode);

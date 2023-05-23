@@ -1,6 +1,8 @@
 run :
 	gcc  *.c 
 	./a.out
+check : 
+	gcc *.c
 hrun :
 	  gcc *.h 
 

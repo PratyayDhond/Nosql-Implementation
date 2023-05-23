@@ -30,14 +30,13 @@ void reassignBalanceFactor(HashMap *tnode)
     return;
 }
 
-HashMap getImBalancedNode(HashMap *tnode)
+HashMap getImBalancedNode(HashMap tnode)
 {
     if (!tnode)
         return NULL;
-    HashMap temp = *tnode; // Imbalanaced node is that node who has balance factor apart from 0,1,-1
+    Node* temp = tnode; // Imbalanaced node is that node who has balance factor apart from 0,1,-1
     while (temp)
     {
-        
         if (temp->bf >= 2 || temp->bf <= -2)
             return temp;  // Traversing whole the parent ancestor tree for finding imbalanced node
         temp = temp->parent;
@@ -112,6 +111,29 @@ void RLRotation(HashMap *tnode, HashMap *mainTNode)
     RRRotation((tnode), mainTNode);
 }
 
+void getBalancedTree(HashMap* tnode,Node* ImbalancedNode){
+     Node* imBalancedNode = getImBalancedNode(ImbalancedNode);
+  
+    if (!imBalancedNode)
+        return;
+    
+    // printf("\nImbalaned Node : %s , bf : %d\n", imBalancedNode->data, imBalancedNode->bf);
+    if (imBalancedNode->bf == -2)
+    {
+        if (imBalancedNode->right->bf == 0 || imBalancedNode->right->bf == -1) 
+            RRRotation(&imBalancedNode, tnode);
+        else
+            RLRotation(&imBalancedNode, tnode);
+    }
+    else if (imBalancedNode->bf == 2)
+    {
+        if (imBalancedNode->left->bf == 0 ||imBalancedNode->left->bf == 1 )
+            LLRotation(&imBalancedNode, tnode);
+        else  
+            LRRotation(&imBalancedNode, tnode);        
+    }
+    return ;
+}
 
 void insertIntoTree(HashMap *tnode, char *data)
 {
@@ -148,25 +170,26 @@ void insertIntoTree(HashMap *tnode, char *data)
     newnode->parent = q;
    
     reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced node
-    Node* imBalancedNode = getImBalancedNode(&q);
-    if (!imBalancedNode)
-        return;
+    // Node* imBalancedNode = getImBalancedNode(q);
+    // if (!imBalancedNode)
+    //     return;
     
-    if (imBalancedNode->bf == -2)       //This means that imbalanace is on left 
-    {
-        if (imBalancedNode->right->bf == -1)
-            RRRotation(&imBalancedNode, tnode);
-        else
-            RLRotation(&imBalancedNode, tnode);
-    }
-    else if (imBalancedNode->bf == 2)   //This means that imbalance is on right
-    {
+    // if (imBalancedNode->bf == -2)       //This means that imbalanace is on left 
+    // {
+    //     if (imBalancedNode->right->bf == -1)
+    //         RRRotation(&imBalancedNode, tnode);
+    //     else
+    //         RLRotation(&imBalancedNode, tnode);
+    // }
+    // else if (imBalancedNode->bf == 2)   //This means that imbalance is on right
+    // {
 
-        if (imBalancedNode->left->bf == 1)
-            LLRotation(&imBalancedNode, tnode);
-        else
-            LRRotation(&imBalancedNode, tnode);
-    }
+    //     if (imBalancedNode->left->bf == 1)
+    //         LLRotation(&imBalancedNode, tnode);
+    //     else
+    //         LRRotation(&imBalancedNode, tnode);
+    // }
+    getBalancedTree(tnode,q);
 }
 
 void inOrder(HashMap tnode)
@@ -204,34 +227,35 @@ int heightOfTree(HashMap tNode)
     return 1 + max(heightOfTree(tNode->left), heightOfTree(tNode->right));
 }
 
-
-void removeNodeHelper(HashMap* parent)
+void removeNodeHelper(HashMap* parent,HashMap* tnode)
 {
     if(!(*parent))
         return;
     reassignBalanceFactor(parent);
+    getBalancedTree(tnode,*parent);
 
-    Node* imBalancedNode = getImBalancedNode(parent);
+    // Node* imBalancedNode = getImBalancedNode(*parent);
   
-    if (!imBalancedNode)
-        return;
+    // if (!imBalancedNode)
+    //     return;
     
-    // printf("\nImbalaned Node : %s , bf : %d\n", imBalancedNode->data, imBalancedNode->bf);
-    if (imBalancedNode->bf == -2)
-    {
-        if (imBalancedNode->right->bf == 0 || imBalancedNode->right->bf == -1) 
-            RRRotation(&imBalancedNode, parent);
-        else
-            RLRotation(&imBalancedNode, parent);
-    }
-    else if (imBalancedNode->bf == 2)
-    {
-        if (imBalancedNode->left->bf == 0 ||imBalancedNode->left->bf == 1 )
-            LLRotation(&imBalancedNode, parent);
-        else  
-            LRRotation(&imBalancedNode, parent);        
-    }
-
+    // // printf("\nImbalaned Node : %s , bf : %d\n", imBalancedNode->data, imBalancedNode->bf);
+    // if (imBalancedNode->bf == -2)
+    // {
+    //     if (imBalancedNode->right->bf == 0 || imBalancedNode->right->bf == -1) 
+    //         RRRotation(&imBalancedNode, parent);
+    //     else
+    //         RLRotation(&imBalancedNode, parent);
+    // }
+    // else if (imBalancedNode->bf == 2)
+    // {
+    //     if (imBalancedNode->left->bf == 0 ||imBalancedNode->left->bf == 1 )
+    //         LLRotation(&imBalancedNode, parent);
+    //     else  
+    //         LRRotation(&imBalancedNode, parent);        
+    // }
+    if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (*parent))
+        *tnode = *parent;
 }
 
 void removeNode(HashMap *tnode, char *data)
@@ -279,10 +303,10 @@ void removeNode(HashMap *tnode, char *data)
             p -> parent = NULL;
         }
         free(deleteNode);
-        removeNodeHelper(&temp);
+        removeNodeHelper(&temp,tnode);
 
-        if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
-        *tnode = temp;
+        // if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
+        // *tnode = temp;
 
         return;
     }
@@ -307,10 +331,10 @@ void removeNode(HashMap *tnode, char *data)
         }
 
         free(deleteNode);
-        removeNodeHelper(&temp);
+        removeNodeHelper(&temp,tnode);
 
-        if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
-        *tnode = temp;
+        // if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
+        // *tnode = temp;
 
         return;
     }
@@ -335,10 +359,10 @@ void removeNode(HashMap *tnode, char *data)
             p -> right -> parent = q;
         }
         free(deleteNode);
-        removeNodeHelper(&temp);
+        removeNodeHelper(&temp,tnode);
         
-        if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
-        *tnode = temp;
+        // if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (temp))
+        // *tnode = temp;
 
         return;
     }
@@ -379,10 +403,10 @@ void removeNode(HashMap *tnode, char *data)
             preecedingPointer->right = NULL;
             free(temp);
         }
-        removeNodeHelper(&parentOfTemp);
+        removeNodeHelper(&parentOfTemp,tnode);
         
-        if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (parentOfTemp))
-        *tnode = parentOfTemp;
+        // if((*tnode) && (*tnode) -> parent &&  (*tnode) -> parent == (parentOfTemp))
+        // *tnode = parentOfTemp;
     }
 }
 
