@@ -11,13 +11,13 @@ return;
 }
 
 void printHeading(int windowCol){
-    for(int i = 0; i < windowCol/2-28;i++)
+    for(int i = 0; i < windowCol/2-19;i++)
     printf(" ");
-    printf("Welcome to NoSQL implementation implementation using C.\n");
+    printf("Welcome to NoSQL implementation using C.\n");
 
-    for(int i = 0; i < windowCol/2-28;i++)
+    for(int i = 0; i < windowCol/2-20;i++)
         printf(" ");
-    printf("-------------------------------------------------------\n\n");
+    printf("------------------------------------------\n\n");
 return;
 }
 

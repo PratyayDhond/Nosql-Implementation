@@ -1,9 +1,9 @@
 
-typedef struct Document {
-    char* key;
-    char* value;
-    int type ;
-}Doc;
+// typedef struct Document {
+//     char* key;
+//     char* value;
+//     int type ;
+// }Doc;
 
 typedef struct Node{
     int bf;
@@ -20,7 +20,7 @@ void initHashMap(HashMap* tree);
 void insertIntoHashMap(HashMap *tnode,char* data);
 void destroyTree(HashMap* tnode);
 void removeNode(HashMap *tnode,char* data);
-char* getDocument(HashMap tnode,char* data);
+char* findAndFetchDocument(HashMap tnode,char* data);
 
 //Traversals
 void inOrder(HashMap tnode);

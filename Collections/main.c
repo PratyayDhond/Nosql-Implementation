@@ -1,15 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
-#include "Collections.h"
+#include "UserHashMap.h"
 #include<limits.h>
 #include<string.h>
 
-int getCount(Collections tnode){
+int getCount(UserHashMap tnode){
     if(!tnode)
     return 0;
     return 1 + getCount(tnode -> left) + getCount(tnode -> right);
 }
-void initDocumentsIntoCollections(Collections* t){
+void initDocumentsIntoCollections(UserHashMap* t){
     FILE* fp;
     char ch;
     char data[1000][1000];
@@ -30,7 +30,7 @@ void initDocumentsIntoCollections(Collections* t){
     fclose(fp);
 }
 int main(){
-    Collections t;
+    UserHashMap t;
     initCollections(&t);
     initDocumentsIntoCollections(&t);
 

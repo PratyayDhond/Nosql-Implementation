@@ -1,5 +1,6 @@
 {
     "files.associations": {
-        "cipher.h": "c"
+        "cipher.h": "c",
+        "userhashmap.h": "c"
     }
 }

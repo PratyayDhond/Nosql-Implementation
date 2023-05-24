@@ -370,7 +370,7 @@ void destroyTree(HashMap *tnode)
     return;
 }
 
-char* getDocument(HashMap tnode,char* data){
+char* findAndFetchDocument(HashMap tnode,char* data){
     Node* p = tnode;
     while(p){
         int result = strcmp(data,tnode -> data);

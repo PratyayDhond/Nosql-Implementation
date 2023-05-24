@@ -5,3 +5,4 @@ run:
 debug:
 	gcc -g *.c
 	gdb a.out
+	

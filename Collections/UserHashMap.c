@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "Collections.h"
+#include "UserHashMap.h"
 #include <string.h>
 #include <limits.h>
 
@@ -9,7 +9,7 @@ int max(int a, int b)
    return a > b ? a : b;
 }
 
-int heightOfTree(Collections tcollectionNode)
+int heightOfTree(UserHashMap tcollectionNode)
 {
     if (!tcollectionNode)
         return -1;
@@ -17,9 +17,9 @@ int heightOfTree(Collections tcollectionNode)
     return 1 + max(heightOfTree(tcollectionNode->left), heightOfTree(tcollectionNode->right));
 }
 
-Collections mallocateAcollectionNode(Collections *tcollectionNode, char *data)
+UserHashMap mallocateAcollectionNode(UserHashMap *tcollectionNode, char *data)
 {
-    collectionNode *newcollectionNode = (collectionNode*)malloc(sizeof(collectionNode)); // Mallocating a collectionNode and initializing the structure
+    userHashMapNode *newcollectionNode = (userHashMapNode*)malloc(sizeof(userHashMapNode)); // Mallocating a userHashMapNode and initializing the structure
     newcollectionNode->left = NULL;
     newcollectionNode->right = NULL;
     newcollectionNode->parent = NULL;
@@ -27,43 +27,43 @@ Collections mallocateAcollectionNode(Collections *tcollectionNode, char *data)
     newcollectionNode->bf = 0;
     return newcollectionNode;
 }
-void initCollections(Collections *tcollectionNode)
+void initCollections(UserHashMap *tcollectionNode)
 {
     *tcollectionNode = NULL; // Initializing a structure
 }
 
-void reassignBalanceFactor(Collections *tcollectionNode)
+void reassignBalanceFactor(UserHashMap *tcollectionNode)
 {
-    collectionNode* temp = *tcollectionNode;
+    userHashMapNode* temp = *tcollectionNode;
     while (temp)
     {
-        temp->bf = heightOfTree(temp->left) - heightOfTree(temp->right); // Assigning balance factor to collectionNode as left height - right height
+        temp->bf = heightOfTree(temp->left) - heightOfTree(temp->right); // Assigning balance factor to userHashMapNode as left height - right height
         temp = temp->parent;
     }
     return;
 }
 
-Collections getImBalancedcollectionNode(Collections tcollectionNode)
+UserHashMap getImBalancedcollectionNode(UserHashMap tcollectionNode)
 {
     if (!tcollectionNode)
         return NULL;
-    collectionNode* temp = tcollectionNode; // Imbalanaced collectionNode is that collectionNode who has balance factor apart from 0,1,-1
+    userHashMapNode* temp = tcollectionNode; // Imbalanaced userHashMapNode is that userHashMapNode who has balance factor apart from 0,1,-1
     while (temp)
     {
         if (temp->bf >= 2 || temp->bf <= -2)
-            return temp;  // Traversing whole the parent ancestor tree for finding imbalanced collectionNode
+            return temp;  // Traversing whole the parent ancestor tree for finding imbalanced userHashMapNode
         temp = temp->parent;
     }
     return NULL;
 }
 
 
-void LLRotation(Collections *tcollectionNode, Collections *mainTcollectionNode)  //Rotate whole tree in right direction
+void LLRotation(UserHashMap *tcollectionNode, UserHashMap *mainTcollectionNode)  //Rotate whole tree in right direction
 {
-    collectionNode* A = (*tcollectionNode);
-    collectionNode* B = A->left;
-    collectionNode* BR = B->right;
-    collectionNode* AP = A->parent;
+    userHashMapNode* A = (*tcollectionNode);
+    userHashMapNode* B = A->left;
+    userHashMapNode* BR = B->right;
+    userHashMapNode* AP = A->parent;
     B->parent = AP;
     if (!AP)
         *mainTcollectionNode = B;
@@ -87,12 +87,12 @@ void LLRotation(Collections *tcollectionNode, Collections *mainTcollectionNode) 
     return;
 }
 
-void RRRotation(Collections *tcollectionNode, Collections *mainTcollectionNode) //Rotate tree to left
+void RRRotation(UserHashMap *tcollectionNode, UserHashMap *mainTcollectionNode) //Rotate tree to left
 {
-    collectionNode* A = (*tcollectionNode);
-    collectionNode* B = A->right;
-    collectionNode* BR = B->left;
-    collectionNode* AP = A->parent;
+    userHashMapNode* A = (*tcollectionNode);
+    userHashMapNode* B = A->right;
+    userHashMapNode* BR = B->left;
+    userHashMapNode* AP = A->parent;
     B->parent = AP;
     if (!AP)
         *mainTcollectionNode = B;
@@ -112,24 +112,24 @@ void RRRotation(Collections *tcollectionNode, Collections *mainTcollectionNode) 
     B->bf = 0;
     reassignBalanceFactor(&A);  //We have rotated the tree using pointers , now reassingning its bf
 }
-void LRRotation(Collections *tcollectionNode, Collections *mainTcollectionNode)
+void LRRotation(UserHashMap *tcollectionNode, UserHashMap *mainTcollectionNode)
 {
     RRRotation(&(*tcollectionNode)->left, mainTcollectionNode);     //Rotate left subtree and then rotate that updated tree to right
     LLRotation(tcollectionNode, mainTcollectionNode);
 }
 
-void RLRotation(Collections *tcollectionNode, Collections *mainTcollectionNode)
+void RLRotation(UserHashMap *tcollectionNode, UserHashMap *mainTcollectionNode)
 {
     LLRotation(&(*tcollectionNode)->right, mainTcollectionNode); //Rotate right subtree and then rotate that updated tree to left
     RRRotation((tcollectionNode), mainTcollectionNode);
 }
 
-void getBalancedTree(Collections* tcollectionNode,collectionNode* ImbalancedcollectionNode){
-     collectionNode* imBalancedcollectionNode = getImBalancedcollectionNode(ImbalancedcollectionNode);
+void getBalancedTree(UserHashMap* tcollectionNode,userHashMapNode* ImbalancedcollectionNode){
+     userHashMapNode* imBalancedcollectionNode = getImBalancedcollectionNode(ImbalancedcollectionNode);
   
     if (!imBalancedcollectionNode)
         return;
-    // printf("\nImbalaned collectionNode : %s , bf : %d\n", imBalancedcollectionNode->data, imBalancedcollectionNode->bf);
+    // printf("\nImbalaned userHashMapNode : %s , bf : %d\n", imBalancedcollectionNode->data, imBalancedcollectionNode->bf);
     if (imBalancedcollectionNode->bf == -2)
     {
         if (imBalancedcollectionNode->right->bf == 0 || imBalancedcollectionNode->right->bf == -1) 
@@ -147,16 +147,16 @@ void getBalancedTree(Collections* tcollectionNode,collectionNode* Imbalancedcoll
     return ;
 }
 
-void setDocuments(Collections *tcollectionNode, char *data)
+void setDocuments(UserHashMap *tcollectionNode, char *data)
 {
-    collectionNode* newcollectionNode = mallocateAcollectionNode(tcollectionNode, data);
+    userHashMapNode* newcollectionNode = mallocateAcollectionNode(tcollectionNode, data);
     if (!*tcollectionNode)
     {
         *tcollectionNode = newcollectionNode;
         return;
     }
-    collectionNode* p = *tcollectionNode;
-    collectionNode* q = NULL;
+    userHashMapNode* p = *tcollectionNode;
+    userHashMapNode* q = NULL;
 
     while (p)
     {
@@ -182,21 +182,21 @@ void setDocuments(Collections *tcollectionNode, char *data)
 
     newcollectionNode->parent = q;
    
-    reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced collectionNode
+    reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced userHashMapNode
     getBalancedTree(tcollectionNode,q);
 }
 
-void inOrder(Collections tcollectionNode)
+void inOrder(UserHashMap tcollectionNode)
 {
     if (!tcollectionNode)
         return;
 
     inOrder(tcollectionNode->left);
-    printf("collectionNode: %s , Parent : %s ,BF : %d , Left : %s , Right : %s\n", tcollectionNode->data,
+    printf("userHashMapNode: %s , Parent : %s ,BF : %d , Left : %s , Right : %s\n", tcollectionNode->data,
            tcollectionNode->parent ? tcollectionNode->parent->data : "", tcollectionNode->bf, tcollectionNode->left ? tcollectionNode->left->data : "", tcollectionNode->right ? tcollectionNode->right->data : "");
     inOrder(tcollectionNode->right);
 }
-void preOrder(Collections tcollectionNode)
+void preOrder(UserHashMap tcollectionNode)
 {
 
     if (!tcollectionNode)
@@ -209,7 +209,7 @@ void preOrder(Collections tcollectionNode)
     preOrder(tcollectionNode->right);
 }
 
-void removecollectionNodeHelper(Collections* parent,Collections* tcollectionNode)
+void removecollectionNodeHelper(UserHashMap* parent,UserHashMap* tcollectionNode)
 {
     if(!(*parent))
         return;
@@ -220,9 +220,9 @@ void removecollectionNodeHelper(Collections* parent,Collections* tcollectionNode
         *tcollectionNode = *parent;
 }
 
-void removecollectionNode(Collections *tcollectionNode, char *data)
+void removecollectionNode(UserHashMap *tcollectionNode, char *data)
 {
-    collectionNode *p, *q;
+    userHashMapNode *p, *q;
     if (!*tcollectionNode)
         return;
 
@@ -232,7 +232,7 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
         int result = strcmp(p->data, data);
         if (result == 0)
             break;
-        q = p; // Search for presence of collectionNode and make pointer q following p
+        q = p; // Search for presence of userHashMapNode and make pointer q following p
         if (result > 0)
             p = p->left;
         else
@@ -243,17 +243,17 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
     
     if (!p){
         // printf("\n %s Not Found\n", data);
-        return; // collectionNode not present
+        return; // userHashMapNode not present
     }
     // Now 4 cases
     
-    // leaf collectionNode
+    // leaf userHashMapNode
     int flag = 0;
     if (!p->right && !p->left)
     {
-        collectionNode *deletecollectionNode = p;
-        collectionNode *temp = deletecollectionNode->parent;
-        if (p == *tcollectionNode) // There is only 1 collectionNode (root collectionNode)
+        userHashMapNode *deletecollectionNode = p;
+        userHashMapNode *temp = deletecollectionNode->parent;
+        if (p == *tcollectionNode) // There is only 1 userHashMapNode (root userHashMapNode)
                 *tcollectionNode = NULL;
         else
         {
@@ -272,8 +272,8 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
         //1 child -> Only left child exists
     if (!p->right && p->left)
     {
-        collectionNode* deletecollectionNode = p;
-        collectionNode* temp = deletecollectionNode->parent;
+        userHashMapNode* deletecollectionNode = p;
+        userHashMapNode* temp = deletecollectionNode->parent;
         if (p == *tcollectionNode) // There is root with only left child
         {
             p -> left -> parent = (*tcollectionNode) -> parent;
@@ -296,8 +296,8 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
     //1 Child , Only right child exists
     else if (p->right && !p->left)
     {
-        collectionNode* deletecollectionNode = p;
-        collectionNode* temp = deletecollectionNode->parent;
+        userHashMapNode* deletecollectionNode = p;
+        userHashMapNode* temp = deletecollectionNode->parent;
         if (p == *tcollectionNode)
         {
             p -> right -> parent = (*tcollectionNode) -> parent;
@@ -320,10 +320,10 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
     //2 Childs i.e there exits both left and right
     else if (p->right && p->left)
     {
-        collectionNode *temp, *preecedingPointer; // There is root with left and right child
+        userHashMapNode *temp, *preecedingPointer; // There is root with left and right child
         preecedingPointer = p->left;
         temp = preecedingPointer->right;
-        collectionNode* parentOfTemp = NULL;
+        userHashMapNode* parentOfTemp = NULL;
         if (!temp)
         {
             p->data = (char *)malloc(sizeof(preecedingPointer->data));
@@ -358,7 +358,7 @@ void removecollectionNode(Collections *tcollectionNode, char *data)
     }
 }
 
-void destroyTree(Collections *tcollectionNode)
+void destroyTree(UserHashMap *tcollectionNode)
 {
     if (!(*tcollectionNode))
         return;
@@ -370,17 +370,19 @@ void destroyTree(Collections *tcollectionNode)
     return;
 }
 
-char* getDocument(Collections tcollectionNode,char* data){
-    collectionNode* p = tcollectionNode;
-    while(p){
-        int result = strcmp(data,tcollectionNode -> data);
-        if(result == 0){
-            return data; 
-        }
-        else if(result > 0)
-            p = p -> left;
-        else 
-            p = p -> right;
-    }
-    return NULL;
-}
+
+// If multiple collections per user
+// char* getDocument(UserHashMap tcollectionNode,char* data){
+    // userHashMapNode* p = tcollectionNode;
+    // while(p){
+        // int result = strcmp(data,tcollectionNode -> data);
+        // if(result == 0){
+            // return data; 
+        // }
+        // else if(result > 0)
+            // p = p -> left;
+        // else 
+            // p = p -> right;
+    // }
+    // return NULL;
+// }
