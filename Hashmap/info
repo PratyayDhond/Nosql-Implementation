@@ -8,10 +8,30 @@ clear   -----------Done
 display()-----------Done
 search ---------Done
 getdocument  -----------Done
-
 getCollection  -----------Done
-
 setDocuments   -----------Done
-
 IMPLMENENT COLLECTIONS  -----------Done
 
+commands -> showUsers, showdocuments, ls, man,login(-> input username,password) 
+
+Pratyay  ->  login -> create user, sign in, log out
+Sohel    ->  getAllDocuments, testcases, input parsing
+Sarvesh  ->  MAKE HASHMAP! -> Add fields search using Key, access Value, and Data type. Hash Map for Collections
+
+login
+create user Pratyay
+
+create doc sohel1
+name:"PratyayDhond"
+name:'PratyayDhond'
+age:19
+gender:'M'
+height:5.9
+
+
+string
+char
+int 
+double
+bool - T F
+//date and time

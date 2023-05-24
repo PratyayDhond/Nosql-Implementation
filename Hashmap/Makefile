@@ -1,5 +1,5 @@
 run :
-	gcc  *.c 
+	gcc  *.c ../FetchingDocument/document.c
 	./a.out
 check : 
 	gcc *.c

@@ -3,7 +3,7 @@
 #include "HashMap.h"
 #include <string.h>
 #include <limits.h>
-
+#include "../FetchingDocument/document.h"
 int max(int a, int b)
 {
    return a > b ? a : b;

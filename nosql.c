@@ -53,6 +53,11 @@ void printWelcomeMessage(){
 void noSQLMenu(){
     printWelcomeMessage();
     while(1){
+        // ls man
+        // login
+        // 
         
     }
 }
+
+// Write a function to load all documents into AVL tree
