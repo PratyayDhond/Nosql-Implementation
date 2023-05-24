@@ -1,4 +1,4 @@
-#include "cipher.h"
+#include "Encryption/cipher.h"
 #include "nosql.h"
 #include<stdio.h>
 
@@ -9,7 +9,7 @@ char * test(char * str){
 }
 
 int main(){
-    printf("Decrypted -> %s\n",test());
+    printf("Decrypted -> %s\n",test("HELLLO"));
     // noSQLMenu();
 return 0;
 }
