@@ -1,4 +1,5 @@
 #include "cipher.h"
+#include "nosql.h"
 #include<stdio.h>
 
 char * test(char * str){
@@ -8,6 +9,6 @@ char * test(char * str){
 }
 
 int main(){
-    printf("%s",test("Test@#123"));
+    noSQLMenu();
 return 0;
 }
