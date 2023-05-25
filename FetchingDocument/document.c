@@ -43,6 +43,53 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
     return;
 }
 
+// For initilizing the collection linkedlist
+void initCollection(Collection *c)
+{
+    *c = NULL;
+    return;
+}
+
+// For appending document to collection linkedlist
+void addDocumentToCollection(Collection *collection, document* doc)
+{
+    collectionNode *nn = (collectionNode*) malloc(sizeof(collectionNode));
+    nn->document = doc;
+    nn -> next = NULL;
+
+    if(!nn)
+        return;
+
+    if(!(*collection))
+    {
+        *collection = nn;
+        return;
+    }
+
+    collectionNode *temp = *collection;
+    while(temp->next)
+    {
+        temp = temp -> next;
+    }
+
+    temp -> next = nn;
+    return;
+}
+
+void displayCollection(Collection collection)
+{
+    if(!collection) return;
+
+    collectionNode* nn = collection;
+
+    while(nn)
+    {
+        printf("%s\n", nn->document->key);
+        nn = nn->next;
+    }
+}
+
+
 // this function returns a single document as a document structure
 document* getDocument(char *collection,char* key)
 {
@@ -62,28 +109,41 @@ document* getDocument(char *collection,char* key)
    
     i = 0;
     while (key[i] != '\0') {
+        if(key[i] == '\n') key[i] = '\0';
+        // printf("%c ",key[i]);
         documentpath[j] = key[i];
         i++;
         j++;
     }
 
     documentpath[j] = '\0';
-
     file = fopen(documentpath, "r");
 
     if(!file)
+    {
+        printf("file not found\n");
         return NULL;
-
+    }
+   
     Pair pairs = getAllPairsOfDocument(file);
 
     if(!pairs)
+    {
+        printf("Pairs not found\n");
         return NULL;
+    }
 
     document *doc = (document*) malloc(sizeof(document));
+    
+    if(!doc)
+    {
+        printf("Cannot mallocate a document\n");
+        return NULL;
+    }
+
     doc->key = (char*) malloc(sizeof(key));
     strcpy(doc->key, key);
     doc->pairs = pairs;
-
     return doc;
     
 }
@@ -103,6 +163,7 @@ void displayDocument(document doc)
 Pair getAllPairsOfDocument(FILE *file)
 {
     // Initilizing pairs linked list
+    
     Pair pairs; 
     initPair(&pairs);
 
@@ -154,3 +215,44 @@ Pair getAllPairsOfDocument(FILE *file)
     return pairs;
 }
 
+Collection getAllDocumentFromCollection(char* collectionName)
+{
+    Collection collection;
+    initCollection(&collection);
+
+    if(!collectionName)
+        return 0;
+
+    FILE *fp;
+    char command[200] = "test -d ";
+
+    strcat(command, collectionName);
+    int status = system(command);
+    
+    // if collection directory not exists then simply return
+    if(status)
+        return 0;
+
+    char listCommand[200] = "ls ./";
+    strcat(listCommand, collectionName);
+    fp = popen(listCommand, "r");
+
+    if(!fp) return 0;
+
+    char line[MAX_LINE_LENGTH];
+    while(fgets(line, MAX_LINE_LENGTH, fp)){
+    
+        document *doc = getDocument(collectionName, line);
+        if(!doc)
+        {
+            free(collection);
+            return 0;
+        }
+        addDocumentToCollection(&collection, doc);
+    }
+
+    fclose(fp);
+
+    return collection;
+
+}

@@ -13,8 +13,22 @@ typedef struct document
     Pair pairs;
 } document;
 
+typedef struct collectionNode
+{
+    document *document;
+    struct collectionNode* next;
+} collectionNode;
+
+typedef collectionNode* Collection;
+
 void initPair(Pair *l);
 void appendToPair(Pair *l, char* key, char* value, char* datatype);
 document* getDocument(char *collection ,char* key);
 Pair getAllPairsOfDocument(FILE *file);
+Collection getAllDocumentFromCollection(char* collectionName);
 void displayDocument(document doc);
+
+
+void initCollection(Collection *c);
+void addDocumentToCollection(Collection *collection, document* doc);
+void displayCollection(Collection collection);
