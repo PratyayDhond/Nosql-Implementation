@@ -93,7 +93,10 @@ void displayCollection(Collection collection)
 // this function returns a single document as a document structure
 document* getDocument(char *collection,char* key)
 {
-    FILE *file; 
+    FILE *file;
+
+    if(strlen(collection) == 0 || strlen(key) == 0)
+        return NULL;
 
     // concatinating collection name and document key
     char documentpath[100];
@@ -255,4 +258,80 @@ Collection getAllDocumentFromCollection(char* collectionName)
 
     return collection;
 
+}
+
+
+document* initilizeAndCreateDocument(char* key, Pair pairs)
+{
+    document *doc = (document*) malloc(sizeof(document));
+    
+    if(!doc)
+    {
+        printf("Cannot mallocate a document\n");
+        return NULL;
+    }
+
+    doc->key = (char*) malloc(sizeof(key));
+    strcpy(doc->key, key);
+    doc->pairs = pairs;
+    return doc;
+}
+
+int createDocument(char* collection, document* doc)
+{
+    if(!doc) return 0;
+
+    if(strlen(collection) == 0) return 0;
+
+    FILE *fp;
+    
+    // concatinating collection name and document key
+    char documentpath[MAX_LINE_LENGTH];
+    
+    int i=0, j=0;
+
+    while (collection[i] != '\0') {
+        documentpath[j] = collection[i];
+        i++;
+        j++;
+    }
+    documentpath[j++] = '/';
+   
+    i = 0;
+    while (doc->key[i] != '\0') {
+        if(doc->key[i] == '\n') doc->key[i] = '\0';
+        // printf("%c ",key[i]);
+        documentpath[j] = doc->key[i];
+        i++;
+        j++;
+    }
+
+    documentpath[j] = '\0';
+    printf("%s\n", documentpath);
+
+    fp = fopen(documentpath, "w");
+
+    if(!fp) return 0;
+
+    node* temp = doc->pairs;
+
+    // displayDocument(*doc);
+
+    // while(temp)
+    // {
+        // strcat(temp->datatype, temp->key);
+        // strcat(temp->datatype, temp->value);
+        size_t stringLength = strlen(temp->value);
+
+        size_t elementsWritten = fwrite(temp->value, sizeof(char), stringLength, fp);
+        if (elementsWritten != stringLength) {
+            printf("Error writing data to the file.\n");
+            fclose(fp);
+            return 1;
+        }
+    //     temp = temp -> next;
+    // }
+    // printf("\n");
+    // fclose(fp);
+    // return 1;
 }
