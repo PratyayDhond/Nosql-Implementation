@@ -1,6 +1,5 @@
 run:
 	gcc -g main.c nosql.c Encryption/cipher.c
-	clear
 	./a.out
 	
 debug:

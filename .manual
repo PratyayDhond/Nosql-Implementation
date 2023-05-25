@@ -1,0 +1,45 @@
+This is the Manual Page for NoSQL implementation project using C language.
+
+Available Commands:
+-------------------
+
+- login:
+           Used to invoke the login procedure.
+           On usage of this command the terminal will be cleared and user will be redirected to a login page.
+           <SYNTAX> => `login`
+
+- logout:
+           Used to logout of the current session safely.
+           If user doesn't use logout to quit, there might be some losses of the unsaved recent data, hence it is recommended for the user to logout.
+           <SYNTAX> => `logout`
+- ls users:
+           Used to list all the users that have made account in the database.
+           This command is made for users who might forget their usernames and want to access the list
+           <SYNTAX> => `ls users`
+           
+- ls collections:
+           List all the available collections for the current user.
+           To use this command, the user must be logged in.
+           <SYNTAX> => `ls collections` OR `ls cols`
+
+- ls documents:
+           Used to list all the documents in the users current collection
+           For this command to work, the user must have already selected a collection.
+           <SYNTAX> => `ls documents` or `ls docs`
+           
+- use document:
+           Used to select a particular document with document name provided by the user.
+           A document needs to be selected before performing CRUD operations.
+           All the CRUD operations will occur on the last selected document.
+           <SYNTAX> => `use document DOCUMENT_NAME`
+           
+- use collection:
+           Used to select a particular collection with COLLECTION_NAME provided by the user.
+           A collection must be selected before selecting a document.
+           All the newly created documents will be saved in the last selected collection.
+           <SYNTAX> => `use collection COLLECTION_NAME`
+- man:
+           Used to Invoke the Manual Page instruction
+
+           
+
