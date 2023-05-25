@@ -1,3 +1,4 @@
+// #include "";
 typedef struct userHashMapNode{
     int bf;
     char* data;
@@ -13,7 +14,7 @@ void initCollections(UserHashMap* tree);
 void setDocuments(UserHashMap *tnode,char* data);
 void destroyTree(UserHashMap* tnode);
 void removeNode(UserHashMap *tnode,char* data);
-char* getDocument(UserHashMap tnode,char* data);
+char* getDocuments(UserHashMap tnode,char* data);
 
 //Traversals
 void inOrder(UserHashMap tnode);

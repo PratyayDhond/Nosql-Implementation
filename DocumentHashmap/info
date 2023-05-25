@@ -16,8 +16,9 @@ commands -> showUsers, showdocuments, ls, man,login(-> input username,password)
 
 Pratyay  ->  login -> create user, sign in, log out
 Sohel    ->  getAllDocuments, testcases, input parsing
-Sarvesh  ->  MAKE HASHMAP! -> Add fields search using Key, access Value, and Data type. Hash Map for Collections
-
+Sarvesh  -> 
+ MAKE HASHMAP! -> Add fields search using Key, access Value, and Data type. Hash Map for Collections
+ ------------Done
 login
 create user Pratyay
 
@@ -39,3 +40,6 @@ bool - T F
 
 // feature ? -> Give user option to create the encryption key for the first time they start the program.
 // Encryption not working for #, as # gets replaced by \ which is an escape character
+
+
+// in Encrypt code -> if # occurs replace with %23

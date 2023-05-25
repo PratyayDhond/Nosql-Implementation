@@ -29,6 +29,7 @@ Collection getAllDocumentFromCollection(char* collectionName);
 void displayDocument(document doc);
 
 
+
 void initCollection(Collection *c);
 void addDocumentToCollection(Collection *collection, document* doc);
 void displayCollection(Collection collection);
