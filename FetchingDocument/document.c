@@ -3,7 +3,7 @@
 #include<string.h>
 #include"document.h"
 
-#define MAX_LINE_LENGTH 1000000
+#define MAX_LINE_LENGTH 100000
 
 // Initilizing the pairs linkedlist
 void initPair(Pair *pairs)
@@ -16,9 +16,9 @@ void initPair(Pair *pairs)
 void appendToPair(Pair *pair, char* key, char* value, char* datatype)
 {
     node *nn = (node*) malloc(sizeof(node));
-    nn->datatype = (char*) malloc(sizeof(datatype));
-    nn->key = (char*) malloc(sizeof(key));
-    nn->value = (char*) malloc(sizeof(value));
+    nn->datatype = (char*) malloc(strlen(datatype)*sizeof(char));
+    nn->key = (char*) malloc(strlen(key)*sizeof(char));
+    nn->value = (char*) malloc(strlen(value)*sizeof(char));
     strcpy(nn->datatype, datatype);
     strcpy(nn->key, key);
     strcpy(nn->value, value);
@@ -144,7 +144,7 @@ document* getDocument(char *collection,char* key)
         return NULL;
     }
 
-    doc->key = (char*) malloc(sizeof(key));
+    doc->key = (char*) malloc(strlen(key)*sizeof(char));
     strcpy(doc->key, key);
     doc->pairs = pairs;
     return doc;
@@ -205,6 +205,7 @@ Pair getAllPairsOfDocument(FILE *file)
         counter = 0;
         while(line[lineTraverse] != '\0')
         {
+            // if(value[counter] == '\n') value[counter] = '\0';
             value[counter++] = line[lineTraverse++];
         }
         value[counter] = '\0';
@@ -260,6 +261,15 @@ Collection getAllDocumentFromCollection(char* collectionName)
 
 }
 
+void createPair(Pair *pairs,char* key, char* value, char* datatype)
+{
+    if(!pairs)
+        return;
+
+    appendToPair(pairs, key, value, datatype);
+    return;
+}
+
 
 document* initilizeAndCreateDocument(char* key, Pair pairs)
 {
@@ -300,14 +310,26 @@ int createDocument(char* collection, document* doc)
     i = 0;
     while (doc->key[i] != '\0') {
         if(doc->key[i] == '\n') doc->key[i] = '\0';
-        // printf("%c ",key[i]);
         documentpath[j] = doc->key[i];
         i++;
         j++;
     }
 
     documentpath[j] = '\0';
-    printf("%s\n", documentpath);
+    // Checking whether the document is exists or not
+    char command[200] = "test -f ./";
+
+    strcat(command, collection);
+    strcat(command, "/");
+    strcat(command, doc->key);
+
+    int status = system(command);
+
+    if(!status) 
+    {
+        printf("Document already exists\n");
+        return 0;
+    }
 
     fp = fopen(documentpath, "w");
 
@@ -315,23 +337,187 @@ int createDocument(char* collection, document* doc)
 
     node* temp = doc->pairs;
 
-    // displayDocument(*doc);
 
-    // while(temp)
-    // {
-        // strcat(temp->datatype, temp->key);
-        // strcat(temp->datatype, temp->value);
-        size_t stringLength = strlen(temp->value);
+    while(temp)
+    {
+        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        temp = temp -> next;
+    }
 
-        size_t elementsWritten = fwrite(temp->value, sizeof(char), stringLength, fp);
-        if (elementsWritten != stringLength) {
-            printf("Error writing data to the file.\n");
-            fclose(fp);
-            return 1;
+    printf("Document created successfully\n");
+    fclose(fp);
+    return 1;
+}
+
+int updateDocument(char* collection, document* doc)
+{
+    if(!doc) return 0;
+
+    if(strlen(collection) == 0) return 0;
+
+    FILE *fp;
+    
+    // concatinating collection name and document key
+    char documentpath[MAX_LINE_LENGTH];
+    
+    int i=0, j=0;
+
+    while (collection[i] != '\0') {
+        documentpath[j] = collection[i];
+        i++;
+        j++;
+    }
+    documentpath[j++] = '/';
+   
+    i = 0;
+    while (doc->key[i] != '\0') {
+        if(doc->key[i] == '\n') doc->key[i] = '\0';
+        documentpath[j] = doc->key[i];
+        i++;
+        j++;
+    }
+
+    documentpath[j] = '\0';
+    // Checking whether the document is exists or not
+    char command[200] = "test -f ./";
+
+    strcat(command, collection);
+    strcat(command, "/");
+    strcat(command, doc->key);
+
+    int status = system(command);
+
+    if(status) 
+    {
+        printf("Document does not exist\n");
+        return 0;
+    }
+
+    fp = fopen(documentpath, "w");
+
+    if(!fp) return 0;
+
+    node* temp = doc->pairs;
+
+
+    while(temp)
+    {
+        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        temp = temp -> next;
+    }
+
+    printf("Document updated successfully\n");
+    fclose(fp);
+    return 1;
+}
+
+int deleteDocument(char* collection, char* documentKey)
+{
+    if(strlen(documentKey) == 0) return 0;
+
+    if(strlen(collection) == 0) return 0;
+
+    // concatinating collection name and document key
+    char documentpath[MAX_LINE_LENGTH];
+    
+    int i=0, j=0;
+
+    while (collection[i] != '\0') {
+        documentpath[j] = collection[i];
+        i++;
+        j++;
+    }
+    documentpath[j++] = '/';
+   
+    i = 0;
+    while (documentKey[i] != '\0') {
+        if(documentKey[i] == '\n') documentKey[i] = '\0';
+        documentpath[j] = documentKey[i];
+        i++;
+        j++;
+    }
+
+    documentpath[j] = '\0';
+    // Checking whether the document is exists or not
+    char command[200] = "test -f ./";
+
+    strcat(command, collection);
+    strcat(command, "/");
+    strcat(command, documentKey);
+
+    int status = system(command);
+
+    if(status) 
+    {
+        printf("Document does not exist\n");
+        return 0;
+    }
+
+    char del[200] = "rm ";
+
+    strcat(del, collection);
+    strcat(del, "/");
+    strcat(del, documentKey);
+
+    if(system(del))
+    {
+        printf("Error in deleting a document\n");
+        return 0;
+    }
+
+    printf("Document deleted successfully\n");
+    return 1;
+}
+
+int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
+{
+    if(strlen(collection)) return 0;
+    if(strlen(documentKey)) return 0;
+
+
+    document *doc = getDocument(collection, documentKey);
+    displayDocument(*doc);
+
+    if(!doc)
+    {
+        printf("Document does not exist\n");
+        return 0;
+    }
+    printf("jkdjkdfjfjdkf\n");
+
+    if(!(doc->pairs))
+    {
+        printf("document does not have any pairs\n");
+        return 0;
+    }
+
+    Pair pairs = doc->pairs;
+
+    node* temp = pairs;
+    node* prev = NULL;
+    
+    while(temp)
+    {
+        if(strcmp(temp->key, pairkey) == 0)
+        {
+            node* toDelete = temp;
+            prev -> next = temp -> next;
+            free(toDelete);
+            break;
         }
-    //     temp = temp -> next;
-    // }
-    // printf("\n");
-    // fclose(fp);
-    // return 1;
+        prev = temp;
+        temp = temp -> next;
+    }
+
+    doc->pairs = temp;
+
+
+    if(createDocument(collection, doc))
+    {
+        printf("%s field is deleted successfully\n", pairkey);
+        return 1;
+    }
+
+    return 0;
+
 }
