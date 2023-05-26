@@ -1,3 +1,5 @@
+#include <stdio.h>
+
 typedef struct node
 {
     char *key, *value, *datatype;

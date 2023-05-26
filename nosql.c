@@ -9,6 +9,7 @@
 #include <string.h>   // for strcmp 
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
+#include "FetchingDocument/document.h"
 
 #define SIZE 32
 
@@ -363,6 +364,10 @@ int getInput(){
         command = delete_collection;
     else if(strcmp(input,"remove collection") == 0 || strcmp(input,"rm collection") == 0)
         command = delete_collection;
+    else if(strcmp(input,"remove doc") == 0 || strcmp(input,"rm document") == 0)
+        command = delete_document;
+    else if(strcmp(input,"remove document") == 0 || strcmp(input,"rm doc") == 0)
+        command = delete_document;
     else if(strcmp(input,"use col") == 0 || strcmp(input,"use collection") == 0)
         command = use_collection;
     else if(strcmp(input,"use doc") == 0 || strcmp(input,"use document") == 0)
@@ -546,6 +551,7 @@ int checkUser(char * username){
     else return -1;
 }
 void loginUser(){
+
     system("clear");
     printHeading("User Login");
     printDeclaration("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) ");
@@ -556,7 +562,7 @@ void loginUser(){
     if(code == USER_ALREADY_EXISTS){
         code = validateUser(username);
         if( code == PASSWORDS_DO_NOT_MATCH){
-            printf("Incorrect password! Login failed.");
+            printf("Incorrect password! Login failed.\n");
         }else{
             printf("Welcome `%s`, you have now successfully logged in.\n",username);
             strcpy(globals.user,username);
@@ -599,7 +605,7 @@ void createCollection(){
     }
 }
 
-void createDocument(){
+void createDocument_FrontEnd(){
     if(strcmp(globals.user,"") == 0){
         printf("You need to be logged in to create a document.\n");
         return;
@@ -636,7 +642,74 @@ void createDocument(){
         strcat(command,COMMAND_POSTFIX);
 
         printf("Document `%s` created successfully. You are into Data insertion mode now.\n Press enter twice to save your changes to the document.\n\n",documentName);
+        int carriageReturnCount = 0;
+        int inputFlag = 1;
+        char input[100];
+        char key[30] ="\0", value[100] ="\0", dataType[20] ="\0";
+        
+        fgets(input,2,stdin);
+        Pair pairs;
+        initPair(&pairs);
+        while(inputFlag){
+            fgets(input,100,stdin);
+            char *p = input;
+            int keyIndex = 0;
+            int valueIndex = 0;
+            int keyValueBAR =0; // if 0 key, else value
+            if(strcmp(input,"\n") == 0){
+                carriageReturnCount++;
+                // printf("carriage count ->  %d\n",carriageReturnCount);
+                if(carriageReturnCount == 2)
+                    break;
+                continue;
+            }else{
+                carriageReturnCount = 0;
+            }
 
+            FILE *fptr = fopen("testop","a+");
+            while(*p != '\0'){
+                if(*p == ':'){
+                    if(keyValueBAR == 0){
+                        key[keyIndex++] = '\0';
+                        // printf("*p+1 = %c\n",*(p+1));
+                       
+                        if(*(p+1) == '"')
+                            strcpy(dataType,"STRING");
+                        else if(*(p+1) == '\'')
+                            strcpy(dataType,"CHARACTER");
+                        else if(*(p+1) == 'T' || (*p+1) == 'F')
+                            strcpy(dataType,"BOOLEAN");
+                        else
+                            strcpy(dataType,"INTEGER");
+                    }
+                    keyValueBAR++;
+                }
+                else if(keyValueBAR == 0)
+                    key[keyIndex++] = *p;
+                else{
+                    value[valueIndex++] = *p;
+                    int isInteger = strcmp(dataType,"INTEGER");
+                    
+                    if(isInteger == 0 && *p != '\n' && *p != '.' && isdigit(*p) == 0 ){
+                        printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
+                        printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
+                        // #BOOKMARK -> FREE PAIR HERE 
+                        return;
+                    }
+                    if(isInteger == 0 && *p == '.')
+                        strcpy(dataType,"DOUBLE");
+                }
+                p++;
+            }
+            value[valueIndex-1] = '\0';
+            if(keyValueBAR == 0 && carriageReturnCount != 1){
+                printf("Incorrect INPUT format. refer to manual for input formats.\n");
+                return;
+            }
+
+            appendToPair(&pairs,key,value,dataType);
+        }
+        // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
 }
@@ -661,6 +734,7 @@ void useCollection(){
     
     if(x == 0){
         strcpy(globals.collection, collectionName);
+        strcpy(globals.document,"");
         printf("Selected Collection `%s`.\n",collectionName);
         return;
     }else{
@@ -738,9 +812,55 @@ void removeCollection(){
     return;
 }
 
+void removeDocument(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You must be logged in to delete a collection\n");
+        return;
+    }
+
+    if(strcmp(globals.collection,"") == 0){
+        printf("You must have a collection selected to delete a document\n");
+        return;
+    }
+
+    char * str = "Enter Document Name : ";
+    char * documentName = (char *) malloc(sizeof(char) * 100);
+    // printDashes(getLength(str));
+    printf("%s",str);
+    fscanf(stdin,"%s",documentName);
+
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,globals.collection);
+    strcat(location,"/");
+    strcat(location,documentName);
+    strcat(location,COMMAND_POSTFIX);
+    strcat(command,location);
+
+    int code = system(command);
+    // printf("`%s` `%s` %d\n",location,command,code);
+    if(code == 0){
+        code = validateUser(globals.user);
+        if(code == PASSWORDS_MATCH){
+            strcpy(command,"rm -r ");
+            strcat(command,location);
+            system(command);
+            printf("Document `%s` deleted successfully!\n",documentName);
+        }else{
+            printf("Incorrect Password! Document cannot be deleted with incorrect credentials.\n");
+        }
+    }else{
+        printf("Document does not exist. Check Document Name again or try `ls docs` to get list of documents\n");
+    }
+    free(documentName); 
+    return;
+
+}
+
 void noSQLMenu(){
     initGlobals();
-    // globals.user = "test";
     ioctl(0,TIOCGWINSZ,&sz);
     printWelcomeMessage();
     int command;
@@ -787,9 +907,14 @@ void noSQLMenu(){
                     createCollection();
                     break;
             case create_document:
-                    createDocument();
+                    createDocument_FrontEnd();
                     break;
             case delete:
+                    printf("use `create` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `rm user`\n");
+                    printf("   2. <SYNTAX> => `rm doc`\n");
+                    printf("   3. <SYNTAX> => `rm col`\n");
+                    printf("use command `man` for more details\n");
                     break;
             case delete_user:
                     removeUser();
@@ -800,6 +925,7 @@ void noSQLMenu(){
                     removeCollection();
                     break;
             case delete_document:
+                    removeDocument();
                     break;
             case use_collection:
                     useCollection();
@@ -808,6 +934,11 @@ void noSQLMenu(){
                     useDocument();
                     break;
             case login:
+                        
+                    if(strcmp(globals.user,"") != 0){
+                        printf("You are already Logged in. use the command `logout` before logging in with another user\n");
+                        break;
+                    }
                     loginUser();
                     system("clear");
                     printWelcomeMessage();
