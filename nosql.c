@@ -58,21 +58,21 @@ return;
 typedef enum Commands{
     ls,                         //
     ls_users,                   //
-    ls_documents,               // # NOt tested for functionality yet
+    ls_documents,               //
     ls_collections,             //
     man,                        //
     login,                      //
     logout,                     //
     create,                     //
     create_user,                //
-    create_collection,          
-    create_document,
-    delete,            
+    create_collection,          //          
+    create_document,            //
+    delete,                     //
     delete_user,                //
-    delete_collection,          
-    delete_document,                      
-    use_document,               
-    use_collection,             
+    delete_collection,          //
+    delete_document,            //                      
+    use_document,               //
+    use_collection,             //
     clear,                      //
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
