@@ -31,6 +31,7 @@ typedef enum Commands{
     show_collections,
     use_document,
     use_collection,
+    clear,
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
@@ -61,8 +62,7 @@ void printHeading(char *str){
 return;
 }
 
-void printDeclaration(){
-    char * str = "This project is developed under the guidance of Prof. Ashwini Matange ma'am by the students Pratyay Dhond, Sarvesh Kulkarni and Sohel Bargir of Computer Engineering Div 2.\n";
+void printDeclaration(char * str){
     for(char *p = str; *p != '\0'; p++){
         printf("   ");
         for(int j = 2; j < sz.ws_col-3;j++){
@@ -74,6 +74,8 @@ void printDeclaration(){
             break;
         printf(" \n");
     }
+        printf(" \n");
+
     // str = "Available commands are"
     // for()
 
@@ -109,7 +111,7 @@ return;
 
 void printWelcomeMessage(){
     printHeading("Welcome to NoSQL implementation using C.");
-    printDeclaration();
+    printDeclaration("This project is developed under the guidance of Prof. Ashwini Matange ma'am by the students Pratyay Dhond, Sarvesh Kulkarni and Sohel Bargir of Computer Engineering Div 2.");
     printAvailableCommands();
     return;
 }
@@ -231,7 +233,6 @@ int checkPasswords(char *password, char * confirmPassword){
     return PASSWORDS_DO_NOT_MATCH;
 }
 
-
 void createUser(){
     system("clear");
 
@@ -272,6 +273,7 @@ void createUser(){
         if(input == 'y' || input == 'Y'){
             printf("Password : %s\n",password);
             printf("Press return key to continue.\n :");
+            scanf("%c",&input);
             clearInputBuffer();
         }
         free(password);
@@ -287,8 +289,11 @@ int getInput(){
     int command = NOP;
     fgets(input,100,stdin);
     toLower(input);
+    // printf("input -> `%s`",input);
     if(strcmp(input,"man") == 0)
         command = man;
+    else if(strcmp(input, "clear") == 0)
+        command = clear;
     else if(strcmp(input,"ls") == 0)
         command = ls;    
     else if(strcmp(input,"ls users") == 0)
@@ -309,15 +314,109 @@ int getInput(){
         command = create_document;
     else if(strcmp(input,"create collection") == 0 || strcmp(input,"create col") == 0)
         command = create_collection;
+    else if(strcmp(input,"remove user") == 0 || strcmp(input,"rm user") == 0)
+        command = delete_user;
 // use document
 // use collection
    free(input);
    return command; 
 }
 
+void showUsers(){
+    system(" ls .root/ >> users");
+    FILE *fptr = fopen("users","r");
+    if(!fptr)
+        return;
+    char temp[32] = "";
+    printf("Users : \n");
+    int j = 0;
+    int code = 0;
+    while(fscanf(fptr,"%s",temp)){
+        if(feof(fptr))
+            break;
+        printf("  %s\n",temp);
+    }
+    printf("\n");
+    fclose(fptr);
+    system("rm users ");
+}
+
+int validateUser(char * username){
+    int code;
+    // printf("Enter password : ");
+    char *password = (char*) malloc(sizeof(char) * 32);
+    if(!password)
+        return PASSWORDS_DO_NOT_MATCH;
+    fgets(password,32,stdin);
+    password = getPassword("Enter password : ");
+    if(password[0] == '\n')
+        password = getPassword("Enter password : ");
+        // fgets(password,32,stdin);
+    // password[getLength(password)-2] = '\0'; // replaces /n from the password
+
+    strcpy(password,Encrypt(password));
+    
+    char *filename = (char*) calloc(100,sizeof(char));
+    strcat(filename,".root/");
+    strcat(filename,username);
+    strcat(filename,"/.pass");
+
+
+    FILE *fptr = fopen(filename,"r");
+    if(!fptr){
+        printf("password file read failed!");
+        return PASSWORDS_DO_NOT_MATCH;
+    }
+
+    char * encryptedPass = (char*) malloc(sizeof(char) * 32);
+    fgets(encryptedPass,32,fptr);
+    if(encryptedPass[getLength(encryptedPass)-2] == '\n')
+        encryptedPass[getLength(encryptedPass)-2] = '\0';
+
+    if(strcmp(password,encryptedPass) == 0)
+        code = PASSWORDS_MATCH;
+    else 
+        code = PASSWORDS_DO_NOT_MATCH;
+
+    fclose(fptr);
+    return code;
+}
+
+void removeUser(){
+    system("clear");
+    printHeading("Remove User");
+    printDeclaration("User removal is a dangerous process! All the collections and the documents of the user would be deleted along with the user metadate. Please make sure that you are at the right place before proceeding.");
+    printf("Enter username : ");
+    char * username = (char *) calloc(100,sizeof(char));
+    fscanf(stdin,"%s",username);
+    char command[100] = "ls -d '.root/";
+    strcat(command, username);
+    strcat(command, "'");
+    int code = system(command);
+    
+    if(code == 0){
+        code = validateUser(username);
+        if(code == PASSWORDS_MATCH){
+            strcpy(command,"rm -r '.root/");
+            strcat(command, username);
+            strcat(command, "'");
+            system(command);
+            printf("User `%s` deleted successfully!\n",username);
+        }else{
+            printf("Incorrect Password! User cannot be deleted with incorrect credentials.");
+        }
+        getchSafe();
+    }else{
+        printf("User does not exist. Check username again or try `ls users` to get list of users\n");
+        getchSafe();
+    }
+    free(username); 
+    return;
+}
+
+
 void noSQLMenu(){
     ioctl(0,TIOCGWINSZ,&sz);
-
     printWelcomeMessage();
     int command;
     while(1){
@@ -334,15 +433,23 @@ void noSQLMenu(){
             printf("   2. <SYNTAX> => `ls docs`\n");
             printf("   3. <SYNTAX> => `ls cols`\n");
             printf("use command `man` for more details\n");
+        }else if(command == ls_users){
+            showUsers();
         }else if(command == create){
             printf("use `create` with one of the following parameters:\n");
             printf("   1. <SYNTAX> => `create user`\n");
             printf("   2. <SYNTAX> => `create document`\n");
             printf("   3. <SYNTAX> => `create collection`\n");
             printf("use command `man` for more details\n");
-
         }else if(command == create_user){
             createUser();
+            system("clear");
+            printWelcomeMessage();
+        }else if(command == delete_user){
+            removeUser();
+            system("clear");
+            printWelcomeMessage();
+        }else if(command == clear){
             system("clear");
             printWelcomeMessage();
         }else if(command == NOP){
