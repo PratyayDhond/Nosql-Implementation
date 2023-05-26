@@ -49,10 +49,11 @@ char * Encrypt(char * str){
     getPolyAlphabeticKey(&key);
     char * encryptedKey = (char *) malloc( sizeof(char) * length);
     for(int i = 0, j = 0; i < length; i++,j++){
+        if(j >= key.length -1 )
+            j = 0;
+
         encryptedKey[i] = ((str[i] + key.key[j])) % MODULO;
         // encryptedKey[i] = (((str[i] - MODULO) + (key.key[j] - MODULO)) % 26) + MODULO;
-        if(j >= key.length)
-            j %= key.length;
     }
     encryptedKey[length-1] = '\0';
     free(key.key);      
@@ -66,9 +67,9 @@ char * Decrypt(char * str){
     getPolyAlphabeticKey(&key);
     char * decryptedKey = (char *) malloc( sizeof(char) * length);
     for(int i = 0, j = 0; i < length; i++,j++){
+        if(j >= key.length -1)
+            j = 0;
         decryptedKey[i] = (str[i] - key.key[j] + MODULO) % MODULO;   
-        if(j >= key.length)
-            j %= key.length;
     }
     free(key.key);  
     decryptedKey[length-1] = '\0';    

@@ -43,7 +43,7 @@ void reassignBalanceFactor(UserHashMap *tcollectionNode)
     return;
 }
 
-UserHashMap getImBalancedcollectionNode(UserHashMap tcollectionNode)
+UserHashMap getimBalancedNode(UserHashMap tcollectionNode)
 {
     if (!tcollectionNode)
         return NULL;
@@ -124,25 +124,25 @@ void RLRotation(UserHashMap *tcollectionNode, UserHashMap *mainTcollectionNode)
     RRRotation((tcollectionNode), mainTcollectionNode);
 }
 
-void getBalancedTree(UserHashMap* tcollectionNode,userHashMapNode* ImbalancedcollectionNode){
-     userHashMapNode* imBalancedcollectionNode = getImBalancedcollectionNode(ImbalancedcollectionNode);
+void getBalancedTree(UserHashMap* tcollectionNode,userHashMapNode* nodeToCheck){
+     userHashMapNode* imBalancedNode = getimBalancedNode(nodeToCheck);
   
-    if (!imBalancedcollectionNode)
+    if (!imBalancedNode)
         return;
-    // printf("\nImbalaned userHashMapNode : %s , bf : %d\n", imBalancedcollectionNode->data, imBalancedcollectionNode->bf);
-    if (imBalancedcollectionNode->bf == -2)
+    // printf("\nImbalaned userHashMapNode : %s , bf : %d\n", imBalancedNode->data, imBalancedNode->bf);
+    if (imBalancedNode->bf == -2)
     {
-        if (imBalancedcollectionNode->right->bf == 0 || imBalancedcollectionNode->right->bf == -1) 
-            RRRotation(&imBalancedcollectionNode, tcollectionNode);
+        if (imBalancedNode->right->bf == 0 || imBalancedNode->right->bf == -1) 
+            RRRotation(&imBalancedNode, tcollectionNode);
         else
-            RLRotation(&imBalancedcollectionNode, tcollectionNode);
+            RLRotation(&imBalancedNode, tcollectionNode);
     }
-    else if (imBalancedcollectionNode->bf == 2)
+    else if (imBalancedNode->bf == 2)
     {
-        if (imBalancedcollectionNode->left->bf == 0 ||imBalancedcollectionNode->left->bf == 1 )
-            LLRotation(&imBalancedcollectionNode, tcollectionNode);
+        if (imBalancedNode->left->bf == 0 ||imBalancedNode->left->bf == 1 )
+            LLRotation(&imBalancedNode, tcollectionNode);
         else  
-            LRRotation(&imBalancedcollectionNode, tcollectionNode);        
+            LRRotation(&imBalancedNode, tcollectionNode);        
     }
     return ;
 }
@@ -371,8 +371,9 @@ void destroyTree(UserHashMap *tcollectionNode)
 }
 
 
+
 // If multiple collections per user
-// char* getDocument(UserHashMap tcollectionNode,char* data){
+// char* getDocuments(UserHashMap tcollectionNode,char* data){
     // userHashMapNode* p = tcollectionNode;
     // while(p){
         // int result = strcmp(data,tcollectionNode -> data);

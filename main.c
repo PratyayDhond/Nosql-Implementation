@@ -9,7 +9,7 @@ char * test(char * str){
 }
 
 int main(){
-    // printf("Decrypted -> %s\n",test("HELLLO"));
-    noSQLMenu();
+    printf("Decrypted -> %s\n",test("{}~"));
+    // noSQLMenu(); 
 return 0;
 }
