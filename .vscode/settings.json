@@ -3,6 +3,7 @@
         "cipher.h": "c",
         "userhashmap.h": "c",
         "document.h": "c",
-        "documenthashmap.h": "c"
+        "documenthashmap.h": "c",
+        "type_traits": "c"
     }
 }

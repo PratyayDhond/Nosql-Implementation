@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
+#include <regex.h>
 #include"document.h"
 
 #define MAX_LINE_LENGTH 100000
@@ -41,6 +42,33 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
 
     temp -> next = nn;
     return;
+}
+
+int deletePair(Pair *pairs, char *pairKey)
+{
+    node * temp;
+    if (strcmp((*pairs)->key, pairKey) == 0) {
+
+        temp = *pairs;
+        *pairs = (*pairs)->next;
+        free(temp);
+        return 1;
+
+    }else {
+        node *current = *pairs;
+
+        while (current->next) {
+            if(strcmp(current->next->key, pairKey) == 0) {
+                temp = current->next;
+                current->next = current-> next->next;
+                free(temp);
+                return 1;
+            }else
+                current = current -> next;
+    }
+  }
+
+  return 0;
 }
 
 // For initilizing the collection linkedlist
@@ -124,7 +152,7 @@ document* getDocument(char *collection,char* key)
 
     if(!file)
     {
-        printf("file not found\n");
+        printf("document not found\n");
         return NULL;
     }
    
@@ -163,6 +191,21 @@ void displayDocument(document doc)
     }
 }
 
+int validateDataFormatProtocol(char* line)
+{
+    if(strlen(line) == 0) return 0;
+     regex_t reegex;
+ 
+    int value;
+
+    value = regcomp(&reegex, "^\\(\\w+\\)\\s*\\w+:\\s*(.*)$",REG_EXTENDED|REG_NOSUB);
+ 
+    value = regexec(&reegex, line,
+                     0, NULL, 0);
+
+    return value;
+}
+
 Pair getAllPairsOfDocument(FILE *file)
 {
     // Initilizing pairs linked list
@@ -180,6 +223,13 @@ Pair getAllPairsOfDocument(FILE *file)
     char key[MAX_LINE_LENGTH], value[MAX_LINE_LENGTH], datatype[20];
 
     while(fgets(line, MAX_LINE_LENGTH, file)){
+
+        if(validateDataFormatProtocol(line) == REG_NOMATCH) 
+        {
+            printf("Error parsing the document\n");
+            return NULL;
+        }
+
         if(line[lineTraverse++] == '(')
         {
             while(line[lineTraverse] != ')')
@@ -188,6 +238,7 @@ Pair getAllPairsOfDocument(FILE *file)
             }
             datatype[counter] = '\0';
         }
+        
         lineTraverse++;
         counter = 0;
 
@@ -196,6 +247,8 @@ Pair getAllPairsOfDocument(FILE *file)
         
         while(line[lineTraverse] != ':')
         {
+            // if(line[lineTraverse] == '\0');
+
             key[counter++] = line[lineTraverse++];
         }
         lineTraverse++;
@@ -402,7 +455,7 @@ int updateDocument(char* collection, document* doc)
 
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"(%s) %s: %s", temp->datatype, temp->key, temp->value);
         temp = temp -> next;
     }
 
@@ -461,7 +514,7 @@ int deleteDocument(char* collection, char* documentKey)
 
     if(system(del))
     {
-        printf("Error in deleting a document\n");
+        printf("Error deleting a document\n");
         return 0;
     }
 
@@ -471,53 +524,45 @@ int deleteDocument(char* collection, char* documentKey)
 
 int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 {
-    if(strlen(collection)) return 0;
-    if(strlen(documentKey)) return 0;
+    if(strlen(collection) == 0) return 0;
+    if(strlen(documentKey) == 0) return 0;
 
 
     document *doc = getDocument(collection, documentKey);
-    displayDocument(*doc);
 
-    if(!doc)
-    {
-        printf("Document does not exist\n");
-        return 0;
-    }
-    printf("jkdjkdfjfjdkf\n");
+    if(!doc) return 0;
 
-    if(!(doc->pairs))
+    if(!(doc->pairs)) return 0;
+
+    if(!deletePair(&(doc->pairs), pairkey))
     {
-        printf("document does not have any pairs\n");
+        printf("Associated value for given key not found\n");
         return 0;
     }
 
-    Pair pairs = doc->pairs;
-
-    node* temp = pairs;
-    node* prev = NULL;
-    
-    while(temp)
-    {
-        if(strcmp(temp->key, pairkey) == 0)
-        {
-            node* toDelete = temp;
-            prev -> next = temp -> next;
-            free(toDelete);
-            break;
-        }
-        prev = temp;
-        temp = temp -> next;
-    }
-
-    doc->pairs = temp;
-
-
-    if(createDocument(collection, doc))
+    if(updateDocument(collection, doc))
     {
         printf("%s field is deleted successfully\n", pairkey);
         return 1;
     }
 
     return 0;
+
+}
+
+
+int freePairs(Pair *pairs)
+{
+    if(!*pairs) return 0;
+
+    while(*pairs)
+    {
+        node* temp = (*pairs);
+        *pairs = (*pairs) -> next;
+        printf("deleted\n");
+        free(temp);
+    }
+
+    return 1;
 
 }

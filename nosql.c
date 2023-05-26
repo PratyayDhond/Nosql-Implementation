@@ -9,7 +9,7 @@
 #include <string.h>   // for strcmp 
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
-#include "FetchingDocument/document.h"
+#include "Backend/document.h"
 
 #define SIZE 32
 
