@@ -37,6 +37,10 @@ int main()
     // Code for deleting a single document
     // int status = deleteDocument("Posts", "newpost");
 
+    // Code for deleting a single field from a document
+    int status = deleteFieldFromDocument("Posts", "post1", "name");
+
+
     
     return 0;
 }

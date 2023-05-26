@@ -34,5 +34,6 @@ void addDocumentToCollection(Collection *collection, document* doc);
 void displayCollection(Collection collection);
 document* initilizeAndCreateDocument(char* documentkey, Pair pairs);
 void createPair(Pair *pairs,char* key, char* value, char* datatype);
+int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey);
 
 

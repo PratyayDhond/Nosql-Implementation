@@ -468,3 +468,56 @@ int deleteDocument(char* collection, char* documentKey)
     printf("Document deleted successfully\n");
     return 1;
 }
+
+int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
+{
+    if(strlen(collection)) return 0;
+    if(strlen(documentKey)) return 0;
+
+
+    document *doc = getDocument(collection, documentKey);
+    displayDocument(*doc);
+
+    if(!doc)
+    {
+        printf("Document does not exist\n");
+        return 0;
+    }
+    printf("jkdjkdfjfjdkf\n");
+
+    if(!(doc->pairs))
+    {
+        printf("document does not have any pairs\n");
+        return 0;
+    }
+
+    Pair pairs = doc->pairs;
+
+    node* temp = pairs;
+    node* prev = NULL;
+    
+    while(temp)
+    {
+        if(strcmp(temp->key, pairkey) == 0)
+        {
+            node* toDelete = temp;
+            prev -> next = temp -> next;
+            free(toDelete);
+            break;
+        }
+        prev = temp;
+        temp = temp -> next;
+    }
+
+    doc->pairs = temp;
+
+
+    if(createDocument(collection, doc))
+    {
+        printf("%s field is deleted successfully\n", pairkey);
+        return 1;
+    }
+
+    return 0;
+
+}
