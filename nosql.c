@@ -7,9 +7,48 @@
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
 
+#define SIZE 32
+
 #define USER_ALREADY_EXISTS 0
 #define PASSWORDS_MATCH 1
 #define PASSWORDS_DO_NOT_MATCH 2
+
+static struct globals{
+    char * user;
+    char * collection;
+    char * document;
+//    int isLoggedIn;
+}globals;
+
+void initGlobals(){
+    globals.collection = (char*) malloc(sizeof(char) * SIZE);
+    if(!globals.collection)
+        exit(EXIT_FAILURE);
+
+    globals.user = (char*) malloc(sizeof(char) * SIZE);
+    if(!globals.user)
+        exit(EXIT_FAILURE);
+
+    globals.document = (char*) malloc(sizeof(char) * SIZE);
+    if(!globals.document)
+        exit(EXIT_FAILURE);
+
+    globals.user[0] = '\0';
+    globals.document[0] = '\0';
+    globals.collection[0] = '\0';
+
+return;
+}
+
+void destroyGlobals(){
+    if(globals.collection)
+        free(globals.collection);
+    if(globals.user)
+        free(globals.user);
+    if(globals.document)
+        free(globals.document);
+return;
+}
 
 typedef enum Commands{
     ls,
@@ -153,7 +192,7 @@ void displayMAN(){
 }
 
 char * getPassword(char * str){
-    char * password = (char *) malloc(sizeof(char) * 32);
+    char * password = (char *) malloc(sizeof(char) * SIZE);
     int i = 0;
     int ch;
 
@@ -180,15 +219,15 @@ char * getPassword(char * str){
     return password;
 }
 
-int checkIfUserExists(char * username){
+int checkIfUserExists(char * username, char * str, char * declaration){
     char command[100] = "ls -d .root/";
     strcat(command,username);
     int x = system(command);
 
     system("clear");
-    printHeading("Create New User");
-    printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
-    printf("Enter your username: %s\n",username);
+    printHeading(str);
+    printDeclaration(declaration);
+    printf("Enter username : %s\n",username);
 
     if(x == 0)
         return USER_ALREADY_EXISTS;
@@ -241,9 +280,10 @@ void createUser(){
     char input;
 
     printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
-    printf("Enter your username: ");
+    printf("Enter username: ");
     scanf("%s",username);
-    if(checkIfUserExists(username) ==  USER_ALREADY_EXISTS){
+
+    if(checkIfUserExists(username,"Create New User","Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O)") ==  USER_ALREADY_EXISTS){
         printf("USER ALREADY EXISTS. Try picking a new username or logging in.\n");
         getchSafe();
     }else{
@@ -254,8 +294,8 @@ void createUser(){
         do{
             system("clear");
             printHeading("Create New User");
-            printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
-            printf("Enter your username: %s\n",username); 
+            printDeclaration("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) ");
+            printf("Enter username: %s\n",username); 
             password = getPassword("Enter Password  : ");
             confirmPassword = getPassword("Confirm Password: ");
         }while(checkPasswords(password,confirmPassword) == PASSWORDS_DO_NOT_MATCH);
@@ -296,7 +336,7 @@ int getInput(){
         command = clear;
     else if(strcmp(input,"ls") == 0)
         command = ls;    
-    else if(strcmp(input,"ls users") == 0)
+    else if(strcmp(input,"ls users") == 0 || strcmp(input,"ls user") == 0)
         command = ls_users;
     else if(strcmp(input,"ls docs") == 0 || strcmp(input,"ls documents") == 0)
         command = ls_documents;
@@ -327,7 +367,7 @@ void showUsers(){
     FILE *fptr = fopen("users","r");
     if(!fptr)
         return;
-    char temp[32] = "";
+    char temp[SIZE] = "";
     printf("Users : \n");
     int j = 0;
     int code = 0;
@@ -344,14 +384,14 @@ void showUsers(){
 int validateUser(char * username){
     int code;
     // printf("Enter password : ");
-    char *password = (char*) malloc(sizeof(char) * 32);
+    char *password = (char*) malloc(sizeof(char) * SIZE);
     if(!password)
         return PASSWORDS_DO_NOT_MATCH;
-    fgets(password,32,stdin);
+    fgets(password,SIZE,stdin);
     password = getPassword("Enter password : ");
     if(password[0] == '\n')
         password = getPassword("Enter password : ");
-        // fgets(password,32,stdin);
+        // fgets(password,SIZE,stdin);
     // password[getLength(password)-2] = '\0'; // replaces /n from the password
 
     strcpy(password,Encrypt(password));
@@ -368,8 +408,8 @@ int validateUser(char * username){
         return PASSWORDS_DO_NOT_MATCH;
     }
 
-    char * encryptedPass = (char*) malloc(sizeof(char) * 32);
-    fgets(encryptedPass,32,fptr);
+    char * encryptedPass = (char*) malloc(sizeof(char) * SIZE);
+    fgets(encryptedPass,SIZE,fptr);
     if(encryptedPass[getLength(encryptedPass)-2] == '\n')
         encryptedPass[getLength(encryptedPass)-2] = '\0';
 
@@ -389,11 +429,12 @@ void removeUser(){
     printf("Enter username : ");
     char * username = (char *) calloc(100,sizeof(char));
     fscanf(stdin,"%s",username);
-    char command[100] = "ls -d '.root/";
-    strcat(command, username);
-    strcat(command, "'");
-    int code = system(command);
-    
+    char command[100] = "";
+    // char command[100] = "ls -d '.root/";
+    // strcat(command, username);
+    // strcat(command, "'");
+    // int code = system(command);
+    int code = checkIfUserExists(username,"Remove User","User removal is a dangerous process! All the collections and the documents of the user would be deleted along with the user metadate. Please make sure that you are at the right place before proceeding.");
     if(code == 0){
         code = validateUser(username);
         if(code == PASSWORDS_MATCH){
@@ -415,18 +456,51 @@ void removeUser(){
 }
 
 
+int checkUser(char * username){
+        char command[100] = "ls -d .root/";
+    strcat(command,username);
+    int x = system(command);
+    if(x == 0)
+        return USER_ALREADY_EXISTS;
+    else return -1;
+}
+void loginUser(){
+    system("clear");
+    printHeading("User Login");
+    printDeclaration("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) ");
+    printf("Enter username : ");
+    char *username = (char *) malloc(sizeof(char) *SIZE);
+    fscanf(stdin,"%s",username);
+    int code = checkIfUserExists(username,"User Login","Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) ");
+    if(code == USER_ALREADY_EXISTS){
+        code = validateUser(username);
+        if( code == PASSWORDS_DO_NOT_MATCH){
+            printf("Incorrect password! Login failed.");
+        }else{
+            printf("Welcome `%s`, you have now successfully logged in.\n",username);
+            strcpy(globals.user,username);
+            getchSafe();
+        }
+    }else{
+        printf("User does not exists. Try `ls users` command to see the list of existing users.\n");
+    }
+return;
+}
+
 void noSQLMenu(){
+    initGlobals();
     ioctl(0,TIOCGWINSZ,&sz);
     printWelcomeMessage();
     int command;
     while(1){
         printf(">> ");
         command = getInput();
+        // printf("command -> %d",command);
+        // exit(0);
         if(command == man){
             displayMAN();
             system("clear");
             printWelcomeMessage();
-
         }else if(command == ls){
             printf("use `ls` with one of the following parameters:\n");
             printf("   1. <SYNTAX> => `ls users`\n");
@@ -449,9 +523,23 @@ void noSQLMenu(){
             removeUser();
             system("clear");
             printWelcomeMessage();
+        }else if(command == login){
+            loginUser();
+            system("clear");
+            printWelcomeMessage();
         }else if(command == clear){
             system("clear");
             printWelcomeMessage();
+        }else if(command == logout){
+            if(strcmp(globals.user,"") == 0)
+                printf("user has to be logged in for using `logout` command.\n");
+            else{
+                printf("user `%s` ", globals.user);
+                strcpy(globals.user,"");
+                strcpy(globals.collection,"");
+                strcpy(globals.document,"");
+                printf("has logged out successfully.\n");
+            }
         }else if(command == NOP){
             printf("\b \b");
             printf("\b \b");
