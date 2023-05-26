@@ -1,15 +1,9 @@
+#include "../FetchingDocument/document.h"
 
-typedef struct value {
-    char* key;
-    char* value;
-    char* datatype;
-}value;
-typedef value* Values;
+
 typedef struct documentHashmap{
     int bf;
-    char* key;
-    char* value;
-    char* datatype;
+    document *data;
     struct documentHashmap* left;
     struct documentHashmap* right;          //Maintaining data , balanace factor , left ,right and parent pointer for each node
     struct documentHashmap* parent;         
@@ -19,11 +13,12 @@ typedef documentHashmap* DocumentHashMap;
 
 //Basic Tree functions
 void initDocumentHashMap(DocumentHashMap* );
-void insertIntoDocumentHashMap(DocumentHashMap*,char*,char*,char* );
+void insertIntoDocumentHashMap(DocumentHashMap*,document);
 void destroyTree(DocumentHashMap* );
 void removedocumentHashmap(DocumentHashMap*,char* );
-Values findAndFetchDocument(DocumentHashMap ,char* );
+document findAndFetchDocument(DocumentHashMap ,char* );
 void updateValue(DocumentHashMap*,char*,char*,char*);
+// void insertIntoDocument(char* key,char *value,char* datatype);
 
 //Traversals
 void inOrder(DocumentHashMap );

@@ -12,56 +12,59 @@ int getCount(DocumentHashMap tnode){
 int main(){
     DocumentHashMap t;
     initDocumentHashMap(&t);
+    document data;
+    initPair(&data.pairs);
+    appendToPair(&data.pairs,"Name", "Sarvesh", "string");
+    appendToPair(&data.pairs,"Address", "COEP", "string");
 
-    insertIntoDocumentHashMap(&t,"Sarvesh","Kulkarni","string");
-    insertIntoDocumentHashMap(&t,"Sarvesh","sarvesh","string");
+    document data1;
+    data1.key = "raul";
 
-    insertIntoDocumentHashMap(&t,"Pratyay","Dhond","string");
-    insertIntoDocumentHashMap(&t,"Sohel","Bargir","string");
-    insertIntoDocumentHashMap(&t,"Aditya","Raul","string");
-    insertIntoDocumentHashMap(&t,"Mahind","Salwe","string");
-    updateValue(&t,"Sarvesh","1","int");
-    // Values temp = findAndFetchDocument(t,"");
-    // if(temp){
-    // printf("\n Key : %s , ",temp -> key);
-    // printf("Value : %s , ",temp -> value);
-    // printf("Datatype : %s\n",temp -> datatype);
-    // }
-    // else{
-    //     printf("No output\n");
-    // }
-    // ######TESTED CODE - ALL WORKS FINE 
-     
-    // removedocumentHashmap(&t,"Sarvesh");
-    // removedocumentHashmap(&t,"Pratyay");
-    // removedocumentHashmap(&t,"Mahind");
-    // removedocumentHashmap(&t,"Aditya");
-    // removedocumentHashmap(&t,"Sohel");
-//     FILE* fp;
-//     char ch;
-//     int k = 0; 
-//     fp = fopen("data1.txt", "r");
-//      if (NULL == fp) {
-//         return 0;
-//     }
-//   char str[1000];
-//       int i = 0;
+    initPair(&data1.pairs);
+    appendToPair(&data1.pairs,"Name", "Raul", "string");
+    appendToPair(&data1.pairs,"Address", "Laturrr", "string");
 
-//     while (fscanf(fp, "%s", data[k]) != EOF) {
-//         insertIntoHashMap(&t,data[k]);
-//         k++;
-//         i++;
-//     }
-//     k = 0 , i = 0 ;
-//     fclose(fp);
-    // int count = 0 ;
-    //   while(t){
-    //         removeNode(&t,t-> data);
-    //  printf("\nTnode Count :  %d",getCount(t));
-    //         count++;
-    //         // printf("\n%d",count);
-    //     }
+    data.key = "sar";
+    // displayDocument(data);
+    insertIntoDocumentHashMap(&t,data);
+    insertIntoDocumentHashMap(&t,data1);
+
+    // document get = findAndFetchDocument(t,"sar");
+
+    // displayDocument(data);
+    // displayDocument(data1);
+
+
      preOrder(t);
 
     return 0;
 }
+/*
+void testingFile()
+{
+    FILE* fp;
+    char ch;
+    int k = 0; 
+    fp = fopen("data1.txt", "r");
+     if (NULL == fp) {
+        return 0;
+    }
+  char str[1000];
+      int i = 0;
+
+    while (fscanf(fp, "%s", data[k]) != EOF) {
+        insertIntoHashMap(&t,data[k]);
+        k++;
+        i++;
+    }
+    k = 0 , i = 0 ;
+    fclose(fp);
+    int count = 0 ;
+      while(t){
+            removeNode(&t,t-> data);
+     printf("\nTnode Count :  %d",getCount(t));
+            count++;
+            // printf("\n%d",count);
+        }
+}
+*/

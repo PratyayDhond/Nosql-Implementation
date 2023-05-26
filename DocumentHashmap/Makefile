@@ -1,5 +1,6 @@
 run :
-	gcc  *.c ../FetchingDocument/document.c
+	 clear
+	 gcc -g *.c ../FetchingDocument/document.c
 	./a.out
 check : 
 	gcc *.c
