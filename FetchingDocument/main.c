@@ -1,15 +1,21 @@
 #include<stdio.h>
+#include<string.h>
 #include"document.h"
 
 int main()
 {
-    document *d= getDocument("Posts","post2");
+    document *d= getDocument("Posts","post3");
 
-    // displayDocument(*d);
+    if(d) displayDocument(*d);
 
-    Collection col = getAllDocumentFromCollection("Posts");
+    strcpy(d->key,"sohel");
 
-   displayCollection(col);
+
+    int result = createDocument("Posts", d);
+
+    // Collection col = getAllDocumentFromCollection("Posts");
+
+    // displayCollection(col);
 
     return 0;
 }

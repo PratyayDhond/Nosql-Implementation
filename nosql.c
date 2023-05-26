@@ -8,7 +8,8 @@
 #include <unistd.h> // for getPassword command
 
 #define USER_ALREADY_EXISTS 0
-
+#define PASSWORDS_MATCH 1
+#define PASSWORDS_DO_NOT_MATCH 2
 
 typedef enum Commands{
     ls,
@@ -79,8 +80,29 @@ void printDeclaration(){
 return;
 }
 
+void getchSafe(){
+    printf("Press any key to continue.\n :");
+    if(getch() == '\033'){
+        getch(); 
+        getch();
+    }
+    return;
+}
+
+void clearInputBuffer(){
+        char temp = getch();
+        while(temp != '\n' ){
+            if(temp == '\033'){
+                getch(); getch();
+                break;
+            }
+            temp = getch();
+        }
+        return;
+}
+
 void printAvailableCommands(){
-    char * str = "Available commands are ls,man,login,create. Use command man for more details\n";
+    char * str = "Available commands are ls,man,login,create. Use command man for more details\n\n";
     printf("   %s",str);
 return;
 }
@@ -98,6 +120,12 @@ void toLower(char * input){
     for(int i = 0; i < length-1; i++){
         input[i] = tolower(input[i]);
     }
+    // printf("length -2 = '%d'",input[length-2]);
+    for(int i = length -1; i >= 0; i--)
+        if(input[i] == (char) 13){
+            input[i] == '\0';
+            break;
+        }
     return;
 }
 
@@ -115,17 +143,10 @@ void displayMAN(){
     fclose(fptr);
     free(temp);
 
-    char * str = "Press Any key to exit manual";
 
-    printDashes(getLength(str));
-    printf("%s\n: ",str);
-   
+    printDashes(getLength("Press any key to continue.\n :"));
+    getchSafe();
     // This test case is explicitly for handling arrow presses, when a user presses an arrow 3 characters are put in the input stream '\033', '[' and either A,B,C,D
-    if(getch() == '\033'){
-        getch(); 
-        getch();
-    }
-   
     system("clear");
 }
 
@@ -134,8 +155,14 @@ char * getPassword(char * str){
     int i = 0;
     int ch;
 
+    // prints the do you want to enter password wala statement, do not comment
     printf("%s",str);
     while ((ch = getch()) != '\n') {
+        if(ch == '\033'){
+            getch();    // this case deals with the input of arrow keys in pass word
+            getch();
+            continue;
+        }
         if (ch == 127 || ch == 8) { // handle backspace
             if (i != 0) {
                 i--;
@@ -191,42 +218,65 @@ void createUserDirectoryAndFiles(char * username,char * password){
     // system("clear");
 }
 
+int checkPasswords(char *password, char * confirmPassword){
+
+    if(strcmp(password,confirmPassword) == 0){
+        free(confirmPassword);
+        return PASSWORDS_MATCH;
+    }
+    free(password);
+    free(confirmPassword);
+    printf("ERROR! Both Passwords must be the same! Press any key to continue...\n");
+    getchSafe();
+    return PASSWORDS_DO_NOT_MATCH;
+}
+
+
 void createUser(){
     system("clear");
 
     printHeading("Create New User");
     char * username = calloc(100,sizeof(char));
-    char * password;
-    char * confirmPassword;
+    char input;
+
     printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
     printf("Enter your username: ");
     scanf("%s",username);
-    
     if(checkIfUserExists(username) ==  USER_ALREADY_EXISTS){
         printf("USER ALREADY EXISTS. Try picking a new username or logging in.\n");
+        getchSafe();
     }else{
-        reEnterPassword:
-        password = getPassword("Enter Password  : ");
-        confirmPassword = getPassword("Confirm Password: ");
+            char * password;
+            char * confirmPassword;
 
-        if(strcmp(password,confirmPassword) == 0){
-            printf("Creating user...\n");
-            createUserDirectoryAndFiles(username,password);
-            printf("User has been created successfully.\n Do you want to display your password?\n : ");
-        }
-        // marked for probable depreciation
-        else{
-            printf("both Passwords must be the same.\n");
-            goto reEnterPassword;
+            // takes input till both passwords are the same
+        do{
+            system("clear");
+            printHeading("Create New User");
+            printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
+            printf("Enter your username: %s\n",username); 
+            password = getPassword("Enter Password  : ");
+            confirmPassword = getPassword("Confirm Password: ");
+        }while(checkPasswords(password,confirmPassword) == PASSWORDS_DO_NOT_MATCH);
+
+        printf("Creating user...\n");
+        createUserDirectoryAndFiles(username,password);
+        printf("User has been created successfully.\n Do you want to display your password? [Y/N]\n : ");
+        
+        
+        input = getch();
+        if(input == '\033'){
+            getch(); getch();
         }
 
-    }
-    
-    printf("Press any key to continue.\n :");
-    if(getch() == '\033'){
-        getch(); 
-        getch();
-    }
+        if(input == 'y' || input == 'Y'){
+            printf("Password : %s\n",password);
+            printf("Press return key to continue.\n :");
+            clearInputBuffer();
+        }
+        free(password);
+        free(username);
+    }   
     return;
 
     // printHeading()
@@ -235,7 +285,6 @@ void createUser(){
 int getInput(){
     char *input = (char *) calloc(100,sizeof(char)); // calloced to get an array initialised to 0
     int command = NOP;
-    fflush(stdin);
     fgets(input,100,stdin);
     toLower(input);
     if(strcmp(input,"man") == 0)
@@ -269,9 +318,6 @@ int getInput(){
 void noSQLMenu(){
     ioctl(0,TIOCGWINSZ,&sz);
 
-    createUser();
-    exit(0);
-
     printWelcomeMessage();
     int command;
     while(1){
@@ -279,9 +325,9 @@ void noSQLMenu(){
         command = getInput();
         if(command == man){
             displayMAN();
-            fflush(stdout);
-            fflush(stdin);
+            system("clear");
             printWelcomeMessage();
+
         }else if(command == ls){
             printf("use `ls` with one of the following parameters:\n");
             printf("   1. <SYNTAX> => `ls users`\n");
@@ -297,7 +343,14 @@ void noSQLMenu(){
 
         }else if(command == create_user){
             createUser();
+            system("clear");
+            printWelcomeMessage();
+        }else if(command == NOP){
+            printf("\b \b");
+            printf("\b \b");
+            printf("\b \b");
         }
+
     }
 }
 
