@@ -51,26 +51,24 @@ return;
 }
 
 typedef enum Commands{
-    ls,
-    ls_users,
-    ls_documents,
-    ls_collections,
-    man,
-    login,
-    logout,
-    create,
-    create_user,
-    create_collection,
+    ls,                         //
+    ls_users,                   //
+    ls_documents,               // # NOt tested for functionality yet
+    ls_collections,             //
+    man,                        //
+    login,                      //
+    logout,                     //
+    create,                     //
+    create_user,                //
+    create_collection,          
     create_document,
-    delete_user,
-    delete_collection,
-    delete_document,
-    show_users,
-    show_documents,
-    show_collections,
-    use_document,
-    use_collection,
-    clear,
+    delete,            
+    delete_user,                //
+    delete_collection,          
+    delete_document,                      
+    use_document,               
+    use_collection,             
+    clear,                      //
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
@@ -381,6 +379,74 @@ void showUsers(){
     system("rm users ");
 }
 
+void showCollections(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login to view your collections.\n");
+        return;
+    }
+
+    char command[100] = "";
+    strcpy(command,"ls '.root/");
+    strcat(command,globals.user);
+    strcat(command,"' >> collections");
+    system(command);
+
+    FILE *fptr = fopen("collections","r");
+    if(!fptr)
+        return;
+    char temp[SIZE] = "";
+    printf("Collections : \n");
+
+    while(fscanf(fptr,"%s",temp)){
+        if(feof(fptr))
+            break;
+        printf("  %s\n",temp);
+    }
+    printf("\n");
+    fclose(fptr);
+    system("rm collections ");
+    return;
+}
+
+// Function not tested yet
+void showDocuments(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login to view your Documents.\n");
+        return;
+    }
+
+    if(strcmp(globals.collection,"") == 0){
+        printf("You need to select a collection to view the Documents.\n");
+        return;
+    }
+
+    char command[100];
+    strcpy(command,"ls '.root/");
+    strcat(command,globals.user);
+    strcat(command,"/");
+    strcat(command,globals.collection);
+    strcat(command,"/");
+    strcat(command,"' >> documents");
+    system(command);
+
+    FILE *fptr = fopen("documents","r");
+    if(!fptr)
+        return;
+    char temp[SIZE] = "";
+    printf("Documents : \n");
+
+    while(fscanf(fptr,"%s",temp)){
+        if(feof(fptr))
+            break;
+        printf("  %s\n",temp);
+    }
+    printf("\n");
+    fclose(fptr);
+    system("rm documents");
+    return;
+
+}
+
 int validateUser(char * username){
     int code;
     // printf("Enter password : ");
@@ -540,6 +606,10 @@ void noSQLMenu(){
                 strcpy(globals.document,"");
                 printf("has logged out successfully.\n");
             }
+        }else if(command == ls_collections){
+            showCollections();
+        }else if(command == ls_documents){
+            showDocuments();
         }else if(command == NOP){
             printf("\b \b");
             printf("\b \b");
