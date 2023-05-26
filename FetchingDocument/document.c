@@ -550,24 +550,19 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 
 }
 
-void deleteFirstPair(Pair *pairs)
-{
-    if(!(*pairs))
-        return;
-
-    node* temp = (*pairs);
-    *pairs = (*pairs) -> next;
-    printf("deleted\n");
-    free(temp);
-}
 
 int freePairs(Pair *pairs)
 {
-    if(*pairs) return 0;
+    if(!*pairs) return 0;
 
     while(*pairs)
     {
-        deleteFirstPair(pairs);
+        node* temp = (*pairs);
+        *pairs = (*pairs) -> next;
+        printf("deleted\n");
+        free(temp);
     }
+
+    return 1;
 
 }

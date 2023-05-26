@@ -5,13 +5,13 @@
 int main()
 {
     // Code for getting a single document
-    document *d= getDocument("Posts","post1");
+    // document *d= getDocument("Posts","post1");
     // if(d) displayDocument(*d);
 
-    
-    freePairs(&(d->pairs));
-
-    if(!d->pairs) printf("deleted");
+    // Code for freeing the pairs
+    // freePairs(&(d->pairs));
+    // if(!d->pairs) printf("deleted");
+  
     // Code for creating and initlizing the doucment
     // Pair pairs;
     // initPair(&pairs);
