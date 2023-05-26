@@ -3,7 +3,6 @@
 #include "DocumentHashMap.h"
 #include <string.h>
 #include <limits.h>
-// #include "../FetchingDocument/document.h"
 
 int max(int a, int b)
 {
@@ -138,15 +137,18 @@ void getBalancedTree(DocumentHashMap* tdocumentHashmap,documentHashmap* nodeImba
     return ;
 }
 
-DocumentHashMap mallocateAdocumentHashmap(DocumentHashMap *tdocumentHashmap,document data)
+DocumentHashMap mallocateAdocumentHashmap(DocumentHashMap *tdocumentHashmap,
+char* key,char* value,char* datatype)
 {
     documentHashmap *newdocumentHashmap = (documentHashmap*)malloc(sizeof(documentHashmap)); // Mallocating a documentHashmap and initializing the structure
-    newdocumentHashmap -> data = (document*)malloc(sizeof(document));
-    newdocumentHashmap -> data -> key = (char*)malloc(sizeof(char)*strlen(data.key));
-    strcpy(newdocumentHashmap -> data -> key,data.key);
-    newdocumentHashmap -> data -> pairs = (node*)malloc(sizeof(node));
-    newdocumentHashmap -> data -> pairs = data.pairs;
-    
+    newdocumentHashmap -> key = (char*) malloc(sizeof(char) * strlen(key));
+    newdocumentHashmap -> value = (char*) malloc(sizeof(char) * strlen(value));
+    newdocumentHashmap -> datatype = (char*) malloc(sizeof(char) * strlen(datatype));
+
+    strcpy(newdocumentHashmap -> key ,key);
+    strcpy(newdocumentHashmap -> value ,value);
+    strcpy(newdocumentHashmap -> datatype ,datatype);
+
     newdocumentHashmap->left = NULL;
     newdocumentHashmap->right = NULL;
     newdocumentHashmap->parent = NULL;
@@ -160,11 +162,11 @@ void insertIntoDocumentFile(document* doc){
     initDocumentHashMap(&tnode);
   
 }
-void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,document data)
+void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
 {
     // printf("Get : %s\n",data.key);
 
-    documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap,data);
+    documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap, key,value,datatype);
     // printf("%s",newdocumentHashmap -> data ->pairs -> key);
     // printf("Print : %s\n",newdocumentHashmap -> data -> key);
 
@@ -179,7 +181,7 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,document data)
     while (p)
     {
         q = p;
-        int result = strcmp(p -> data -> key, data.key);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
+        int result = strcmp(p -> key , key);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
             free(newdocumentHashmap);
@@ -190,7 +192,7 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,document data)
         else
             p = p->right;
     }
-    int res = strcmp(q->data -> key, data.key);
+    int res = strcmp(q-> key, key);
     if (res > 0)
         q->left = newdocumentHashmap;
     else
@@ -219,9 +221,9 @@ void preOrder(DocumentHashMap tdocumentHashmap)
     if (!tdocumentHashmap)
         return;
 
-    printf("Key : %s ", tdocumentHashmap -> data -> key);
+    // printf("Key : %s ", tdocumentHashmap -> documentName);
 
-    printf(" { K : %s , V : %s , D : %s } \n",tdocumentHashmap->data -> pairs -> key,tdocumentHashmap->data -> pairs -> value,tdocumentHashmap->data -> pairs -> datatype );
+    printf(" { KEY : %s , VALUE : %s , DT : %s } \n",tdocumentHashmap->key ,tdocumentHashmap-> value,tdocumentHashmap -> datatype );
     preOrder(tdocumentHashmap->left);
     preOrder(tdocumentHashmap->right);
 }
@@ -246,7 +248,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
     p = *tdocumentHashmap;
     while (p)
     {
-        int result = strcmp(p->data -> key, key);
+        int result = strcmp(p -> key, key);
         if (result == 0)
             break;
         q = p; // Search for presence of documentHashmap and make pointer q following p
@@ -344,8 +346,8 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         documentHashmap* parentOfTemp = NULL;
         if (!temp)
         {
-            p->data -> key = (char *)malloc(sizeof(preecedingPointer->data ->key));
-            strcpy(p->data -> key, preecedingPointer->data ->key);
+            p -> key = (char *)malloc(sizeof(preecedingPointer->key));
+            strcpy(p -> key, preecedingPointer ->key);
             p->left = preecedingPointer->left;
             if(preecedingPointer -> left)
             preecedingPointer -> left -> parent = p;
@@ -359,9 +361,9 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
                 preecedingPointer = temp;
                 temp = temp->right;
             }
-            char *tempo = temp->data -> key;
-            p->data -> key = (char *)malloc(sizeof(p->data -> key));
-            strcpy(p->data -> key, temp->data -> key);
+            char *tempo = temp-> key;
+            p->key = (char *)malloc(sizeof(p-> key));
+            strcpy(p-> key, temp-> key);
 
             parentOfTemp = preecedingPointer;
             if(temp -> left){
@@ -382,23 +384,21 @@ void destroyTree(DocumentHashMap *tdocumentHashmap)
         return;
     destroyTree(&(*tdocumentHashmap)->left);
     destroyTree(&(*tdocumentHashmap)->right);
-    printf("\n%s Deleted\n", (*tdocumentHashmap)->data -> key);
+    printf("\n%s Deleted\n", (*tdocumentHashmap) -> key);
     free(*tdocumentHashmap);
     *tdocumentHashmap = NULL;
     return;
 }
 
-document findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key){
-    document temp ;
+Pair findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key){
+    Pair temp ;
+    initPair(&temp);
     documentHashmap* p = tdocumentHashmap;
     while(p){
-        int result = strcmp(key,tdocumentHashmap -> data -> key);
+        int result = strcmp(key,tdocumentHashmap  -> key);
         if(result == 0){
-            temp.key = key;
-            temp.pairs = (node*)malloc(sizeof(node));
-            temp.pairs -> key = (char*)malloc(sizeof(tdocumentHashmap -> data -> key));
-            initPair(&temp.pairs);
-            temp.pairs = tdocumentHashmap -> data->pairs;
+            appendToPair(&temp,tdocumentHashmap -> key,tdocumentHashmap -> value,
+            tdocumentHashmap -> datatype);
             return temp; 
         }
         else if(result > 0)
@@ -409,21 +409,21 @@ document findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key){
     return temp;
 }
 
-// void updateValue(DocumentHashMap* tdocumentHashmap,char* key,char* value,char* datatype){
-//     documentHashmap* p = *tdocumentHashmap;
-//     while(p){
-//         int result = strcmp(key,p -> data -> key);
-//         if(result == 0){
-//             // p -> value = (char*)malloc(sizeof( value));
-//             // p -> datatype = (char*)malloc(sizeof( datatype));
-//             // strcpy(p -> value, value);
-//             // strcpy(p -> datatype, datatype);
-//             return ; 
-//         }
-//         else if(result > 0)
-//             p = p -> left;
-//         else 
-//             p = p -> right;
-//     }
-//     return ;
-// }
+void updateValue(DocumentHashMap* tdocumentHashmap,char* key,char* value,char* datatype){
+    documentHashmap* p = *tdocumentHashmap;
+    while(p){
+        int result = strcmp(key,p -> key);
+        if(result == 0){
+            // p -> value = (char*)malloc(sizeof( value));
+            // p -> datatype = (char*)malloc(sizeof( datatype));
+            strcpy(p -> value, value);
+            strcpy(p -> datatype, datatype);
+            return ; 
+        }
+        else if(result > 0)
+            p = p -> left;
+        else 
+            p = p -> right;
+    }
+    return ;
+}

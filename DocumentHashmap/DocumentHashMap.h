@@ -1,9 +1,12 @@
-#include "../FetchingDocument/document.h"
+#include "../Backend/document.h"
 
 
 typedef struct documentHashmap{
     int bf;
-    document *data;
+    char* key;
+    char* value;
+    char* datatype;
+    // document *data;
     struct documentHashmap* left;
     struct documentHashmap* right;          //Maintaining data , balanace factor , left ,right and parent pointer for each node
     struct documentHashmap* parent;         
@@ -13,10 +16,11 @@ typedef documentHashmap* DocumentHashMap;
 
 //Basic Tree functions
 void initDocumentHashMap(DocumentHashMap* );
-void insertIntoDocumentHashMap(DocumentHashMap*,document);
+void insertIntoDocumentHashMap(DocumentHashMap*,char*,char*,char*);
 void destroyTree(DocumentHashMap* );
 void removedocumentHashmap(DocumentHashMap*,char* );
-document findAndFetchDocument(DocumentHashMap ,char* );
+Pair findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key);
+
 void updateValue(DocumentHashMap*,char*,char*,char*);
 // void insertIntoDocument(char* key,char *value,char* datatype);
 
