@@ -5,10 +5,13 @@
 int main()
 {
     // Code for getting a single document
-    // document *d= getDocument("Posts","post3");
+    document *d= getDocument("Posts","post1");
     // if(d) displayDocument(*d);
 
+    
+    freePairs(&(d->pairs));
 
+    if(!d->pairs) printf("deleted");
     // Code for creating and initlizing the doucment
     // Pair pairs;
     // initPair(&pairs);
@@ -38,7 +41,7 @@ int main()
     // int status = deleteDocument("Posts", "newpost");
 
     // Code for deleting a single field from a document
-    int status = deleteFieldFromDocument("Posts", "post1", "name");
+    // int status = deleteFieldFromDocument("Posts", "post1", "im");
 
 
     

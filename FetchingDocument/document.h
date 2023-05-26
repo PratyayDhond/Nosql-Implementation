@@ -35,5 +35,8 @@ void displayCollection(Collection collection);
 document* initilizeAndCreateDocument(char* documentkey, Pair pairs);
 void createPair(Pair *pairs,char* key, char* value, char* datatype);
 int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey);
-
-
+int deletePair(Pair *pairs, char *pairKey);
+void deleteFirstPair(Pair *pairs);
+int freePairs(Pair* pairs);
+// int saveHashMapIntoFile()
+int validateDataFormatProtocol(char* line);
