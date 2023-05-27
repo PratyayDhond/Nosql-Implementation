@@ -655,13 +655,13 @@ char* convertSinglePairIntoJSONString(node* singlePair)
         strcat(pairJSONString, pairValue);
         strcat(pairJSONString, "\"");
     }
-    else if(strcmp(pairDatatype, "CHAR") == 0)
+    else if(strcmp(pairDatatype, "CHARACTER") == 0)
     {
         strcat(pairJSONString,"\'");
         strcat(pairJSONString, pairValue);
         strcat(pairJSONString, "\'");
     }
-    else if(strcmp(pairDatatype, "INT") == 0)
+    else if(strcmp(pairDatatype, "INTEGER") == 0)
     {
         strcat(pairJSONString, pairValue);
     }
@@ -669,7 +669,7 @@ char* convertSinglePairIntoJSONString(node* singlePair)
     {
         strcat(pairJSONString, pairValue);
     }
-    else if(strcmp(pairDatatype, "BOOL") == 0)
+    else if(strcmp(pairDatatype, "BOOLEAN") == 0)
     {
         if(strcmp(pairValue, "T") == 0) 
         {
@@ -766,25 +766,27 @@ char* jsonfiyCollection(char *collectionName)
 
 int exportDocument(char* collectionName, char* documentId)
 {
-    // if(strlen(documentId) == 0) return 0;
+    document* doc = getDocument(collectionName, documentId);
 
-    // char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
+    char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
 
-    // if(strlen(exportJSONString) == 0) return 0;
+    if(!exportJSONString) return 0;
+    if(strlen(exportJSONString) == 0) return 0;
+    
+    FILE *fileptr;
 
-    // char filename[MAX_LINE_LENGTH];
-    // strcat(filename, documentId);
-    // strcat(filename, "_exported.json");
+    char filename[MAX_LINE_LENGTH];
+    strcat(filename, documentId);
+    strcat(filename, "_exported.json");
 
-    // fileptr = fopen(filename, "w+");
+    fileptr = fopen(filename, "w+");
 
-    // if(!fileptr) return 0;
-    // fprintf(fileptr,"%s", exportJSONString);
+    if(!fileptr) return 0;
+    fprintf(fileptr,"%s", exportJSONString);
 
-    // fclose(fileptr);
+    fclose(fileptr);
 
     return 1;
-
 } 
 
 int exportCollection(char *collectionName)
