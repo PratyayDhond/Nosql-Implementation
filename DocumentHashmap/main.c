@@ -9,16 +9,24 @@ int getCount(DocumentHashMap tnode){
     return 0;
     return 1 + getCount(tnode -> left) + getCount(tnode -> right);
 }
+void disp(Pair docs){
+    node* p = docs;
+    while(p){
+        printf("%s %s %s \n",p -> key , p -> value , p -> datatype);
+        p = p -> next;
+    }
+    return;
+}
 int main(){
-    DocumentHashMap t;
-    initDocumentHashMap(&t);
-    document data;
-    initPair(&data.pairs);
-    insertIntoDocumentHashMap(&t,"Name","Sarvesh","string");
-    insertIntoDocumentHashMap(&t,"address","COEP","string");
-    removedocumentHashmap(&t,"Name");
-    updateValue(&t,"Name","Raul","string");
-     preOrder(t);
+    Pair new;
+    initPair(&new);
+    appendToPair(&new,"sarvesh","Sarvesh","string");
+    appendToPair(&new,"pratyay","COEP","string");
+    appendToPair(&new,"sohel","COEP","string");
+    appendToPair(&new,"aditya","COEP","string");
+    appendToPair(&new,"raul","COEP","string");
+
+    helpInsertingIntoDocumentFile(&new);
 
     return 0;
 }
