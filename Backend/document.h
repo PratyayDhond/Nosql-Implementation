@@ -58,3 +58,6 @@ int freeCollection(Collection* collection);
 int validateDataFormatProtocol(char* line);
 void displayDocument(document doc);
 void displayCollection(Collection collection);
+
+char* convertSingleDocumentIntoJSONString(document *doc);
+char* jsonify(Collection collection);
