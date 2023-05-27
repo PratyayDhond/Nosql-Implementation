@@ -16,7 +16,7 @@ typedef documentHashmap* DocumentHashMap;
 void initDocumentHashMap(DocumentHashMap* );
 void helpInsertingIntoDocumentFile(Pair* );
 void destroyTree(DocumentHashMap* );
-void removedocumentHashmap(DocumentHashMap*,char* );
+int removedocumentHashmap(DocumentHashMap*,char* );
 Pair findAndFetchDocument(DocumentHashMap ,char* );
 void updateValue(DocumentHashMap*,char*,char*,char*);
 
