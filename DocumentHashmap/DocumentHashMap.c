@@ -5,6 +5,8 @@
 #include <limits.h>
 #include "../globals/globals.h"
 
+int getDocumentInHashMap(DocumentHashMap *tnode);
+
 DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
 
@@ -303,9 +305,12 @@ void showDocs(DocumentHashMap tdocumentHashmap)
     showDocs(tdocumentHashmap->right);
 }
 void showFieldsDocuments()
-{   
-    if(!tnode)
-        getDocumentInHashMap(&tnode);
+{
+    if(!tnode){
+        int result = getDocumentInHashMap(&tnode);
+        if(!result)
+            return;
+    }
     printf("\n");
     showDocs(tnode);
     printf("\n");
@@ -551,7 +556,6 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
-    printf("%s %s %s\n",key,value,datatype);
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);
@@ -559,11 +563,12 @@ int helpUpdatingField(char* key,char* value,char* datatype){
             return INT_MIN;
         }
      }
-    preOrder(tnode);
 
     Pair result = updateValue(key,value,datatype);
     if(!result){
-        return 0;
+        insertIntoDocumentHashMap(key,value,datatype);
+        // helpInsertingIntoDocumentFile
+        // return 0;
     }
     document* docs = (document*)malloc(sizeof(document));
     docs->documentId = globals.document;
@@ -575,8 +580,22 @@ int helpUpdatingField(char* key,char* value,char* datatype){
     if(!status){
         return INT_MIN;
     }
-    showFieldsDocuments();
     return 1;
+}
+
+int helpUpdatingTheDocument(Pair newPair){
+    Pair mainPair = newPair;
+    int result = 0;
+    while(mainPair ){
+        int status = helpUpdatingField(mainPair->key, mainPair-> value,mainPair -> datatype);
+        // if(!)
+        if(status)
+        {
+            result = 1; 
+        }
+        mainPair = mainPair -> next;
+    }
+    return result ; //Result 1 Indicates some updates done , Result 0 indicatest no updates done
 }
 
 Pair updateValue(char* key,char* value,char* datatype){
@@ -585,7 +604,6 @@ Pair updateValue(char* key,char* value,char* datatype){
 
     documentHashmap* p = tnode;
     while(p){
-        // printf("\nKEY : %s" , p -> key);
         int result = strcmp(key,p -> key);
         if(result == 0){
             appendToPair(&newPair,key,value,datatype);

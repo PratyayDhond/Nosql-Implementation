@@ -14,7 +14,8 @@ typedef documentHashmap* DocumentHashMap;
 // Basic Tree functions
 void initDocumentHashMap();
 int helpInsertingIntoDocumentFile(Pair*);
-int helpUpdatingField(char* key,char* value,char* datatype);
+int helpUpdatingTheDocument(Pair newPair);
+
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key);
 void destroyTree();
 void showFieldsDocuments();

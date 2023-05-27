@@ -1168,15 +1168,14 @@ void updateDocument_frontEnd()
 
     showFieldsDocuments();
     printf("\n");
-       int carriageReturnCount = 0;
-       int inputFlag = 1;
-       char input[100];
-       char key[30] = "\0", value[100] = "\0", dataType[20] = "\0";
-    //    fgets(input, 2, stdin);
-       Pair pairs;
-       initPair(&pairs);
-       while (inputFlag)
-        {
+    int carriageReturnCount = 0;
+    int inputFlag = 1;
+    char input[100];
+    char key[30] = "\0", value[100] = "\0", dataType[20] = "\0";
+    Pair pairs;
+    initPair(&pairs);
+    while (inputFlag)
+    {
             fgets(input, 100, stdin);
             char *p = input;
             int keyIndex = 0;
@@ -1216,9 +1215,9 @@ void updateDocument_frontEnd()
                     }
                     keyValueBAR++;
                 }
-                else if (keyValueBAR == 0){
+                else if (keyValueBAR == 0)
                     key[keyIndex++] = *p;
-                }else
+                else
                 {
                     value[valueIndex++] = *p;
                     int isInteger = strcmp(dataType, "INTEGER");
@@ -1254,21 +1253,42 @@ void updateDocument_frontEnd()
 
             appendToPair(&pairs, key, value, dataType);
         }
-    helpUpdatingField(key,value,dataType);
-    // exit(0);
-    // char* key ;
-    // printf("Enter the key to be udpated : ");
-    // scanf(key);
-    // char* value;
-
-    // helpUpdatingField(key,value,datatype);
+    helpUpdatingTheDocument(pairs);
 }
 
-void test1()
-{
-    strcpy(globals.user, "sohel");
-    strcpy(globals.collection, "1");
-    strcpy(globals.document, "one");
+void test1(){
+
+
+    // DocumentHashMap tnode;
+    // initDocumentHashMap(&tnode);
+    // globals.collection = "a";
+    // globals.user = "a";
+    // globals.document = "a";
+
+    // Pair new;
+    // initPair(&new);
+    // appendToPair(&new,"name","COEP","STRING");
+    // appendToPair(&new,"yesorno","T","BOOLEAN");
+    // appendToPair(&new,"yeda","1","INTEGER");
+
+
+    //  Pair upadtePair;
+    // initPair(&upadtePair);
+    // appendToPair(&upadtePair,"name","YES","STRING");
+    // appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
+    // appendToPair(&upadtePair,"yeda","YES","STRING");
+
+    // helpInsertingIntoDocumentFile(&new);
+    // // showFieldsDocuments();   
+    // helpUpdatingTheDocument(upadtePair);
+    
+    // // helpUpdatingField("name","Sarvesh", "STRING");
+    // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+    // showFieldsDocuments();
+    // exit(0);
+    strcpy(globals.user,"sohel");
+    strcpy(globals.collection,"1");
+    strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();
     // exportUser_FrontEnd();
