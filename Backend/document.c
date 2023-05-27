@@ -564,7 +564,7 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
     }
     if(updateDocument(collection, doc))
     {
-        // printf("%s field is deleted successfully\n", pairkey);
+        printf("%s field is deleted successfully\n", pairkey);
         return 1;
     }
 
@@ -735,7 +735,6 @@ char* jsonfiyCollection(char *collectionName)
 {
     if(strlen(collectionName) == 0) return NULL;
 
-    // printf("%s\n", collectionName);
     Collection collection = getAllDocumentFromCollection(collectionName);
 
     if(!collection) return NULL;
@@ -799,7 +798,7 @@ int exportDocument(char* username, char* collectionName, char* documentId)
 
     fclose(fileptr);
     convertExportedDirectoryIntoTarFile(username);
-    printf("Document %s exported successfully to exports_%s.tar", documentId, username);
+    printf("Document: `%s` exported successfully to `exports_%s.tar`.\n", documentId, username);
 
     return 1;
 } 
@@ -834,7 +833,7 @@ int exportCollection(char* username, char *collectionName)
     convertExportedDirectoryIntoTarFile(username);
     fclose(fileptr);
 
-    printf("Collection %s exported successfully to exports_%s.tar", collectionName, username);
+    printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
     return 1;
 }
 
@@ -856,7 +855,7 @@ int exportUser(char *username)
         exportCollection(username, line);
     }
     convertExportedDirectoryIntoTarFile(username);
-    printf("User %s's data exported successfully exports_%s.tar", username);
+    printf("Data of user `%s` exported successfully to `exports_%s.tar`.\n", username, username);
     free(line);
     fclose(fp);
     return 1;
@@ -892,6 +891,6 @@ int convertExportedDirectoryIntoTarFile(char* username)
     // if collection directory not exists then simply return
     if(x)
         return 0;
-        
+
     return 1;
 }

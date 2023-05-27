@@ -1153,12 +1153,12 @@ void updateDocument_frontEnd(){
 
 void test1(){
     strcpy(globals.user,"sohel");
-    strcpy(globals.collection,"abc");
+    strcpy(globals.collection,"1");
     strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();
-    exportUser_FrontEnd();
-    // exportCollection_FrontEnd();    
+    // exportUser_FrontEnd();
+    exportCollection_FrontEnd();    
     exit(0);
 }
 
