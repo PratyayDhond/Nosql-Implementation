@@ -9,6 +9,8 @@ DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
 
 
+int getDocumentInHashMap(DocumentHashMap *tnode);
+
 int max(int a, int b)
 {
    return a > b ? a : b;
@@ -277,11 +279,13 @@ void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
         brackets = 2;
     }
     getBrackets(brackets);
-      if(strcmp(tdocumentHashmap -> value,"T") == 0){
-        printf("TRUE");
-    }
-    else if(strcmp(tdocumentHashmap -> value,"F") == 0){
-        printf("TRUE");
+    if(tdocumentHashmap -> datatype == "BOOLEAN"){
+        if(strcmp(tdocumentHashmap -> value,"T") == 0){
+            printf("TRUE");
+        }
+        else if(strcmp(tdocumentHashmap -> value,"F") == 0){
+            printf("FALSE");
+        }
     }
     else
         printf("%s",tdocumentHashmap -> value );
@@ -299,7 +303,9 @@ void showDocs(DocumentHashMap tdocumentHashmap)
     showDocs(tdocumentHashmap->right);
 }
 void showFieldsDocuments()
-{
+{   
+    if(!tnode)
+        getDocumentInHashMap(&tnode);
     printf("\n");
     showDocs(tnode);
     printf("\n");
@@ -545,6 +551,7 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
+    printf("%s %s %s\n",key,value,datatype);
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);

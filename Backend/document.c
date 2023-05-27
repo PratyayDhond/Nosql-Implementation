@@ -771,10 +771,8 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     strcat(filepath, username);
     strcat(filepath, "/");
     strcat(filepath, collectionName);
-
     document* doc = getDocument(filepath, documentId);
     if(!doc) return 0;
-
     char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
 
     if(!exportJSONString) return 0;
@@ -830,8 +828,8 @@ int exportCollection(char* username, char *collectionName)
     if(!fileptr) return 0;
 
     fprintf(fileptr,"%s", exportJSONString);
-    convertExportedDirectoryIntoTarFile(username);
     fclose(fileptr);
+    convertExportedDirectoryIntoTarFile(username);
 
     printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
     return 1;
@@ -839,6 +837,8 @@ int exportCollection(char* username, char *collectionName)
 
 int exportUser(char *username)
 {
+    perror("HELLO");
+        
     if(strlen(username) == 0) return 0;
 
     FILE* fp;
@@ -847,7 +847,7 @@ int exportUser(char *username)
     fp = popen(listCommand, "r");
 
     if(!fp) return 0;
-
+    perror("HOOO2");
     char *line = (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
@@ -862,7 +862,7 @@ int exportUser(char *username)
 }
 
 int convertExportedDirectoryIntoTarFile(char* username)
-{
+{   
     char command[200] = "test -d ";
 
     strcat(command, "exports_");
@@ -872,13 +872,14 @@ int convertExportedDirectoryIntoTarFile(char* username)
     if(status)
         return 0;
 
-    char tarcommand[200] = "tar -czvf exports_";
+    char tarcommand[200] = "tar -cf exports_";
 
     strcat(tarcommand, username);
     strcat(tarcommand, ".tar exports_");
     strcat(tarcommand, username);
+    printf("\n `%s`\n", tarcommand);
 
-    int y = system(tarcommand);
+    int y = system(tarcommand); 
     // if collection directory not exists then simply return
     if(y)
         return 0;
@@ -888,6 +889,7 @@ int convertExportedDirectoryIntoTarFile(char* username)
     strcat(delcommand, "exports_");
     strcat(delcommand, username);
     int x = system(delcommand);
+    
     // if collection directory not exists then simply return
     if(x)
         return 0;
