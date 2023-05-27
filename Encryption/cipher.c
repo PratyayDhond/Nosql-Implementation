@@ -32,15 +32,15 @@ Key * getPolyAlphabeticKey(Key * key){
     return key;
 }
 
-int getLength(char * str){
-    int l = 0;
-    char * p = str;
-    while(*p != '\0'){
-        p++;
-        l++;
-    }
-    return l+1;
-}
+// int getLength(char * str){
+//     int l = 0;
+//     char * p = str;
+//     while(*p != '\0'){
+//         p++;
+//         l++;
+//     }
+//     return l+1;
+// }
 
 char * Encrypt(char * str){
     

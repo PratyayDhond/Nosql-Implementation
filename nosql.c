@@ -38,16 +38,17 @@ typedef enum Commands
     delete_user,       //
     delete_collection, //
     delete_document,   //
-    export,
-    export_user,
-    export_collection,
-    export_document,
+    delete_data,        // remove working just need to update AVL deletion, when root is deleted, and leaf swaps value with root, also swap key
+    export,             //
+    export_user,        //
+    export_collection,  //
+    export_document,    //
     use_document,   //
     use_collection, //
-    update_document,
-    clear, //
-    quit,
-    open_document,
+    update_document,    //  Partially working, AVL SEG FAULT
+    clear,              //
+    quit,               //
+    open_document,      //
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
@@ -455,6 +456,8 @@ int getInput()
         command = open_document;
     else if (strcmp(input, "update doc") == 0 || strcmp(input, "update document") == 0)
         command = update_document;
+    else if (strcmp(input, "rm field") == 0 || strcmp(input, "remove field") == 0)
+        command = delete_data;
     else
         command = NOP;
     // use document
@@ -1256,6 +1259,34 @@ void updateDocument_frontEnd()
     helpUpdatingTheDocument(pairs);
 }
 
+void deleteData_frontEnd(){
+
+    if (strcmp(globals.user, "") == 0)
+    {
+        printf("You need to login in order to export User data.\n");
+        return;
+    }
+
+    if (strcmp(globals.collection, "") == 0)
+    {
+        printf("You need to select a collection in order to export the collection.\n");
+        return;
+    }
+
+    if (strcmp(globals.document, "") == 0)
+    {
+        printf("You need to select a document in order to export the document.\n");
+        return;
+    }
+
+    showFieldsDocuments();
+    printf("\nEnter `key` of the data to be deleted.\n >> ");
+    char key[100];
+    fscanf(stdin,"%s",key);
+    helpRemoveFieldFromDocument(globals.collection,globals.document,key);
+return;
+}
+
 void test1(){
     // insertIntoDocumentHashMap("sarvesh","aserv","datra");
     // preOrder(tnode);
@@ -1308,8 +1339,6 @@ void noSQLMenu()
     {
         printf(">> ");
         command = getInput();
-        // printf("command -> %d",command);
-        // exit(0);
         switch (command)
         {
         case man:
@@ -1419,6 +1448,9 @@ void noSQLMenu()
             break;
         case NOP:
             printf("Incorrect Command Syntax. Check your inputted command for typos or refer to `man`.\n");
+            break;
+        case delete_data:
+            deleteData_frontEnd();
             break;
         default:
             break;
