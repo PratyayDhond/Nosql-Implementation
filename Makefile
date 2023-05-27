@@ -1,5 +1,5 @@
 run:
-	gcc -g  main.c nosql.c Encryption/cipher.c Backend/document.c
+	gcc -g  main.c nosql.c Encryption/cipher.c DocumentHashmap/DocumentHashMap.c Backend/document.c
 	./a.out
 	
 debug:

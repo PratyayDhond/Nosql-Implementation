@@ -9,7 +9,8 @@
 #include <string.h>   // for strcmp 
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
-#include "Backend/document.h"
+// #include "Backend/document.h"
+#include "DocumentHashmap/DocumentHashMap.h"
 
 #define SIZE 32
 
@@ -17,43 +18,9 @@
 #define PASSWORDS_MATCH 1
 #define PASSWORDS_DO_NOT_MATCH 2
 #define COMMAND_POSTFIX " >nul 2>nul"
+#define VALID_USER_NAME 1
+#define INVALID_USER_NAME 0
 
-static struct globals{
-    char * user;
-    char * collection;
-    char * document;
-//    int isLoggedIn;
-}globals;
-
-void initGlobals(){
-    globals.collection = (char*) malloc(sizeof(char) * SIZE);
-    if(!globals.collection)
-        exit(EXIT_FAILURE);
-
-    globals.user = (char*) malloc(sizeof(char) * SIZE);
-    if(!globals.user)
-        exit(EXIT_FAILURE);
-
-    globals.document = (char*) malloc(sizeof(char) * SIZE);
-    if(!globals.document)
-        exit(EXIT_FAILURE);
-
-    globals.user[0] = '\0';
-    globals.document[0] = '\0';
-    globals.collection[0] = '\0';
-
-return;
-}
-
-void destroyGlobals(){
-    if(globals.collection)
-        free(globals.collection);
-    if(globals.user)
-        free(globals.user);
-    if(globals.document)
-        free(globals.document);
-return;
-}
 
 typedef enum Commands{
     ls,                         //
@@ -278,6 +245,17 @@ int checkPasswords(char *password, char * confirmPassword){
     return PASSWORDS_DO_NOT_MATCH;
 }
 
+int checkUserName(char * username){
+    char *p = username;
+    while(*p != '\0'){
+        if(isalnum(*p) == 0)
+            if(*p != '_')
+                return INVALID_USER_NAME;
+        p++;
+    }
+    return VALID_USER_NAME;
+}
+
 void createUser(){
     system("clear");
 
@@ -288,6 +266,12 @@ void createUser(){
     printf("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) \n");
     printf("Enter username: ");
     scanf("%s",username);
+
+    if(checkUserName(username) == INVALID_USER_NAME){
+        printf("Incorrect username! User name can only contain A-Z,a-z,0-9 and underscores.\n");
+        getchSafe();
+        return;
+    }
 
     if(checkIfUserExists(username,"Create New User","Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O)") ==  USER_ALREADY_EXISTS){
         printf("USER ALREADY EXISTS. Try picking a new username or logging in.\n");
@@ -715,6 +699,7 @@ void createDocument_FrontEnd(){
 
             appendToPair(&pairs,key,value,dataType);
         }
+        helpInsertingIntoDocumentFile(&pairs);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
@@ -971,8 +956,8 @@ void noSQLMenu(){
                     break;                
             default:
                     break;
-
         }             
+        ioctl(0,TIOCGWINSZ,&sz);
         // if(command == man){
         //     displayMAN();
         //     system("clear");
