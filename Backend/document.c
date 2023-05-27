@@ -325,7 +325,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            freeCollection(doc);
+            freeCollection(&collection);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
