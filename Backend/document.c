@@ -61,6 +61,8 @@ int deletePair(Pair *pairs, char *pairKey)
     if(strlen(pairKey)) return -1;
     node * temp;
     pairKey = trim_spaces(pairKey);
+
+    printf("%d\n",strcmp((*pairs)->key, pairKey));
     if (strcmp((*pairs)->key, pairKey) == 0) {
 
         temp = *pairs;
