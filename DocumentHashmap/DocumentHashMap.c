@@ -141,27 +141,38 @@ DocumentHashMap mallocateAdocumentHashmap(DocumentHashMap *tdocumentHashmap,
 char* key,char* value,char* datatype)
 {
     documentHashmap *newdocumentHashmap = (documentHashmap*)malloc(sizeof(documentHashmap)); // Mallocating a documentHashmap and initializing the structure
+    if(!newdocumentHashmap){
+        return NULL;
+    }
     newdocumentHashmap -> key = (char*) malloc(sizeof(char) * strlen(key));
+    if(!newdocumentHashmap -> key){
+        free(newdocumentHashmap);
+        return NULL;
+    }
     newdocumentHashmap -> value = (char*) malloc(sizeof(char) * strlen(value));
+    if(!newdocumentHashmap -> value){
+        free(newdocumentHashmap -> key);
+        free(newdocumentHashmap);
+        return NULL;
+
+    }
     newdocumentHashmap -> datatype = (char*) malloc(sizeof(char) * strlen(datatype));
+    if(!newdocumentHashmap -> datatype){
+        free(newdocumentHashmap -> key);
+        free(newdocumentHashmap -> value);
+        free(newdocumentHashmap);
+        return NULL;
+    }
 
     strcpy(newdocumentHashmap -> key ,key);
     strcpy(newdocumentHashmap -> value ,value);
     strcpy(newdocumentHashmap -> datatype ,datatype);
 
-    newdocumentHashmap->left = NULL;
-    newdocumentHashmap->right = NULL;
-    newdocumentHashmap->parent = NULL;
+    newdocumentHashmap->left = newdocumentHashmap->right = newdocumentHashmap->parent = NULL;
     newdocumentHashmap->bf = 0;
     return newdocumentHashmap;
 }
-void insertIntoDocumentFile(document* doc){
 
-    char* key = doc -> key;
-    DocumentHashMap tnode;
-    initDocumentHashMap(&tnode);
-  
-}
 void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
 {
     // printf("Get : %s\n",data.key);
@@ -169,7 +180,9 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char*
     documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap, key,value,datatype);
     // printf("%s",newdocumentHashmap -> data ->pairs -> key);
     // printf("Print : %s\n",newdocumentHashmap -> data -> key);
-
+    if(!newdocumentHashmap){
+        return;
+    }
     if (!*tdocumentHashmap)
     {
         *tdocumentHashmap = newdocumentHashmap;
@@ -205,6 +218,22 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char*
     getBalancedTree(tdocumentHashmap,q);
 }
 
+void helpInsertingIntoDocumentFile(Pair* pair){
+    node* temp = *pair;
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
+    while(temp){
+        insertIntoDocumentHashMap(&tnode,temp->key,temp->value,temp->datatype);
+        temp = temp -> next;
+    }
+        // printf("sar\n");
+    // preOrder(tnode);
+        removedocumentHashmap(&tnode,"sarvesh");
+    preOrder(tnode);
+    return ;
+    
+}
+
 void inOrder(DocumentHashMap tdocumentHashmap)
 {
     if (!tdocumentHashmap)
@@ -215,6 +244,7 @@ void inOrder(DocumentHashMap tdocumentHashmap)
         //    tdocumentHashmap->parent ? tdocumentHashmap->parent->data.key : "", tdocumentHashmap->bf, tdocumentHashmap->left ? tdocumentHashmap->left->data.key : "", tdocumentHashmap->right ? tdocumentHashmap->right->key : "");
     inOrder(tdocumentHashmap->right);
 }
+
 void preOrder(DocumentHashMap tdocumentHashmap)
 {
 
@@ -223,7 +253,9 @@ void preOrder(DocumentHashMap tdocumentHashmap)
 
     // printf("Key : %s ", tdocumentHashmap -> documentName);
 
-    printf(" { KEY : %s , VALUE : %s , DT : %s } \n",tdocumentHashmap->key ,tdocumentHashmap-> value,tdocumentHashmap -> datatype );
+    printf(" { KEY : %s , VALUE : %s , DT : %s , L : %s , R : %s} \n",tdocumentHashmap->key ,
+    tdocumentHashmap-> value,tdocumentHashmap -> datatype ,tdocumentHashmap -> left ? tdocumentHashmap -> left -> key : NULL,
+    tdocumentHashmap -> right ? tdocumentHashmap -> right -> key : NULL);
     preOrder(tdocumentHashmap->left);
     preOrder(tdocumentHashmap->right);
 }
@@ -270,6 +302,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
     int flag = 0;
     if (!p->right && !p->left)
     {
+
         documentHashmap *deletedocumentHashmap = p;
         documentHashmap *temp = deletedocumentHashmap->parent;
         if (p == *tdocumentHashmap) // There is only 1 documentHashmap (root documentHashmap)
@@ -291,6 +324,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         //1 child -> Only left child exists
     if (!p->right && p->left)
     {
+        
         documentHashmap* deletedocumentHashmap = p;
         documentHashmap* temp = deletedocumentHashmap->parent;
         if (p == *tdocumentHashmap) // There is root with only left child
@@ -316,6 +350,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
     else if (p->right && !p->left)
 
     {
+        
         documentHashmap* deletedocumentHashmap = p;
         documentHashmap* temp = deletedocumentHashmap->parent;
         if (p == *tdocumentHashmap)
@@ -346,7 +381,6 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         documentHashmap* parentOfTemp = NULL;
         if (!temp)
         {
-            p -> key = (char *)malloc(sizeof(preecedingPointer->key));
             strcpy(p -> key, preecedingPointer ->key);
             p->left = preecedingPointer->left;
             if(preecedingPointer -> left)
@@ -362,7 +396,6 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
                 temp = temp->right;
             }
             char *tempo = temp-> key;
-            p->key = (char *)malloc(sizeof(p-> key));
             strcpy(p-> key, temp-> key);
 
             parentOfTemp = preecedingPointer;
@@ -384,7 +417,7 @@ void destroyTree(DocumentHashMap *tdocumentHashmap)
         return;
     destroyTree(&(*tdocumentHashmap)->left);
     destroyTree(&(*tdocumentHashmap)->right);
-    printf("\n%s Deleted\n", (*tdocumentHashmap) -> key);
+    // printf("\n%s Deleted\n", (*tdocumentHashmap) -> key);
     free(*tdocumentHashmap);
     *tdocumentHashmap = NULL;
     return;
@@ -414,8 +447,6 @@ void updateValue(DocumentHashMap* tdocumentHashmap,char* key,char* value,char* d
     while(p){
         int result = strcmp(key,p -> key);
         if(result == 0){
-            // p -> value = (char*)malloc(sizeof( value));
-            // p -> datatype = (char*)malloc(sizeof( datatype));
             strcpy(p -> value, value);
             strcpy(p -> datatype, datatype);
             return ; 
