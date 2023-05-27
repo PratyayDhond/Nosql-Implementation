@@ -897,7 +897,7 @@ void removeDocument(){
 
 void exportUser_FrontEnd(){
     if(strcmp(globals.user,"") == 0){
-        printf("You need to login in order to export User data.");
+        printf("You need to login in order to export User data.\n");
         return;
     }
 
