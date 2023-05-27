@@ -41,7 +41,28 @@ int main()
     // int status = deleteDocument("Posts", "newpost");
 
     // Code for deleting a single field from a document
-    // int status = deleteFieldFromDocument("Posts", "post1", "im");
+    int status = deleteFieldFromDocument("Posts", "post1", "name");
+    // if(status) printf("document field deleted\n");
+
+
+    // Code for converting document structure into json object string
+    // document *d= getDocument("Posts","post1");
+    // if(d) displayDocument(*d);
+
+    // document *d1= getDocument("Posts","post2");
+    // if(d1) displayDocument(*d1);
+
+    // document *d2= getDocument("Posts","documentpath");
+    // if(d2) displayDocument(*d2);
+    // printf("%s\n", convertSinglePairIntoJSONString(d->pairs->next));
+    // printf("%s\n", convertSingleDocumentIntoJSONString(d));
+    // printf("%s\n", convertSingleDocumentIntoJSONString(d1));
+    // printf("%s\n", convertSingleDocumentIntoJSONString(d2));
+
+    // printf("%s\n", jsonfiyCollection("Posts"));
+
+    // exportCollection("Posts");
+    // exportUser("sohel");
 
     return 0;
 }

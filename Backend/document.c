@@ -5,7 +5,7 @@
 #include"document.h"
 #include<limits.h>
 #include "../globals/globals.h"
-#define MAX_LINE_LENGTH 1000000
+#define MAX_LINE_LENGTH 256
 
 // Initilizing the pairs linkedlist
 void initPair(Pair *pairs)
@@ -23,6 +23,11 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
     nn->datatype = (char*) malloc(strlen(datatype)*sizeof(char));
     nn->key = (char*) malloc(strlen(key)*sizeof(char));
     nn->value = (char*) malloc(strlen(value)*sizeof(char));
+    
+    datatype = trim_spaces(datatype);
+    key = trim_spaces(key);
+    value = trim_spaces(value);
+
     strcpy(nn->datatype, datatype);
     strcpy(nn->key, key);
     strcpy(nn->value, value);
@@ -36,6 +41,7 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
         *pair = nn;
         return;
     }
+
     node *temp = *pair;
     while(temp->next)
     {
@@ -49,10 +55,6 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
 // This is used to delete a single a pair from pairs linkedlist
 int deletePair(Pair *pairs, char *pairKey)
 {
-    if(!(*pairs))
-        return INT_MIN;
-
-    if(strlen(pairKey)) return -1;
     node * temp;
     if (strcmp((*pairs)->key, pairKey) == 0) {
 
@@ -275,6 +277,7 @@ Pair getAllPairsOfDocument(FILE *file)
             value[counter++] = line[lineTraverse++];
         }
         value[counter] = '\0';
+
         appendToPair(&pairs, key, value, datatype);
 
         counter = 0, lineTraverse = 0;
@@ -316,7 +319,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            free(collection);
+            freeCollection(&collection);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
@@ -352,7 +355,7 @@ document* initilizeAndCreateDocument(char* documentId, Pair pairs)
     doc->documentId = (char*) malloc(sizeof(document));
     
     if(!doc->documentId) return NULL;
-    
+    documentId = trim_spaces(documentId);
     strcpy(doc->documentId, documentId);
     doc->pairs = pairs;
     return doc;
@@ -472,10 +475,9 @@ int updateDocument(char* collection, document* doc)
 
     node* temp = doc->pairs;
 
-
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
         temp = temp -> next;
     }
 
@@ -559,9 +561,7 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
     {
         printf("Associated value for given key not found\n");
         return 0;
-    }else{
     }
-
     if(updateDocument(collection, doc))
     {
         printf("%s field is deleted successfully\n", pairkey);
@@ -614,38 +614,232 @@ int freeCollection(Collection *collection)
     return 1;
 }
 
-char* convertSingleDocumentIntoJSONString(document *doc)
+char *trim_spaces(char *str)
 {
-    return NULL;
+  int i = 0;
+  while (str[i] == ' ' || str[i] == '\n') {
+    i++;
+  }
+
+  int j = strlen(str) - 1;
+  while (str[j] == ' ' || str[j] == '\n') {
+    j--;
+  }
+
+  char *new_str = malloc(sizeof(char) * (j - i + 2));
+  strncpy(new_str, str + i, j - i + 1);
+  new_str[j - i + 1] = '\0';
+
+  return new_str;
 }
 
-char* jsonify(Collection collection)
+char* convertSinglePairIntoJSONString(node* singlePair)
 {
+    if(!singlePair) return NULL;
+
+    char* pairJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
+     
+    char* pairDatatype = singlePair->datatype;
+    char* pairKey = singlePair->key;
+    char* pairValue = singlePair->value;
+
+    if(strlen(pairDatatype) == 0 || strlen(pairKey) == 0 || strlen(pairValue) == 0) return NULL;
+
+    strcat(pairJSONString, "        \"");
+    strcat(pairJSONString, pairKey);
+    strcat(pairJSONString, "\":");
+
+    if(strcmp(pairDatatype, "STRING") == 0)
+    {
+        strcat(pairJSONString,"\"");
+        strcat(pairJSONString, pairValue);
+        strcat(pairJSONString, "\"");
+    }
+    else if(strcmp(pairDatatype, "CHAR") == 0)
+    {
+        strcat(pairJSONString,"\'");
+        strcat(pairJSONString, pairValue);
+        strcat(pairJSONString, "\'");
+    }
+    else if(strcmp(pairDatatype, "INT") == 0)
+    {
+        strcat(pairJSONString, pairValue);
+    }
+    else if(strcmp(pairDatatype, "DOUBLE") == 0)
+    {
+        strcat(pairJSONString, pairValue);
+    }
+    else if(strcmp(pairDatatype, "BOOL") == 0)
+    {
+        if(strcmp(pairValue, "T") == 0) 
+        {
+            strcpy(pairValue,"true");
+            strcat(pairJSONString, pairValue);
+            strcpy(pairValue,"T");
+        }
+        else
+        {
+            strcpy(pairValue,"false");
+            strcat(pairJSONString, pairValue);
+            strcpy(pairValue,"F");
+        }
+    }
+    else 
+    {
+        printf("Error generating JSON string\n");
+        return NULL;
+    }
+    return pairJSONString;
+}
+
+char* convertSingleDocumentIntoJSONString(document *doc)
+{
+
+    if(!doc) return NULL;
+
+    char* documentJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
+    strcat(documentJSONString, "    {\n");
+
+    Pair pairs = doc->pairs;
+
+    node* temp = pairs;
+
+    if(temp)
+    {
+        strcat(documentJSONString, "        \"_docId\":");
+        strcat(documentJSONString, "\"");
+        strcat(documentJSONString, doc->documentId);
+        strcat(documentJSONString, "\",\n");
+    }
+
+    while(temp)
+    {
+        char* pairJSONString = convertSinglePairIntoJSONString(temp);
+        if(!pairJSONString) return NULL;
+        if(!temp->next)
+        {
+            strcat(pairJSONString, "\n");
+        } else{
+            strcat(pairJSONString, ",\n");
+        }
+        strcat(documentJSONString, pairJSONString);
+        free(pairJSONString);
+        temp = temp -> next;
+    }
+
+    strcat(documentJSONString, "    }");
+    return documentJSONString;
+}
+
+
+char* jsonfiyCollection(char *collectionName)
+{
+    if(strlen(collectionName) == 0) return NULL;
+
+    Collection collection = getAllDocumentFromCollection(collectionName);
     if(!collection) return NULL;
 
     collectionNode* temp = collection;
 
-    FILE *fileptr;
-
-    char filename[MAX_LINE_LENGTH];
-    strcat(filename, "users");
-    strcat(filename, ".json");
-    fileptr = fopen(filename, "w+");
-
-    if(!fileptr) return NULL; 
-
-    char collectionJSONString[MAX_LINE_LENGTH];
+    char* collectionJSONString= (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
     strcat(collectionJSONString, "[\n");
 
     while(temp)
     {
         document* doc = temp->document;
         char* documentJSONString = convertSingleDocumentIntoJSONString(doc);
+        if(!documentJSONString) return NULL;
+        if(!temp->next){       
+            strcat(documentJSONString, "\n");
+        } else{
+            strcat(documentJSONString, ",\n");
+        }
         strcat(collectionJSONString, documentJSONString);
+        free(documentJSONString);
         temp = temp -> next;
     }
 
     strcat(collectionJSONString, "]");
 
-    // return collectionJSONString;
+    return collectionJSONString;
+}
+
+int exportDocument(char* collectionName, char* documentId)
+{
+    // if(strlen(documentId) == 0) return 0;
+
+    // char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
+
+    // if(strlen(exportJSONString) == 0) return 0;
+
+    // char filename[MAX_LINE_LENGTH];
+    // strcat(filename, documentId);
+    // strcat(filename, "_exported.json");
+
+    // fileptr = fopen(filename, "w+");
+
+    // if(!fileptr) return 0;
+    // fprintf(fileptr,"%s", exportJSONString);
+
+    // fclose(fileptr);
+
+    return 1;
+
+} 
+
+int exportCollection(char *collectionName)
+{
+    char* exportJSONString = jsonfiyCollection(collectionName);
+
+    if(!exportJSONString)
+        return 0;
+
+
+    FILE* fileptr;
+
+    char filename[MAX_LINE_LENGTH];
+    strcat(filename, collectionName);
+    strcat(filename, "_exported.json");
+
+    printf("%s\n", filename);
+
+    fileptr = fopen(filename, "w+");
+
+    if(!fileptr) return 0;
+    fprintf(fileptr,"%s", exportJSONString);
+
+    fclose(fileptr);
+
+    return 1;
+}
+
+int exportUser(char *username)
+{
+    // if(strlen(username) == 0) return 0;
+
+    // char listCommand[200] = "ls ./";
+    // strcat(listCommand, username);
+    // fp = popen(listCommand, "r");
+
+    // if(!fp) return 0;
+
+    // char line[MAX_LINE_LENGTH];
+    // while(fgets(line, MAX_LINE_LENGTH, fp)){
+    
+    //     if(!collection)
+    //     {
+    //         char filename[200];
+    //         strcat(filename, "exports_");
+    //         strcat(filename, username);
+    //         strcat(filename, "/");
+
+    //         exportCollection(filename);
+    //         freeCollection(collection);
+    //         return 0;
+    //     }
+    // }
+
+    // fclose(fp);
+
+    return 1;
 }

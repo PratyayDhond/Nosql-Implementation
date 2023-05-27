@@ -1,2 +1,4 @@
-(string) name: Sohel Bargir
-(int) age: 15
+(INTEGER) age: 20
+(BOOLEAN) student: T
+(DOUBLE) weight: 56.99
+(CHARACTER) gender: 'M'
