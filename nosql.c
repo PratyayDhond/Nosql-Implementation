@@ -9,9 +9,10 @@
 #include <string.h> // for strcmp
 #include <ctype.h>  // for toLower
 #include <unistd.h> // for getPassword command
-// #include "Backend/document.h"
+// // #include "Backend/document.h"
 #include "DocumentHashmap/DocumentHashMap.h"
 #include "globals/globals.h"
+#include "DocumentHashmap/DocumentHashMap.h"
 
 #define SIZE 32
 
@@ -1082,6 +1083,26 @@ void exportUser_FrontEnd()
 void noSQLMenu()
 {
     initGlobals();
+    ioctl(0,TIOCGWINSZ,&sz);
+
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
+    Pair new;
+    globals.collection = "Backend/Posts";
+    globals.user = "Sarvesh";
+    globals.document = "testing";
+
+    initPair(&new);
+    appendToPair(&new,"mango","COEP","string");
+    appendToPair(&new,"nano","COEP","string");
+    appendToPair(&new,"yeda","COEP","string");
+    appendToPair(&new,"zebra","coepian","string");
+    appendToPair(&new,"sarvesh","coepian","string");
+
+    helpInsertingIntoDocumentFile(&new);
+    helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    // destroyTree();
+    exit(0);
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;

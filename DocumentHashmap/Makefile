@@ -1,6 +1,6 @@
 run :
 	 clear
-	 gcc -g *.c ../Backend/document.c
+	 gcc -g *.c ../Backend/document.c ../globals/globals.h
 	./a.out
 check : 
 	gcc *.c
