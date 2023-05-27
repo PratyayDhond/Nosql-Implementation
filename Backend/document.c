@@ -55,14 +55,7 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
 // This is used to delete a single a pair from pairs linkedlist
 int deletePair(Pair *pairs, char *pairKey)
 {
-    if(!(*pairs))
-        return INT_MIN;
-
-    if(strlen(pairKey)) return -1;
     node * temp;
-    pairKey = trim_spaces(pairKey);
-
-    printf("%d\n",strcmp((*pairs)->key, pairKey));
     if (strcmp((*pairs)->key, pairKey) == 0) {
 
         temp = *pairs;
@@ -75,7 +68,6 @@ int deletePair(Pair *pairs, char *pairKey)
 
         while (current->next) {
             if(strcmp(current->next->key, pairKey) == 0) {
-                printf("jdkdfjdkdfj");
                 temp = current->next;
                 current->next = current-> next->next;
                 free(temp);
@@ -485,7 +477,7 @@ int updateDocument(char* collection, document* doc)
 
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
         temp = temp -> next;
     }
 
@@ -570,7 +562,6 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
         printf("Associated value for given key not found\n");
         return 0;
     }
-
     if(updateDocument(collection, doc))
     {
         printf("%s field is deleted successfully\n", pairkey);
