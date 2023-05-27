@@ -36,7 +36,6 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
         *pair = nn;
         return;
     }
-
     node *temp = *pair;
     while(temp->next)
     {
@@ -560,6 +559,7 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
     {
         printf("Associated value for given key not found\n");
         return 0;
+    }else{
     }
 
     if(updateDocument(collection, doc))
@@ -647,5 +647,5 @@ char* jsonify(Collection collection)
 
     strcat(collectionJSONString, "]");
 
-    return collectionJSONString;
+    // return collectionJSONString;
 }
