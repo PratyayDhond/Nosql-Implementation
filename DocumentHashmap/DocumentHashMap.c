@@ -333,22 +333,28 @@ void removedocumentHashmapHelper(DocumentHashMap* parent)
     if((tdocumentHashmap) && (tdocumentHashmap) -> parent &&  (tdocumentHashmap) -> parent == (*parent))
         tdocumentHashmap = *parent;
 }
-
+int getDocumentInHashMap(DocumentHashMap *tnode){
+    char collectionPath[100]  = "";
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    document* fetchData =  getDocument(collectionPath,globals.document);
+    Pair newPair = fetchData -> pairs;
+        while(newPair){
+            int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
+            if(status == INT_MIN){
+                destroyTree(tnode);
+                return 0;
+            }
+            newPair = newPair -> next;
+        }
+    return 1;
+}
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
  char collectionPath[100]  = "";
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     if(!tnode){
-   
-        document* fetchData =  getDocument(collectionPath,globals.document);
-            Pair newPair = fetchData -> pairs;
-            while(newPair){
-            int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
-            if(status == INT_MIN){
-                destroyTree(&tnode);
-                return INT_MIN;
-            }
-            newPair = newPair -> next;
-            }
+        int result = getDocumentInHashMap(&tnode);
+        if(!result)
+            return INT_MIN;
     }
     Pair getDocuemnt = findAndFetchDocument(key);
     if(!getDocuemnt){
@@ -543,18 +549,12 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
-     char collectionPath[100]  = "";
-     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    char collectionPath[100]  = "";
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
-     document* fetchData =  getDocument(collectionPath,globals.document);
-     Pair newPair = fetchData -> pairs;
-        while(newPair){
-        int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
-        if(status == INT_MIN){
-            destroyTree(&tnode);
+        int result = getDocumentInHashMap(&tnode);
+        if(!result){
             return INT_MIN;
-        }
-        newPair = newPair -> next;
         }
      }
     preOrder(tnode);
