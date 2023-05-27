@@ -1,6 +1,3 @@
-//    strcat(location , " >nul 2>nul"); the > 2> are redirections to avoid unnecessary details being printed on the terminal
-//
-
 #include "nosql.h"
 #include "Encryption/cipher.h"
 #include <stdio.h>
@@ -9,7 +6,7 @@
 #include <string.h> // for strcmp
 #include <ctype.h>  // for toLower
 #include <unistd.h> // for getPassword command
-#include "Backend/document.h"
+#include "DocumentHashmap/DocumentHashMap.h"
 #include "globals/globals.h"
 
 #define SIZE 32
@@ -847,6 +844,7 @@ void createDocument_FrontEnd()
                         printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
                         printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
                         // #BOOKMARK -> FREE PAIR HERE
+                        freePairs(&pairs);
                         return;
                     }
                     if (isInteger == 0 && *p == '.')
@@ -861,9 +859,20 @@ void createDocument_FrontEnd()
                 return;
             }
 
+            if( strcmp(dataType,"STRING") == 0 || strcmp(dataType,"CHARACTER") == 0 ){
+                int i = 0;
+                for(; i < getLength(value) -2; i++){
+                    value[i] = value[i+1];
+                }
+                value[i-1] = '\0';
+            }            
+
+
+
             appendToPair(&pairs, key, value, dataType);
         }
-
+        
+        helpInsertingIntoDocumentFile(&pairs);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
@@ -1069,6 +1078,42 @@ void exportUser_FrontEnd()
 void noSQLMenu()
 {
     initGlobals();
+    ioctl(0,TIOCGWINSZ,&sz);
+
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
+    Pair new;
+    globals.collection = "Posts";
+    globals.user = "Sarvesh";
+    globals.document = "testing";
+
+    initPair(&new);
+    appendToPair(&new,"name","COEP","STRING");
+    appendToPair(&new,"yesorno","T","BOOLEAN");
+    appendToPair(&new,"yeda","1","INTEGER");
+
+    helpInsertingIntoDocumentFile(&new);
+    showFieldsDocuments();
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    exit(0);
+    // DocumentHashMap tnode;
+    // initDocumentHashMap(&tnode);
+    // Pair new;
+    // globals.collection = "Backend/Posts";
+    // globals.user = "Sarvesh";
+    // globals.document = "testing";
+// 
+    // initPair(&new);
+    // appendToPair(&new,"mango","COEP","string");
+    // appendToPair(&new,"nano","COEP","string");
+    // appendToPair(&new,"yeda","COEP","string");
+    // appendToPair(&new,"zebra","coepian","string");
+    // appendToPair(&new,"sarvesh","coepian","string");
+// 
+    // helpInsertingIntoDocumentFile(&new);
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    // destroyTree();
+    // exit(0);
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;

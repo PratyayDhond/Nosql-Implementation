@@ -26,7 +26,7 @@ int main(){
     appendToPair(&new,"aditya","COEP","string");
     appendToPair(&new,"raul","COEP","string");
 
-    helpInsertingIntoDocumentFile(&new);
+    // helpInsertingIntoDocumentFile(&new);
 
     return 0;
 }

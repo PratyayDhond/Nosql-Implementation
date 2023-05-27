@@ -8,6 +8,8 @@
         "cstdlib": "c",
         "globals.h": "c",
         "stdlib.h": "c",
-        "string.h": "c"
+        "string.h": "c",
+        "nosql.h": "c",
+        "ioctl.h": "c"
     }
 }
