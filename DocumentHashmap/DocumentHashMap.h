@@ -1,5 +1,5 @@
 #include "../Backend/document.h"
-
+// #include ""
 typedef struct documentHashmap{
     int bf;
     char* key;
@@ -14,7 +14,7 @@ typedef documentHashmap* DocumentHashMap;
 
 //Basic Tree functions
 void initDocumentHashMap(DocumentHashMap* );
-void helpInsertingIntoDocumentFile(Pair* );
+// void helpInsertingIntoDocumentFile(Pair*,DocumentHashMap* ,char*,char*);
 void destroyTree(DocumentHashMap* );
 int removedocumentHashmap(DocumentHashMap*,char* );
 Pair findAndFetchDocument(DocumentHashMap ,char* );

@@ -4,6 +4,8 @@
 #include <string.h>
 #include <limits.h>
 
+// #define FOUNDNUPDATE 2
+// #define FOUND 1
 int max(int a, int b)
 {
    return a > b ? a : b;
@@ -173,20 +175,17 @@ char* key,char* value,char* datatype)
     return newdocumentHashmap;
 }
 
-void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
+int insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
 {
-    // printf("Get : %s\n",data.key);
 
     documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap, key,value,datatype);
-    // printf("%s",newdocumentHashmap -> data ->pairs -> key);
-    // printf("Print : %s\n",newdocumentHashmap -> data -> key);
     if(!newdocumentHashmap){
-        return;
+        return 0;
     }
     if (!*tdocumentHashmap)
     {
         *tdocumentHashmap = newdocumentHashmap;
-        return;
+        return 1;
     }
     documentHashmap* p = *tdocumentHashmap;
     documentHashmap* q = NULL;
@@ -197,8 +196,10 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char*
         int result = strcmp(p -> key , key);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
+            strcpy(p -> value,value) ;
+            strcpy(p -> datatype,datatype) ;        //If same value present just UPDATE
             free(newdocumentHashmap);
-            return;
+            return -1;
         }
         else if (result > 0)        //If string 1 is greater , go left
             p = p->left;
@@ -212,27 +213,44 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char*
         q->right = newdocumentHashmap;
 
     newdocumentHashmap->parent = q;
-   DocumentHashMap tnode;
-    initDocumentHashMap(&tnode);
-   
+
     reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced documentHashmap
     getBalancedTree(tdocumentHashmap,q);
+    return 1;
 }
-void controller(){
+
+void createPairToInsertIntoDocument(Pair* pair,DocumentHashMap *tnode){
+    documentHashmap* temp = *tnode;
+    if(!temp){
+        return ;
+    }    
+    appendToPair(pair,temp -> key,temp -> value,temp -> datatype);
+    createPairToInsertIntoDocument(pair,&(temp -> left));
+    createPairToInsertIntoDocument(pair,&(temp -> right));
 
 }
-void helpInsertingIntoDocumentFile(Pair* pair){
+int helpInsertingIntoDocumentFile(Pair* pair,DocumentHashMap *tnode,char* collectionName,
+char* documentName){
     node* temp = *pair;
-    DocumentHashMap tnode;
-    initDocumentHashMap(&tnode);
     while(temp){
-        insertIntoDocumentHashMap(&tnode,temp->key,temp->value,temp->datatype);
+        int status = insertIntoDocumentHashMap(tnode,temp->key,temp->value,temp->datatype);
+        if(!status){
+            destroyTree(tnode);
+            return 0;
+        }
         temp = temp -> next;
     }
-    removedocumentHashmap(&tnode,"sarvesh");
-    preOrder(tnode);
-    return ;
-    
+
+    Pair newPair ; 
+    initPair(&newPair);
+    createPairToInsertIntoDocument(&newPair,tnode);
+    document* docs = initilizeAndCreateDocument(documentName, newPair);
+    int status = createDocument(collectionName, docs );
+    if(!status){
+        destroyTree(tnode);
+        return 0;
+    }
+    return  1;
 }
 
 void inOrder(DocumentHashMap tdocumentHashmap)
@@ -272,8 +290,20 @@ void removedocumentHashmapHelper(DocumentHashMap* parent,DocumentHashMap* tdocum
         *tdocumentHashmap = *parent;
 }
 
-void helpRemoveDocument(char* documentName,char* key){
-    // int result = removedocumentHashmap();
+void helpRemoveFieldFromDocument(DocumentHashMap* tnode, char* collectionName,
+char* documentName,char* key){
+
+    Pair getDocuemnt = findAndFetchDocument(tnode,key);
+    // if(!)
+    int result = removedocumentHashmap(tnode,key);
+    if(!result)
+        return ;
+
+    int status = deleteFieldFromDocument(collectionName, documentName, key); 
+    if(!status){
+        // insertIntoDocumentHashMap(tnode,);
+        return;
+    }
 }
 int removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
 {
@@ -448,6 +478,7 @@ Pair findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key){
     }
     return temp;
 }
+
 
 void updateValue(DocumentHashMap* tdocumentHashmap,char* key,char* value,char* datatype){
     documentHashmap* p = *tdocumentHashmap;
