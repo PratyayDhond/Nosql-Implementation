@@ -61,7 +61,7 @@ int main()
 
     // printf("%s\n", jsonfiyCollection("Posts"));
 
-    // exportDocument("Posts","post1");
+    // exportDocument("sohel","1","2");
     // exportCollection("sohel","");
     // exportUser("sohel");
 

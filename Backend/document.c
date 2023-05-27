@@ -140,7 +140,7 @@ document* getDocument(char *collection,char* documentId)
         return NULL;
 
     // concatinating collection name and document key
-    char documentpath[100];
+    char documentpath[100] = "";
     
     int i=0, j=0;
 
@@ -161,6 +161,7 @@ document* getDocument(char *collection,char* documentId)
     }
 
     documentpath[j] = '\0';
+
     file = fopen(documentpath, "r");
 
     if(!file)
@@ -247,6 +248,7 @@ Pair getAllPairsOfDocument(FILE *file)
         }
 
         if(line[lineTraverse++] == '(')
+
         {
             while(line[lineTraverse] != ')')
             {
@@ -311,12 +313,10 @@ Collection getAllDocumentFromCollection(char* collectionName)
     char listCommand[200] = "ls ./";
     strcat(listCommand, collectionName);
     fp = popen(listCommand, "r");
-
     if(!fp) return 0;
 
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
-    
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
@@ -739,7 +739,9 @@ char* jsonfiyCollection(char *collectionName)
 
     // printf("%s\n", collectionName);
     Collection collection = getAllDocumentFromCollection(collectionName);
+
     if(!collection) return NULL;
+
 
     collectionNode* temp = collection;
 
@@ -768,25 +770,28 @@ char* jsonfiyCollection(char *collectionName)
 
 int exportDocument(char* username, char* collectionName, char* documentId)
 {
-    char filepath[MAX_LINE_LENGTH];
+    char filepath[MAX_LINE_LENGTH] = "";
     strcat(filepath, ".root/");
     strcat(filepath, username);
     strcat(filepath, "/");
     strcat(filepath, collectionName);
 
     document* doc = getDocument(filepath, documentId);
-    if(doc) return 0;
+    if(!doc) return 0;
 
     char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
+    printf("%s\n", exportJSONString);
 
-    if(!exportJSONString) return 0;
     if(strlen(exportJSONString) == 0) return 0;
     
     FILE *fileptr;
 
-    char filename[MAX_LINE_LENGTH];
+    char filename[MAX_LINE_LENGTH] = "";
     strcat(filename, "exports_");
     strcat(filename, username);
+    strcat(filename, "/");
+    strcat(filename, collectionName);
+    strcat(filename, "_");
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
 
@@ -813,8 +818,7 @@ int exportCollection(char* username, char *collectionName)
     strcat(filename, collectionName);
 
     char* exportJSONString = jsonfiyCollection(filename);
-    printf("%s\n", exportJSONString);
-
+    
     if(!exportJSONString)
         return 0;
 
@@ -825,7 +829,7 @@ int exportCollection(char* username, char *collectionName)
     strcat(filename, collectionName);
     strcat(filename, "_exported.json");
 
-    printf("%s\n", filename);
+    // printf("%s\n", filename);
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
@@ -848,12 +852,11 @@ int exportUser(char *username)
     if(!fp) return 0;
 
     char *line = (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
-    char filename[MAX_LINE_LENGTH];
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
+        printf("%s\n", line);
         exportCollection(username, line);
-        break;
     }
 
     free(line);
