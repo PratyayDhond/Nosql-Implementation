@@ -5,7 +5,7 @@
 #include"document.h"
 #include<limits.h>
 #include "../globals/globals.h"
-#define MAX_LINE_LENGTH 1000000
+#define MAX_LINE_LENGTH 256
 
 // Initilizing the pairs linkedlist
 void initPair(Pair *pairs)
@@ -323,13 +323,14 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            freeDocument(doc);
+            freeCollection(collection);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
     }
 
     fclose(fp);
+
     return collection;
 
 }
@@ -480,7 +481,7 @@ int updateDocument(char* collection, document* doc)
 
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"(%s) %s: %s", temp->datatype, temp->key, temp->value);
         temp = temp -> next;
     }
 
@@ -768,12 +769,11 @@ char* jsonfiyCollection(char *collectionName)
     return collectionJSONString;
 }
 
-int exportDocument(char* collectionName, char* documentId)
+int exportDocument(char* documentId)
 {
     if(strlen(documentId) == 0) return 0;
 
-    document* document = getDocument(collectionName, documentId);
-    char* exportJSONString = convertSingleDocumentIntoJSONString(document);
+    char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
 
     if(strlen(exportJSONString) == 0) return 0;
 
@@ -781,7 +781,6 @@ int exportDocument(char* collectionName, char* documentId)
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
 
-    FILE* fileptr;
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
@@ -822,7 +821,6 @@ int exportCollection(char *collectionName)
 int exportUser(char *username)
 {
 
-    FILE* fp;
     char listCommand[200] = "ls ./";
     strcat(listCommand, username);
     fp = popen(listCommand, "r");
@@ -832,12 +830,17 @@ int exportUser(char *username)
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
     
-        char filename[200];
-        strcat(filename, "exports_");
-        strcat(filename, username);
-        strcat(filename, "/");
+        if(!collection)
+        {
+            char filename[200];
+            strcat(filename, "exports_");
+            strcat(filename, username);
+            strcat(filename, "/");
 
-        exportCollection(filename);
+            exportCollection(filename);
+            freeCollection(collection);
+            return 0;
+        }
     }
 
     fclose(fp);
