@@ -1196,29 +1196,38 @@ void updateDocument_frontEnd()
             {
                 carriageReturnCount = 0;
             }
+        }
+}
 
 void test1(){
 
 
     DocumentHashMap tnode;
     initDocumentHashMap(&tnode);
-    Pair new;
     globals.collection = "a";
     globals.user = "a";
     globals.document = "a";
 
+    Pair new;
     initPair(&new);
     appendToPair(&new,"name","COEP","STRING");
     appendToPair(&new,"yesorno","T","BOOLEAN");
     appendToPair(&new,"yeda","1","INTEGER");
 
-    helpInsertingIntoDocumentFile(&new);
-    showFieldsDocuments();
 
-    helpUpdatingField("name","Sarvesh", "STRING");
-    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
+     Pair upadtePair;
+    initPair(&upadtePair);
+    appendToPair(&upadtePair,"name","YES","STRING");
+    appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
+    appendToPair(&upadtePair,"yeda","YES","STRING");
+
+    helpInsertingIntoDocumentFile(&new);
+    // showFieldsDocuments();   
+    helpUpdatingTheDocument(upadtePair);
+    
+    // helpUpdatingField("name","Sarvesh", "STRING");
     // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
-    // showFieldsDocuments();
+    showFieldsDocuments();
     exit(0);
     strcpy(globals.user,"sohel");
     strcpy(globals.collection,"abc");

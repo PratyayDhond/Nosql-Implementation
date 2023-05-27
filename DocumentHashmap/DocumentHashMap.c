@@ -556,8 +556,6 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
-    preOrder(tnode);
-    printf("CHanged\n\n");
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);
@@ -565,7 +563,6 @@ int helpUpdatingField(char* key,char* value,char* datatype){
             return INT_MIN;
         }
      }
-    preOrder(tnode);
 
     Pair result = updateValue(key,value,datatype);
     if(!result){
@@ -581,11 +578,22 @@ int helpUpdatingField(char* key,char* value,char* datatype){
     if(!status){
         return INT_MIN;
     }
-    printf("CHanged After Updating \n\n");
-
-    preOrder(tnode);
-    // showFieldsDocuments();
     return 1;
+}
+
+int helpUpdatingTheDocument(Pair newPair){
+    Pair mainPair = newPair;
+    int result = 0;
+    while(mainPair ){
+        int status = helpUpdatingField(mainPair->key, mainPair-> value,mainPair -> datatype);
+
+        if(status)
+        {
+            result = 1; 
+        }
+        mainPair = mainPair -> next;
+    }
+    return result ; //Result 1 Indicates some updates done , Result 0 indicatest no updates done
 }
 
 Pair updateValue(char* key,char* value,char* datatype){
@@ -594,7 +602,6 @@ Pair updateValue(char* key,char* value,char* datatype){
 
     documentHashmap* p = tnode;
     while(p){
-        // printf("\nKEY : %s" , p -> key);
         int result = strcmp(key,p -> key);
         if(result == 0){
             appendToPair(&newPair,key,value,datatype);
