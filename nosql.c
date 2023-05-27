@@ -641,6 +641,8 @@ void createCollection(){
 }
 
 void createDocument_FrontEnd(){
+    strcpy(globals.user,"test");
+    strcpy(globals.collection, "one");
     if(strcmp(globals.user,"") == 0){
         printf("You need to be logged in to create a document.\n");
         return;
@@ -685,6 +687,8 @@ void createDocument_FrontEnd(){
         fgets(input,2,stdin);
         Pair pairs;
         initPair(&pairs);
+
+            FILE *fptr = fopen("sohel","a+");
         while(inputFlag){
             fgets(input,100,stdin);
             char *p = input;
@@ -700,8 +704,6 @@ void createDocument_FrontEnd(){
             }else{
                 carriageReturnCount = 0;
             }
-
-            FILE *fptr = fopen("testop","a+");
             while(*p != '\0'){
                 if(*p == ':'){
                     if(keyValueBAR == 0){
@@ -742,9 +744,10 @@ void createDocument_FrontEnd(){
                 return;
             }
 
+            printf("(%s) %s:%s\n",dataType,key,value);
             appendToPair(&pairs,key,value,dataType);
         }
-        
+        fclose(fptr);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
@@ -895,33 +898,36 @@ void removeDocument(){
 
 }
 
-void exportUser(){
-    if(strcmp(globals.user,"") == 0){
-        printf("You need to login in order to export User data.");
-        return;
-    }
+// void exportUser(){
+//     if(strcmp(globals.user,"") == 0){
+//         printf("You need to login in order to export User data.");
+//         return;
+//     }
 
-    char command[100] = "mkdir ";
-    char location[80] = "'exports_";
-    strcat(location,globals.user);
-    strcat(location,"'");
-    strcat(command,location);
-    strcat(command,COMMAND_POSTFIX);
-    system(command);
+//     char command[100] = "mkdir ";
+//     char location[80] = "'exports_";
+//     strcat(location,globals.user);
+//     strcat(location,"'");
+//     strcat(command,location);
+//     strcat(command,COMMAND_POSTFIX);
+//     system(command);
 
 
 
-    strcpy(command,"rmdir");
-    strcat(command,location);
-    strcat(command,COMMAND_POSTFIX);
-    system(command);
-return;
-}
+//     strcpy(command,"rmdir");
+//     strcat(command,location);
+//     strcat(command,COMMAND_POSTFIX);
+//     system(command);
+// return;
+// }
 
 void noSQLMenu(){
     initGlobals();
     ioctl(0,TIOCGWINSZ,&sz);
     printWelcomeMessage();
+        createDocument_FrontEnd();
+
+    exit(0);
     int command;
     int programRunning = 1;
     while(programRunning){
@@ -1007,7 +1013,7 @@ void noSQLMenu(){
 
                     break;
             case export_user:
-                    exportUser();
+                    // exportUser();
                     break;
             case login:
                     if(strcmp(globals.user,"") != 0){
