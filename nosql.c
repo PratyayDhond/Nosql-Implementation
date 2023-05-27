@@ -1166,8 +1166,9 @@ void noSQLMenu()
     appendToPair(&new,"yeda","1","INTEGER");
 
     helpInsertingIntoDocumentFile(&new);
-    helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
-    helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+    helpUpdatingField("name","Sarvesh", "STRING");
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
 
     // showFieldsDocuments();
     exit(0);
