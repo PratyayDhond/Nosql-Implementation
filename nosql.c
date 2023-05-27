@@ -1257,38 +1257,38 @@ void updateDocument_frontEnd()
 }
 
 void test1(){
+    // insertIntoDocumentHashMap("sarvesh","aserv","datra");
+    // preOrder(tnode);
+    // exit(0);
+    globals.collection = "a";
+    globals.user = "a";
+    globals.document = "a";
+
+    Pair new;
+    initPair(&new);
+    appendToPair(&new,"name","COEP","STRING");
+    appendToPair(&new,"yesorno","T","BOOLEAN");
+    appendToPair(&new,"yeda","1","INTEGER");
 
 
-    // DocumentHashMap tnode;
-    // initDocumentHashMap(&tnode);
-    // globals.collection = "a";
-    // globals.user = "a";
-    // globals.document = "a";
+     Pair upadtePair;
+    initPair(&upadtePair);
+    appendToPair(&upadtePair,"name","YES","STRING");
+    appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
+    appendToPair(&upadtePair,"yeda","YES","STRING");
 
-    // Pair new;
-    // initPair(&new);
-    // appendToPair(&new,"name","COEP","STRING");
-    // appendToPair(&new,"yesorno","T","BOOLEAN");
-    // appendToPair(&new,"yeda","1","INTEGER");
-
-
-    //  Pair upadtePair;
-    // initPair(&upadtePair);
-    // appendToPair(&upadtePair,"name","YES","STRING");
-    // appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
-    // appendToPair(&upadtePair,"yeda","YES","STRING");
-
-    // helpInsertingIntoDocumentFile(&new);
-    // // showFieldsDocuments();   
+    helpInsertingIntoDocumentFile(&new);
+    showFieldsDocuments();   
+    exit(0);
     // helpUpdatingTheDocument(upadtePair);
     
-    // // helpUpdatingField("name","Sarvesh", "STRING");
+    // helpUpdatingField("name","Sarvesh", "STRING");
     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
     // showFieldsDocuments();
     // exit(0);
-    strcpy(globals.user,"sohel");
-    strcpy(globals.collection,"1");
-    strcpy(globals.document,"one");
+    // strcpy(globals.user,"sohel");
+    // strcpy(globals.collection,"1");
+    // strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();
     // exportUser_FrontEnd();
@@ -1300,7 +1300,7 @@ void noSQLMenu()
 {
     initGlobals();
     ioctl(0, TIOCGWINSZ, &sz);
-    test1();
+    // test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;
