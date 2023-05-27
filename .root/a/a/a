@@ -1,4 +1,3 @@
+(INTEGER) yeda: 1
 (STRING) name: Sarvesh
-(INTEGER) age: 18
-(CHARACTER) char: ch
-(DOUBLE) small: 12.90
+(BOOLEAN) yesorno: T

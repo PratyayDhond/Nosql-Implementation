@@ -1152,6 +1152,28 @@ void updateDocument_frontEnd(){
 }
 
 void test1(){
+
+
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
+    Pair new;
+    globals.collection = "a";
+    globals.user = "a";
+    globals.document = "a";
+
+    initPair(&new);
+    appendToPair(&new,"name","COEP","STRING");
+    appendToPair(&new,"yesorno","T","BOOLEAN");
+    appendToPair(&new,"yeda","1","INTEGER");
+
+    helpInsertingIntoDocumentFile(&new);
+    showFieldsDocuments();
+
+    helpUpdatingField("name","Sarvesh", "STRING");
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+    // showFieldsDocuments();
+    exit(0);
     strcpy(globals.user,"sohel");
     strcpy(globals.collection,"abc");
     strcpy(globals.document,"one");

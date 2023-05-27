@@ -5,6 +5,8 @@
 #include <limits.h>
 #include "../globals/globals.h"
 
+int getDocumentInHashMap(DocumentHashMap *tnode);
+
 DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
 
@@ -300,6 +302,11 @@ void showDocs(DocumentHashMap tdocumentHashmap)
 }
 void showFieldsDocuments()
 {
+    if(!tnode){
+        int result = getDocumentInHashMap(&tnode);
+        if(!result)
+            return;
+    }
     printf("\n");
     showDocs(tnode);
     printf("\n");
@@ -545,6 +552,8 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
+    preOrder(tnode);
+    printf("CHanged\n\n");
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);
@@ -568,7 +577,10 @@ int helpUpdatingField(char* key,char* value,char* datatype){
     if(!status){
         return INT_MIN;
     }
-    showFieldsDocuments();
+    printf("CHanged After Updating \n\n");
+
+    preOrder(tnode);
+    // showFieldsDocuments();
     return 1;
 }
 
