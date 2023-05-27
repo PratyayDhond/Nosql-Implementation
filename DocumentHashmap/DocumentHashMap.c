@@ -551,6 +551,7 @@ Pair findAndFetchDocument(char* key){
 }
 
 int helpUpdatingField(char* key,char* value,char* datatype){
+    printf("%s %s %s\n",key,value,datatype);
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);

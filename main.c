@@ -12,7 +12,6 @@ char * test(char * str){
 int main(){
     // printf("%s",Decrypt("YfL"));
     // printf("Decrypted -> %s\n",test("{}~"));
-    system("clear");
     noSQLMenu(); 
 return 0;
 }
