@@ -1319,7 +1319,7 @@ void test1(){
     // exit(0);
     strcpy(globals.user,"sohel");
     strcpy(globals.collection,"1");
-    strcpy(globals.document,"one");
+    strcpy(globals.document,"sample");
 
     // exportDocument_FrontEnd();
     // exportUser_FrontEnd();

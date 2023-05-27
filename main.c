@@ -13,9 +13,9 @@ char * test(char * str){
 int main(){
     // printf("%s",Decrypt("YfL"));
     // printf("Decrypted -> %s\n",test("{}~"));
-    // noSQLMenu(); 
-    char * encrypt = dataEncrypt("Hello Sohel");
-    char * Decrypt = dataDecrypt(encrypt);
-    printf("%s -> %s",encrypt,Decrypt);
+    noSQLMenu(); 
+    // char * encrypt = dataEncrypt("Hello Sohel");
+    // char * Decrypt = dataDecrypt("%MKF:<D#bR[b47@3M");
+    // printf("%s\n",Decrypt);
 return 0;
 }
