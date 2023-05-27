@@ -4,6 +4,7 @@
 #include <regex.h>
 #include"document.h"
 #include<limits.h>
+#include "../globals/globals.h"
 #define MAX_LINE_LENGTH 1000000
 
 // Initilizing the pairs linkedlist

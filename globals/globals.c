@@ -1,4 +1,5 @@
-
+#include "globals.h"
+#include <stdlib.h>
 void initGlobals(){
     globals.collection = (char*) malloc(sizeof(char) * SIZE);
     if(!globals.collection)
@@ -28,4 +29,3 @@ void destroyGlobals(){
         free(globals.document);
 return;
 }
-
