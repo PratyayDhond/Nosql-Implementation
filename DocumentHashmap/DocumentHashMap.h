@@ -16,7 +16,6 @@ void initDocumentHashMap();
 int helpInsertingIntoDocumentFile(Pair*);
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key);
 void destroyTree();
-
 void showFieldsDocuments();
 int removedocumentHashmap(char* );
 Pair findAndFetchDocument(char* );

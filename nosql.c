@@ -1093,8 +1093,10 @@ void noSQLMenu()
     appendToPair(&new,"yeda","1","INTEGER");
 
     helpInsertingIntoDocumentFile(&new);
-    showFieldsDocuments();
-    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
+    helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+
+    // showFieldsDocuments();
     exit(0);
     // DocumentHashMap tnode;
     // initDocumentHashMap(&tnode);

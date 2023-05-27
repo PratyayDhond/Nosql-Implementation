@@ -481,7 +481,7 @@ int updateDocument(char* collection, document* doc)
         temp = temp -> next;
     }
 
-    printf("Document updated successfully\n");
+    // printf("Document updated successfully\n");
     fclose(fp);
     return 1;
 }
@@ -541,7 +541,7 @@ int deleteDocument(char* collection, char* documentKey)
         return 0;
     }
 
-    printf("Document deleted successfully\n");
+    // printf("Document deleted successfully\n");
     return 1;
 }
 
@@ -559,12 +559,12 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 
     if(!deletePair(&(doc->pairs), pairkey))
     {
-        printf("Associated value for given key not found\n");
+        printf("Associateeed value for given key not found\n");
         return 0;
     }
     if(updateDocument(collection, doc))
     {
-        printf("%s field is deleted successfully\n", pairkey);
+        // printf("%s field is deleted successfully\n", pairkey);
         return 1;
     }
 

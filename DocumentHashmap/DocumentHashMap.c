@@ -231,9 +231,9 @@ void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
     createPairToInsertIntoDocument(pair,temp -> right);
 }
 int helpInsertingIntoDocumentFile(Pair* pair){
-    char collectionPath[100]  = "";
+     char collectionPath[100]  = "";
      sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
-     printf("Collections : %s\n",collectionPath);
+    //  printf("Collections : %s\n",collectionPath);
     node* temp = *pair;
     
     while(temp){
@@ -300,7 +300,7 @@ void showDocs(DocumentHashMap tdocumentHashmap)
     printf("\n");
     showDocs(tdocumentHashmap->right);
 }
-void showFieldsDocuments(DocumentHashMap tdocumentHashmap)
+void showFieldsDocuments()
 {
     printf("\n");
     showDocs(tnode);
@@ -335,34 +335,36 @@ void removedocumentHashmapHelper(DocumentHashMap* parent)
 }
 
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
-
+ char collectionPath[100]  = "";
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     if(!tnode){
-// document* getDocument(char *collection,char* documentId)
-
-        // Pair fetchDoc = getAllPairsOfDocument(documentName);
-        // while(fetchDoc){
-        // int status = insertIntoDocumentHashMap(fetchDoc->key,fetchDoc->value,fetchDoc -> datatype);
-        // if(status == INT_MIN){
-        //     destroyTree(&tnode);
-        //     return INT_MIN;
-        // }
-        // fetchDoc = fetchDoc -> next;
-    // }
-        return 0;
+   
+    document* fetchData =  getDocument(collectionPath,globals.document);
+        Pair newPair = fetchData -> pairs;
+        while(newPair){
+        int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
+        if(status == INT_MIN){
+            destroyTree(&tnode);
+            return INT_MIN;
+        }
+        newPair = newPair -> next;
+    }
+    return 1;
     }
     Pair getDocuemnt = findAndFetchDocument(key);
-    if(!getDocuemnt)
-    return 0;
+    if(!getDocuemnt){
+        return 0;
+    }
     int result = removedocumentHashmap(key);
-    printf("Result : %d",result);
     if(!result)
         return 0;
+
     Pair newPair;
     initPair(&newPair);
     DocumentHashMap temp = tnode;
     createPairToInsertIntoDocument(&newPair,tnode);
     
-    int status = deleteFieldFromDocument(collectionName, documentName, key); 
+    int status = deleteFieldFromDocument(collectionPath, documentName, key); 
     if(!status){
         insertIntoDocumentHashMap(getDocuemnt->key,getDocuemnt->value,getDocuemnt->datatype);
         return INT_MIN;
@@ -525,13 +527,10 @@ Pair findAndFetchDocument(char* key){
     DocumentHashMap tdocumentHashmap = tnode;
     documentHashmap* p = tdocumentHashmap;
     while(p){
-            // printf("temp :  %s",temp->datatype);
-// printf("asr");
         int result = strcmp(key,p -> key);
         if(result == 0){
             appendToPair(&temp,p -> key, p -> value,
             p -> datatype);
-            printf("temp :  %s",temp->key);
             return temp; 
         }
         else if(result > 0){
