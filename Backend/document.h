@@ -62,9 +62,9 @@ void displayCollection(Collection collection);
 char* trim_spaces(char *str);
 char* convertSinglePairIntoJSONString(node* singlePair);
 char* convertSingleDocumentIntoJSONString(document *doc);
-char* jsonfiyCollection(char* collectionName);
+char* jsonfiyCollection(char* collectionpath);
 
 // Exporting functions
-int exportDocument(char* collectionName, char* documentId);
+int exportDocument(char* username, char* collectionName, char* documentId);
 int exportCollection(char* username, char *collectionName);
 int exportUser(char *username);
