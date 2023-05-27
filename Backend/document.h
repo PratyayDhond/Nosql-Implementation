@@ -54,7 +54,7 @@ int freePairs(Pair* pairs);
 // freeing up memory of a single document
 int freeDocument(document* doc);
 // freeing up memory of a single collection
-int freeCollection(Collection* collection)
+int freeCollection(Collection* collection);
 int validateDataFormatProtocol(char* line);
 void displayDocument(document doc);
 void displayCollection(Collection collection);
