@@ -323,7 +323,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            free(collection);
+            freeCollection(collection);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
@@ -478,7 +478,6 @@ int updateDocument(char* collection, document* doc)
     if(!fp) return 0;
 
     node* temp = doc->pairs;
-
 
     while(temp)
     {
@@ -824,7 +823,7 @@ int exportUser(char *username)
     if(strlen(username) == 0) return 0;
 
     char listCommand[200] = "ls ./";
-    strcat(listCommand, collectionName);
+    strcat(listCommand, username);
     fp = popen(listCommand, "r");
 
     if(!fp) return 0;
@@ -832,14 +831,17 @@ int exportUser(char *username)
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
     
-        document *doc = getDocument(collectionName, line);
-        if(!doc)
+        if(!collection)
         {
+            char filename[200];
+            strcat(filename, "exports_");
+            strcat(filename, username);
+            strcat(filename, "/");
 
-            free(collection);
+            exportCollection(filename);
+            freeCollection(collection);
             return 0;
         }
-        addDocumentToCollection(&collection, doc);
     }
 
     fclose(fp);

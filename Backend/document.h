@@ -64,5 +64,8 @@ char* convertSinglePairIntoJSONString(node* singlePair);
 char* convertSingleDocumentIntoJSONString(document *doc);
 char* jsonfiyCollection(char* collectionName);
 
+
+// Exporting functions
 int exportDocument(char* documentId);
 int exportCollection(char *collectionName);
+int exportUser(char *username);
