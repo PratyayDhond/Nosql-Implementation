@@ -1157,8 +1157,8 @@ void test1(){
     strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();
-    // exportUser_FrontEnd();
-    exportCollection_FrontEnd();    
+    exportUser_FrontEnd();
+    // exportCollection_FrontEnd();    
     exit(0);
 }
 
@@ -1166,7 +1166,7 @@ void noSQLMenu()
 {
     initGlobals();
     ioctl(0, TIOCGWINSZ, &sz);
-    // test1();
+    test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;

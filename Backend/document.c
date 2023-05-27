@@ -695,7 +695,6 @@ char* convertSinglePairIntoJSONString(node* singlePair)
 
 char* convertSingleDocumentIntoJSONString(document *doc)
 {
-
     if(!doc) return NULL;
 
     char* documentJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
@@ -741,7 +740,6 @@ char* jsonfiyCollection(char *collectionName)
     Collection collection = getAllDocumentFromCollection(collectionName);
 
     if(!collection) return NULL;
-
 
     collectionNode* temp = collection;
 
@@ -857,8 +855,44 @@ int exportUser(char *username)
         line = trim_spaces(line);
         exportCollection(username, line);
     }
-
+    convertExportedDirectoryIntoTarFile(username);
     free(line);
     fclose(fp);
+    return 1;
+}
+
+int convertExportedDirectoryIntoTarFile(char* username)
+{
+    char command[200] = "test -d ";
+
+    strcat(command, "exports_");
+    strcat(command, username);
+    int status = system(command);
+    printf("%d\n", status);
+    // if collection directory not exists then simply return
+    if(status)
+        return 0;
+
+    char tarcommand[200] = "tar -czvf exports_";
+
+    strcat(tarcommand, username);
+    strcat(tarcommand, ".tar exports_");
+    strcat(tarcommand, username);
+
+    int y = system(tarcommand);
+    // if collection directory not exists then simply return
+    if(y)
+        return 0;
+
+    char delcommand[200] = "rm -r ";
+
+    strcat(delcommand, "exports_");
+    strcat(delcommand, username);
+    int x = system(delcommand);
+    // if collection directory not exists then simply return
+    if(x)
+        return 0;
+
+
     return 1;
 }
