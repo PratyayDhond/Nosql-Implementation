@@ -41,7 +41,7 @@ int main()
     // int status = deleteDocument("Posts", "newpost");
 
     // Code for deleting a single field from a document
-    int status = deleteFieldFromDocument("Posts", "post1", "name");
+    // int status = deleteFieldFromDocument("Posts", "post1", "name");
     // if(status) printf("document field deleted\n");
 
 
@@ -61,6 +61,7 @@ int main()
 
     // printf("%s\n", jsonfiyCollection("Posts"));
 
+    exportDocument("Posts","post1");
     // exportCollection("Posts");
     // exportUser("sohel");
 
