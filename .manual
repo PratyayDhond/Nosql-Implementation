@@ -71,8 +71,6 @@ Available Commands:
            A collection must be selected before selecting a document.
            All the newly created documents will be saved in the last selected collection.
            <SYNTAX> => `use collection COLLECTION_NAME`
-- man:
-           Used to Invoke the Manual Page instruction
 
 - create user: 
            Used to create a Unique User by username provided by the user.
@@ -133,3 +131,9 @@ Available Commands:
 - Open Document:
            Used to view the contents of the document.There must be a document already created for using this command
            <SYNTAX> => `open doc DOCUMENT_NAME`
+- Current User:
+            Used to get the current user.
+            <SYNTAX> => 'who am i'
+- man:
+           Used to Invoke the Manual Page instruction- man:
+           Used to Invoke the Manual Page instruction
