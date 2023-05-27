@@ -60,6 +60,7 @@ int deletePair(Pair *pairs, char *pairKey)
 
     if(strlen(pairKey)) return -1;
     node * temp;
+    pairKey = trim_spaces(pairKey);
     if (strcmp((*pairs)->key, pairKey) == 0) {
 
         temp = *pairs;
@@ -72,6 +73,7 @@ int deletePair(Pair *pairs, char *pairKey)
 
         while (current->next) {
             if(strcmp(current->next->key, pairKey) == 0) {
+                printf("jdkdfjdkdfj");
                 temp = current->next;
                 current->next = current-> next->next;
                 free(temp);
@@ -323,7 +325,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            freeDocument(doc);
+            freeCollection(doc);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
