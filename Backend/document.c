@@ -820,7 +820,6 @@ int exportCollection(char *collectionName)
 
 int exportUser(char *username)
 {
-    if(strlen(username) == 0) return 0;
 
     char listCommand[200] = "ls ./";
     strcat(listCommand, username);

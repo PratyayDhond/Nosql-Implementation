@@ -895,7 +895,7 @@ void removeDocument(){
 
 }
 
-void exportUser(){
+void exportUser_FrontEnd(){
     if(strcmp(globals.user,"") == 0){
         printf("You need to login in order to export User data.");
         return;
@@ -909,7 +909,7 @@ void exportUser(){
     strcat(command,COMMAND_POSTFIX);
     system(command);
 
-
+    int code = exportUser(globals.user);
 
     strcpy(command,"rmdir");
     strcat(command,location);
@@ -1007,7 +1007,7 @@ void noSQLMenu(){
 
                     break;
             case export_user:
-                    exportUser();
+                    exportUser_FrontEnd();
                     break;
             case login:
                     if(strcmp(globals.user,"") != 0){
