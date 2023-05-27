@@ -3,31 +3,28 @@
 #include "DocumentHashMap.h"
 #include <string.h>
 #include <limits.h>
-#include "../globals/globals.h"
-
-DocumentHashMap tnode = NULL;
 
 int max(int a, int b)
 {
    return a > b ? a : b;
 }
 
-int heightOfTree(DocumentHashMap tNode)
+int heightOfTree(DocumentHashMap tdocumentHashmap)
 {
-    if (!tNode)
+    if (!tdocumentHashmap)
         return -1;
 
-    return 1 + max(heightOfTree(tNode->left), heightOfTree(tNode->right));
+    return 1 + max(heightOfTree(tdocumentHashmap->left), heightOfTree(tdocumentHashmap->right));
 }
 
-void initDocumentHashMap()
+void initDocumentHashMap(DocumentHashMap *tdocumentHashmap)
 {
-    tnode = NULL; // Initializing a structure
+    *tdocumentHashmap = NULL; // Initializing a structure
 }
 
-void reassignBalanceFactor(DocumentHashMap* Qnode)
+void reassignBalanceFactor(DocumentHashMap *tdocumentHashmap)
 {
-    documentHashmap* temp = *Qnode;
+    documentHashmap* temp = *tdocumentHashmap;
     while (temp)
     {
         temp->bf = heightOfTree(temp->left) - heightOfTree(temp->right); // Assigning balance factor to documentHashmap as left height - right height
@@ -36,9 +33,8 @@ void reassignBalanceFactor(DocumentHashMap* Qnode)
     return;
 }
 
-DocumentHashMap getimBalancedNode()
+DocumentHashMap getimBalancedNode(DocumentHashMap tdocumentHashmap)
 {
-    DocumentHashMap tdocumentHashmap = tnode;
     if (!tdocumentHashmap)
         return NULL;
     documentHashmap* temp = tdocumentHashmap; // Imbalanaced documentHashmap is that documentHashmap who has balance factor apart from 0,1,-1
@@ -52,16 +48,15 @@ DocumentHashMap getimBalancedNode()
 }
 
 
-void LLRotation(DocumentHashMap *tdocumentHashmap)  //Rotate whole tree in right direction
+void LLRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumentHashmap)  //Rotate whole tree in right direction
 {
-    DocumentHashMap mainTdocumentHashmap = tnode;
     documentHashmap* A = (*tdocumentHashmap);
     documentHashmap* B = A->left;
     documentHashmap* BR = B->right;
     documentHashmap* AP = A->parent;
     B->parent = AP;
     if (!AP)
-        tnode = B;
+        *mainTdocumentHashmap = B;
     else
     {
         if (AP->right == A)
@@ -82,16 +77,15 @@ void LLRotation(DocumentHashMap *tdocumentHashmap)  //Rotate whole tree in right
     return;
 }
 
-void RRRotation(DocumentHashMap *tdocumentHashmap ) //Rotate tree to left
+void RRRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumentHashmap) //Rotate tree to left
 {
-    DocumentHashMap mainTdocumentHashmap = tnode;
     documentHashmap* A = (*tdocumentHashmap);
     documentHashmap* B = A->right;
     documentHashmap* BR = B->left;
     documentHashmap* AP = A->parent;
     B->parent = AP;
     if (!AP)
-        tnode = B;
+        *mainTdocumentHashmap = B;
     else
     {
         if (AP->right == A)
@@ -108,19 +102,19 @@ void RRRotation(DocumentHashMap *tdocumentHashmap ) //Rotate tree to left
     B->bf = 0;
     reassignBalanceFactor(&A);  //We have rotated the tree using pointers , now reassingning its bf
 }
-void LRRotation(DocumentHashMap *tdocumentHashmap)
+void LRRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumentHashmap)
 {
-    RRRotation(&(*tdocumentHashmap)->left);     //Rotate left subtree and then rotate that updated tree to right
-    LLRotation(tdocumentHashmap);
+    RRRotation(&(*tdocumentHashmap)->left, mainTdocumentHashmap);     //Rotate left subtree and then rotate that updated tree to right
+    LLRotation(tdocumentHashmap, mainTdocumentHashmap);
 }
 
-void RLRotation(DocumentHashMap *tdocumentHashmap)
+void RLRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumentHashmap)
 {
-    LLRotation(&(*tdocumentHashmap)->right); //Rotate right subtree and then rotate that updated tree to left
-    RRRotation(tdocumentHashmap);
+    LLRotation(&(*tdocumentHashmap)->right, mainTdocumentHashmap); //Rotate right subtree and then rotate that updated tree to left
+    RRRotation((tdocumentHashmap), mainTdocumentHashmap);
 }
 
-void getBalancedTree(documentHashmap* nodeImbalance){
+void getBalancedTree(DocumentHashMap* tdocumentHashmap,documentHashmap* nodeImbalance){
      documentHashmap* imBalancedNode = getimBalancedNode(nodeImbalance);
   
     if (!imBalancedNode)
@@ -129,21 +123,22 @@ void getBalancedTree(documentHashmap* nodeImbalance){
     if (imBalancedNode->bf == -2)
     {
         if (imBalancedNode->right->bf == 0 || imBalancedNode->right->bf == -1) 
-            RRRotation(&imBalancedNode);
+            RRRotation(&imBalancedNode, tdocumentHashmap);
         else
-            RLRotation(&imBalancedNode);
+            RLRotation(&imBalancedNode, tdocumentHashmap);
     }
     else if (imBalancedNode->bf == 2)
     {
         if (imBalancedNode->left->bf == 0 ||imBalancedNode->left->bf == 1 )
-            LLRotation(&imBalancedNode);
+            LLRotation(&imBalancedNode, tdocumentHashmap);
         else  
-            LRRotation(&imBalancedNode);        
+            LRRotation(&imBalancedNode, tdocumentHashmap);        
     }
     return ;
 }
 
-DocumentHashMap mallocateAdocumentHashmap(char* key,char* value,char* datatype)
+DocumentHashMap mallocateAdocumentHashmap(DocumentHashMap *tdocumentHashmap,
+char* key,char* value,char* datatype)
 {
     documentHashmap *newdocumentHashmap = (documentHashmap*)malloc(sizeof(documentHashmap)); // Mallocating a documentHashmap and initializing the structure
     if(!newdocumentHashmap){
@@ -178,19 +173,22 @@ DocumentHashMap mallocateAdocumentHashmap(char* key,char* value,char* datatype)
     return newdocumentHashmap;
 }
 
-int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
+void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
 {
-    documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap( key,value,datatype);
-    if(!newdocumentHashmap){
-        return INT_MIN;
-    }
-    if (!tnode)
-    {
-        tnode = newdocumentHashmap;
-        return 1;
-    }
+    // printf("Get : %s\n",data.key);
 
-    documentHashmap* p = tnode;
+    documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap, key,value,datatype);
+    // printf("%s",newdocumentHashmap -> data ->pairs -> key);
+    // printf("Print : %s\n",newdocumentHashmap -> data -> key);
+    if(!newdocumentHashmap){
+        return;
+    }
+    if (!*tdocumentHashmap)
+    {
+        *tdocumentHashmap = newdocumentHashmap;
+        return;
+    }
+    documentHashmap* p = *tdocumentHashmap;
     documentHashmap* q = NULL;
 
     while (p)
@@ -199,10 +197,8 @@ int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
         int result = strcmp(p -> key , key);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
-            strcpy(p -> value,value) ;
-            strcpy(p -> datatype,datatype) ;        //If same value present just UPDATE
             free(newdocumentHashmap);
-            return -1;
+            return;
         }
         else if (result > 0)        //If string 1 is greater , go left
             p = p->left;
@@ -217,46 +213,25 @@ int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
 
     newdocumentHashmap->parent = q;
 
+   
     reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced documentHashmap
-    getBalancedTree(q);
-    return 1;
+    getBalancedTree(tdocumentHashmap,q);
 }
 
-void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
-    if(!temp){
-        return ;
-    }    
-    appendToPair(pair,temp -> key,temp -> value,temp -> datatype);
-    createPairToInsertIntoDocument(pair,temp -> left);
-    createPairToInsertIntoDocument(pair,temp -> right);
-}
-int helpInsertingIntoDocumentFile(Pair* pair){
-    char* collectionName = globals.collection;
-    char* documentName = globals.document;
+void helpInsertingIntoDocumentFile(Pair* pair){
     node* temp = *pair;
-    
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
     while(temp){
-        int status = insertIntoDocumentHashMap(temp->key,temp->value,temp -> datatype);
-        if(status == INT_MIN){
-            destroyTree(&tnode);
-            return INT_MIN;
-        }
+        insertIntoDocumentHashMap(&tnode,temp->key,temp->value,temp->datatype);
         temp = temp -> next;
     }
-    if(!tnode){
-        return INT_MIN;
-    }
-    Pair newPair ; 
-    initPair(&newPair);
-    createPairToInsertIntoDocument(&newPair,tnode);
-    document* docs = initilizeAndCreateDocument(documentName, newPair);
-    int status = createDocument(collectionName, docs );
-    if( status == 0){
-        destroyTree(&tnode);
-        return 0;
-    }
-
-    return 1;
+        // printf("sar\n");
+    // preOrder(tnode);
+        removedocumentHashmap(&tnode,"sarvesh");
+    preOrder(tnode);
+    return ;
+    
 }
 
 void inOrder(DocumentHashMap tdocumentHashmap)
@@ -265,7 +240,7 @@ void inOrder(DocumentHashMap tdocumentHashmap)
         return;
 
     inOrder(tdocumentHashmap->left);
-    // printf("documentHashmap: %s , Pa rent : %s ,BF : %d , Left : %s , Right : %s\n", tdocumentHashmap->data.key,
+    // printf("documentHashmap: %s , Parent : %s ,BF : %d , Left : %s , Right : %s\n", tdocumentHashmap->data.key,
         //    tdocumentHashmap->parent ? tdocumentHashmap->parent->data.key : "", tdocumentHashmap->bf, tdocumentHashmap->left ? tdocumentHashmap->left->data.key : "", tdocumentHashmap->right ? tdocumentHashmap->right->key : "");
     inOrder(tdocumentHashmap->right);
 }
@@ -276,6 +251,8 @@ void preOrder(DocumentHashMap tdocumentHashmap)
     if (!tdocumentHashmap)
         return;
 
+    // printf("Key : %s ", tdocumentHashmap -> documentName);
+
     printf(" { KEY : %s , VALUE : %s , DT : %s , L : %s , R : %s} \n",tdocumentHashmap->key ,
     tdocumentHashmap-> value,tdocumentHashmap -> datatype ,tdocumentHashmap -> left ? tdocumentHashmap -> left -> key : NULL,
     tdocumentHashmap -> right ? tdocumentHashmap -> right -> key : NULL);
@@ -283,60 +260,24 @@ void preOrder(DocumentHashMap tdocumentHashmap)
     preOrder(tdocumentHashmap->right);
 }
 
-void removedocumentHashmapHelper(DocumentHashMap* parent)
+void removedocumentHashmapHelper(DocumentHashMap* parent,DocumentHashMap* tdocumentHashmap)
 {
-    DocumentHashMap tdocumentHashmap = tnode;
     if(!(*parent))
         return;
     reassignBalanceFactor(parent);
-    getBalancedTree(tdocumentHashmap);
+    getBalancedTree(tdocumentHashmap,*parent);
 
-    if((tdocumentHashmap) && (tdocumentHashmap) -> parent &&  (tdocumentHashmap) -> parent == (*parent))
-        tdocumentHashmap = *parent;
+    if((*tdocumentHashmap) && (*tdocumentHashmap) -> parent &&  (*tdocumentHashmap) -> parent == (*parent))
+        *tdocumentHashmap = *parent;
 }
 
-int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
-
-    if(!tnode){
-// document* getDocument(char *collection,char* documentId)
-
-        // Pair fetchDoc = getAllPairsOfDocument(documentName);
-        // while(fetchDoc){
-        // int status = insertIntoDocumentHashMap(fetchDoc->key,fetchDoc->value,fetchDoc -> datatype);
-        // if(status == INT_MIN){
-        //     destroyTree(&tnode);
-        //     return INT_MIN;
-        // }
-        // fetchDoc = fetchDoc -> next;
-    // }
-        return 0;
-    }
-    Pair getDocuemnt = findAndFetchDocument(key);
-    if(!getDocuemnt)
-    return 0;
-    int result = removedocumentHashmap(key);
-    printf("Result : %d",result);
-    if(!result)
-        return 0;
-    Pair newPair;
-    initPair(&newPair);
-    DocumentHashMap temp = tnode;
-    createPairToInsertIntoDocument(&newPair,tnode);
-    
-    int status = deleteFieldFromDocument(collectionName, documentName, key); 
-    if(!status){
-        insertIntoDocumentHashMap(getDocuemnt->key,getDocuemnt->value,getDocuemnt->datatype);
-        return INT_MIN;
-    }
-}
-int removedocumentHashmap( char *key)
+void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
 {
-    DocumentHashMap tdocumentHashmap = tnode;
     documentHashmap *p, *q;
-    if (!tdocumentHashmap)
-        return 0;
+    if (!*tdocumentHashmap)
+        return;
 
-    p = tdocumentHashmap;
+    p = *tdocumentHashmap;
     while (p)
     {
         int result = strcmp(p -> key, key);
@@ -348,14 +289,12 @@ int removedocumentHashmap( char *key)
         else
             p = p->right;
     }
-    if (p){
-        // return 1
-    }
+    // if (p)
         // printf("%s Found\n", p->data);
     
     if (!p){
         // printf("\n %s Not Found\n", data);
-        return 0; // documentHashmap not present
+        return; // documentHashmap not present
     }
     // Now 4 cases
     
@@ -363,10 +302,11 @@ int removedocumentHashmap( char *key)
     int flag = 0;
     if (!p->right && !p->left)
     {
+
         documentHashmap *deletedocumentHashmap = p;
         documentHashmap *temp = deletedocumentHashmap->parent;
-        if (p == tdocumentHashmap) // There is only 1 documentHashmap (root documentHashmap)
-                tdocumentHashmap = NULL;
+        if (p == *tdocumentHashmap) // There is only 1 documentHashmap (root documentHashmap)
+                *tdocumentHashmap = NULL;
         else
         {
             if (q->left == p)
@@ -377,9 +317,9 @@ int removedocumentHashmap( char *key)
             p -> parent = NULL;
         }
         free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return 1;
+        return;
     }
         //1 child -> Only left child exists
     if (!p->right && p->left)
@@ -387,10 +327,10 @@ int removedocumentHashmap( char *key)
         
         documentHashmap* deletedocumentHashmap = p;
         documentHashmap* temp = deletedocumentHashmap->parent;
-        if (p == tdocumentHashmap) // There is root with only left child
+        if (p == *tdocumentHashmap) // There is root with only left child
         {
-            p -> left -> parent = (tdocumentHashmap) -> parent;
-            tdocumentHashmap = p->left;
+            p -> left -> parent = (*tdocumentHashmap) -> parent;
+            *tdocumentHashmap = p->left;
         }
         else
         {
@@ -402,20 +342,21 @@ int removedocumentHashmap( char *key)
         }
 
         free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return 1;
+        return;
     }
     //1 Child , Only right child exists
     else if (p->right && !p->left)
 
     {
+        
         documentHashmap* deletedocumentHashmap = p;
         documentHashmap* temp = deletedocumentHashmap->parent;
-        if (p == tdocumentHashmap)
+        if (p == *tdocumentHashmap)
         {
-            p -> right -> parent = (tdocumentHashmap) -> parent;
-            tdocumentHashmap = (deletedocumentHashmap->right);
+            p -> right -> parent = (*tdocumentHashmap) -> parent;
+            *tdocumentHashmap = (deletedocumentHashmap->right);
         }
         else
         {
@@ -427,9 +368,9 @@ int removedocumentHashmap( char *key)
             p -> right -> parent = q;
         }
         free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return 1;
+        return;
     }
     //2 Childs i.e there exits both left and right
     else if (p->right && p->left)
@@ -466,55 +407,43 @@ int removedocumentHashmap( char *key)
             preecedingPointer->right = NULL;
             free(temp);
         }
-        removedocumentHashmapHelper(&parentOfTemp);
-        return 1;
+        removedocumentHashmapHelper(&parentOfTemp,tdocumentHashmap);
     }
 }
 
-void destroyTree(DocumentHashMap *deleteNode)
+void destroyTree(DocumentHashMap *tdocumentHashmap)
 {
-    if (!(*deleteNode))
+    if (!(*tdocumentHashmap))
         return;
-    free(*deleteNode);
-    *deleteNode = NULL;
+    destroyTree(&(*tdocumentHashmap)->left);
+    destroyTree(&(*tdocumentHashmap)->right);
+    // printf("\n%s Deleted\n", (*tdocumentHashmap) -> key);
+    free(*tdocumentHashmap);
+    *tdocumentHashmap = NULL;
     return;
 }
 
-Pair findAndFetchDocument(char* key){
+Pair findAndFetchDocument(DocumentHashMap tdocumentHashmap,char* key){
     Pair temp ;
     initPair(&temp);
-    DocumentHashMap tdocumentHashmap = tnode;
     documentHashmap* p = tdocumentHashmap;
     while(p){
-            // printf("temp :  %s",temp->datatype);
-// printf("asr");
-        int result = strcmp(key,p -> key);
+        int result = strcmp(key,tdocumentHashmap  -> key);
         if(result == 0){
-            appendToPair(&temp,p -> key, p -> value,
-            p -> datatype);
-            printf("temp :  %s",temp->key);
+            appendToPair(&temp,tdocumentHashmap -> key,tdocumentHashmap -> value,
+            tdocumentHashmap -> datatype);
             return temp; 
         }
-        else if(result > 0){
-            p = p -> right;
-        }
-        else{
+        else if(result > 0)
             p = p -> left;
-        } 
+        else 
+            p = p -> right;
     }
     return temp;
 }
 
-void helpUpdatingField(char* key,char* value,char* datatype){
-    // char* collectionName = globals.collection;
-    // char* documentName = globals.document;
-
-    // insertIntoDocumentHashMap(key,value,datatype);
-}
-
-void updateValue(char* key,char* value,char* datatype){
-    DocumentHashMap tdocumentHashmap = tnode;
-    documentHashmap* p = tdocumentHashmap;
+void updateValue(DocumentHashMap* tdocumentHashmap,char* key,char* value,char* datatype){
+    documentHashmap* p = *tdocumentHashmap;
     while(p){
         int result = strcmp(key,p -> key);
         if(result == 0){
