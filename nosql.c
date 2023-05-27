@@ -1097,6 +1097,7 @@ void exportCollection_FrontEnd(){
         printf("You need to selecta a collection in order to export the collection.\n");
         return;
     }
+        exportCollection(globals.user,globals.collection);
 
 return;
 }
@@ -1121,6 +1122,8 @@ void exportDocument_FrontEnd(){
         return;
     }
 
+
+    exportDocument(globals.user,globals.collection,globals.document);
 
 return;    
 }
