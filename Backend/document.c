@@ -4,7 +4,7 @@
 #include <regex.h>
 #include"document.h"
 #include<limits.h>
-#define MAX_LINE_LENGTH 100000
+#define MAX_LINE_LENGTH 1000000
 
 // Initilizing the pairs linkedlist
 void initPair(Pair *pairs)
@@ -611,4 +611,40 @@ int freeCollection(Collection *collection)
     }
 
     return 1;
+}
+
+char* convertSingleDocumentIntoJSONString(document *doc)
+{
+    return NULL;
+}
+
+char* jsonify(Collection collection)
+{
+    if(!collection) return NULL;
+
+    collectionNode* temp = collection;
+
+    FILE *fileptr;
+
+    char filename[MAX_LINE_LENGTH];
+    strcat(filename, "users");
+    strcat(filename, ".json");
+    fileptr = fopen(filename, "w+");
+
+    if(!fileptr) return NULL; 
+
+    char collectionJSONString[MAX_LINE_LENGTH];
+    strcat(collectionJSONString, "[\n");
+
+    while(temp)
+    {
+        document* doc = temp->document;
+        char* documentJSONString = convertSingleDocumentIntoJSONString(doc);
+        strcat(collectionJSONString, documentJSONString);
+        temp = temp -> next;
+    }
+
+    strcat(collectionJSONString, "]");
+
+    return collectionJSONString;
 }
