@@ -232,8 +232,8 @@ void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
     if(!temp){
         return ;
     }    
-    appendToPair(pair,temp -> key,temp -> value,temp -> datatype);
     createPairToInsertIntoDocument(pair,temp -> left);
+    appendToPair(pair,temp -> key,temp -> value,temp -> datatype);
     createPairToInsertIntoDocument(pair,temp -> right);
 }
 int helpInsertingIntoDocumentFile(Pair* pair){
@@ -575,8 +575,6 @@ int helpUpdatingField(char* key,char* value,char* datatype){
     Pair result = updateValue(key,value,datatype);
     if(!result){
         insertIntoDocumentHashMap(key,value,datatype);
-        // helpInsertingIntoDocumentFile
-        // return 0;
     }
     document* docs = (document*)malloc(sizeof(document));
     docs->documentId = globals.document;
@@ -596,7 +594,6 @@ int helpUpdatingTheDocument(Pair newPair){
     int result = 0;
     while(mainPair ){
         int status = helpUpdatingField(mainPair->key, mainPair-> value,mainPair -> datatype);
-        // if(!)
         if(status)
         {
             result = 1; 
