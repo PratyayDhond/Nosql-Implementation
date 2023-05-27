@@ -1,5 +1,38 @@
 This is the Manual Page for NoSQL implementation project using C language.
 
+Available Data-Types:
+---------------------
+    - INTEGER
+    - DOUBLE
+    - BOOLEAN
+    - CHARACTER
+    - STRING
+
+Syntax and Symantics:
+----------------------
+        The program follows a very specific syntax designed for optimal user experience. The data types would be automatically parsed based on the user's input type, thus there would be no need for the user to input the Data-Types manually.
+
+    SYNTAX:
+        - INTEGER
+            <SYNTAX> key:(1+2+3+4+5+6+7+8+9+0)*
+            for the value to be an INTEGER the value should consists of only decimal number
+        - DOUBLE
+            <SYNTAX> key:(1+2+3+4+5+6+7+8+9+0)* . (1+2+3+4+5+6+7+8+9+0)*
+            for the value to be an DOUBLE the value should consists of only decimal number AND at least one '.' (period)
+
+        - STRING
+            <SYNTAX> key:"value"
+            for the value to be an STRING, the value can contain any characters from a-z, A-Z, 0-9 and special characters. The only rule here is that the string must be enclosed withing double quotes.
+
+        - CHARACTER
+            <SYNTAX> key:'value'
+            for the value to be a CHARACTER, the value must contain one and only one CHARACTER, also it should be enclosed by single quotes.
+
+        - BOOLEAN
+            <SYNTAX> key:(T + F)
+            for the value to be a BOOLEAN, it must be a single character either T or F.
+            These characters SHOULD NOT BE enclosed in any quotes.
+
 Available Commands:
 -------------------
 
