@@ -1,0 +1,13 @@
+[
+    {
+        "_docId":"2",
+        "name":"Sohel",
+        "age":20,
+        "partner":"Prachi"
+    },
+    {
+        "_docId":"one",
+        "name":"Sarvesh",
+        "partner":"Prachi"
+    }
+]

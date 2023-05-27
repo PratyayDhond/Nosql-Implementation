@@ -1028,6 +1028,7 @@ void removeDocument()
 
     char command[100] = "ls -d ";
     char location[100] = ".root/";
+    
     strcat(location, globals.user);
     strcat(location, "/");
     strcat(location, globals.collection);
@@ -1077,7 +1078,7 @@ void exportUser_FrontEnd()
     strcat(command, COMMAND_POSTFIX);
     system(command);
 
-    // int code = exportUser(globals.user);
+    int code = exportUser(globals.user);
 
     strcpy(command, "rmdir");
     strcat(command, location);
@@ -1127,8 +1128,8 @@ void exportDocument_FrontEnd(){
     }
 
 
-    exportDocument(globals.user,globals.collection,globals.document);
-
+    // exportDocument(globals.user,globals.collection,globals.document);
+    // exportUser(globals.user);
 return;    
 }
 
@@ -1154,11 +1155,22 @@ void updateDocument_frontEnd(){
     
 }
 
+void test1(){
+    strcpy(globals.user,"sohel");
+    strcpy(globals.collection,"abc");
+    strcpy(globals.document,"one");
+
+    // exportDocument_FrontEnd();
+    // exportUser_FrontEnd();
+    exportCollection_FrontEnd();    
+    exit(0);
+}
 
 void noSQLMenu()
 {
     initGlobals();
     ioctl(0, TIOCGWINSZ, &sz);
+    test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;
