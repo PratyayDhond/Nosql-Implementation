@@ -133,7 +133,7 @@ Available Commands:
            <SYNTAX> => `open doc DOCUMENT_NAME`
 - Current User:
             Used to get the current user.
-            <SYNTAX> => 'who am i'
+            <SYNTAX> => 'whoami'
 - man:
            Used to Invoke the Manual Page instruction- man:
            Used to Invoke the Manual Page instruction
