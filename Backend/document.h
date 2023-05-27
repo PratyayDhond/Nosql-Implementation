@@ -1,3 +1,4 @@
+#include<stdio.h>
 typedef struct node
 {
     char *key, *value, *datatype;
@@ -37,5 +38,4 @@ void createPair(Pair *pairs,char* key, char* value, char* datatype);
 int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey);
 int deletePair(Pair *pairs, char *pairKey);
 int freePairs(Pair* pairs);
-// int saveHashMapIntoFile()
 int validateDataFormatProtocol(char* line);

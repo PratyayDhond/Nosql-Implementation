@@ -77,21 +77,6 @@ char * Decrypt(char * str){
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 char getch(void)
 {
     char buf = 0;

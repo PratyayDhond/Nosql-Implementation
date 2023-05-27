@@ -1,3 +1,6 @@
+//    strcat(location , " >nul 2>nul"); the > 2> are redirections to avoid unnecessary details being printed on the terminal
+// 
+
 #include "nosql.h"
 #include "Encryption/cipher.h"
 #include <stdio.h>
@@ -6,12 +9,14 @@
 #include <string.h>   // for strcmp 
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
+#include "Backend/document.h"
 
 #define SIZE 32
 
 #define USER_ALREADY_EXISTS 0
 #define PASSWORDS_MATCH 1
 #define PASSWORDS_DO_NOT_MATCH 2
+#define COMMAND_POSTFIX " >nul 2>nul"
 
 static struct globals{
     char * user;
@@ -51,26 +56,24 @@ return;
 }
 
 typedef enum Commands{
-    ls,
-    ls_users,
-    ls_documents,
-    ls_collections,
-    man,
-    login,
-    logout,
-    create,
-    create_user,
-    create_collection,
-    create_document,
-    delete_user,
-    delete_collection,
-    delete_document,
-    show_users,
-    show_documents,
-    show_collections,
-    use_document,
-    use_collection,
-    clear,
+    ls,                         //
+    ls_users,                   //
+    ls_documents,               //
+    ls_collections,             //
+    man,                        //
+    login,                      //
+    logout,                     //
+    create,                     //
+    create_user,                //
+    create_collection,          //          
+    create_document,            //
+    delete,                     //
+    delete_user,                //
+    delete_collection,          //
+    delete_document,            //                      
+    use_document,               //
+    use_collection,             //
+    clear,                      //
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
@@ -222,6 +225,7 @@ char * getPassword(char * str){
 int checkIfUserExists(char * username, char * str, char * declaration){
     char command[100] = "ls -d .root/";
     strcat(command,username);
+    strcat(command, COMMAND_POSTFIX);
     int x = system(command);
 
     system("clear");
@@ -238,11 +242,13 @@ void createUserDirectoryAndFiles(char * username,char * password){
     char command[100] = "mkdir '.root/";
     strcat(command,username);
     strcat(command,"'");
+    strcat(command,COMMAND_POSTFIX);
     system(command);
 
     strcpy(command,"touch .root/");
     strcat(command,username);
     strcat(command,"/.pass");
+    strcat(command, COMMAND_POSTFIX);
     system(command);
 
     char * encryptedPassword = Encrypt(password);
@@ -350,12 +356,26 @@ int getInput(){
         command = create;    
     else if(strcmp(input,"create user") == 0)
         command = create_user;
-    else if(strcmp(input,"create doc ") == 0 || strcmp(input,"create document") == 0)
+    else if(strcmp(input,"create doc") == 0 || strcmp(input,"create document") == 0)
         command = create_document;
     else if(strcmp(input,"create collection") == 0 || strcmp(input,"create col") == 0)
         command = create_collection;
     else if(strcmp(input,"remove user") == 0 || strcmp(input,"rm user") == 0)
         command = delete_user;
+    else if(strcmp(input,"remove col") == 0 || strcmp(input,"rm col") == 0)
+        command = delete_collection;
+    else if(strcmp(input,"remove collection") == 0 || strcmp(input,"rm collection") == 0)
+        command = delete_collection;
+    else if(strcmp(input,"remove doc") == 0 || strcmp(input,"rm document") == 0)
+        command = delete_document;
+    else if(strcmp(input,"remove document") == 0 || strcmp(input,"rm doc") == 0)
+        command = delete_document;
+    else if(strcmp(input,"use col") == 0 || strcmp(input,"use collection") == 0)
+        command = use_collection;
+    else if(strcmp(input,"use doc") == 0 || strcmp(input,"use document") == 0)
+        command = use_document;
+    else    
+        command = NOP;
 // use document
 // use collection
    free(input);
@@ -378,7 +398,75 @@ void showUsers(){
     }
     printf("\n");
     fclose(fptr);
-    system("rm users ");
+    system("rm users >nul 2>nul");
+}
+
+void showCollections(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login to view your collections.\n");
+        return;
+    }
+
+    char command[100] = "";
+    strcpy(command,"ls '.root/");
+    strcat(command,globals.user);
+    strcat(command,"/' >> collections");
+    system(command);
+
+    FILE *fptr = fopen("collections","r");
+    if(!fptr)
+        return;
+    char temp[SIZE] = "";
+    printf("Collections : \n");
+
+    while(fscanf(fptr,"%s",temp)){
+        if(feof(fptr))
+            break;
+        printf("  %s\n",temp);
+    }
+    printf("\n");
+    fclose(fptr);
+    system("rm collections >nul 2>nul");
+    return;
+}
+
+// Function not tested yet
+void showDocuments(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login to view your Documents.\n");
+        return;
+    }
+
+    if(strcmp(globals.collection,"") == 0){
+        printf("You need to select a collection to view the Documents.\n");
+        return;
+    }
+
+    char command[100];
+    strcpy(command,"ls '.root/");
+    strcat(command,globals.user);
+    strcat(command,"/");
+    strcat(command,globals.collection);
+    strcat(command,"/");
+    strcat(command,"' >> documents");
+    system(command);
+
+    FILE *fptr = fopen("documents","r");
+    if(!fptr)
+        return;
+    char temp[SIZE] = "";
+    printf("Documents : \n");
+
+    while(fscanf(fptr,"%s",temp)){
+        if(feof(fptr))
+            break;
+        printf("  %s\n",temp);
+    }
+    printf("\n");
+    fclose(fptr);
+    system("rm documents >nul 2>nul");
+    return;
+
 }
 
 int validateUser(char * username){
@@ -441,6 +529,7 @@ void removeUser(){
             strcpy(command,"rm -r '.root/");
             strcat(command, username);
             strcat(command, "'");
+            strcat(command, COMMAND_POSTFIX);
             system(command);
             printf("User `%s` deleted successfully!\n",username);
         }else{
@@ -459,12 +548,14 @@ void removeUser(){
 int checkUser(char * username){
         char command[100] = "ls -d .root/";
     strcat(command,username);
+    strcat(command, COMMAND_POSTFIX);
     int x = system(command);
     if(x == 0)
         return USER_ALREADY_EXISTS;
     else return -1;
 }
 void loginUser(){
+
     system("clear");
     printHeading("User Login");
     printDeclaration("Username can only consist of uppercase,lowercase character, 0-9 (and underscores if you wish :O) ");
@@ -475,7 +566,8 @@ void loginUser(){
     if(code == USER_ALREADY_EXISTS){
         code = validateUser(username);
         if( code == PASSWORDS_DO_NOT_MATCH){
-            printf("Incorrect password! Login failed.");
+            printf("Incorrect password! Login failed.\n");
+            getchSafe();
         }else{
             printf("Welcome `%s`, you have now successfully logged in.\n",username);
             strcpy(globals.user,username);
@@ -483,8 +575,294 @@ void loginUser(){
         }
     }else{
         printf("User does not exists. Try `ls users` command to see the list of existing users.\n");
+        getchSafe();
     }
 return;
+}
+
+void createCollection(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login first in order to create a collection.\n");
+        return;
+    }
+
+    char * str = "Enter Collection Name : ";
+    char * collectionName = (char *) malloc(sizeof(char) * 100);
+    // printDashes(getLength(str));
+    printf("%s",str);
+    fscanf(stdin,"%s",collectionName);
+    // printf("%s\n",collectionName);
+
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,collectionName);
+    strcat(location , COMMAND_POSTFIX);
+    strcat(command,location);
+    int x = system(command);
+    if(x == 0){
+        printf("The collection `%s` already exists",collectionName);
+    }else{
+        strcpy(command,"mkdir ");
+        strcat(command,location);
+        system(command);
+        printf("The collection `%s` has been created successfully.\n",collectionName);
+    }
+}
+
+void createDocument_FrontEnd(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to be logged in to create a document.\n");
+        return;
+    }
+    if(strcmp(globals.collection,"") == 0){
+        printf("You need to have selected a collection to create a document.\n");
+        return;
+    }
+
+    char * str = "Enter Document Name : ";
+    char * documentName = (char *) malloc(sizeof(char) * 100);
+    printf("%s",str);
+    fscanf(stdin,"%s",documentName);
+    // printf("%s\n",documentName);
+
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,globals.collection);
+    strcat(location,"/");
+    strcat(location,documentName);
+    strcat(location, COMMAND_POSTFIX);
+    strcat(command,location);
+
+    int x = system(command);
+
+    if(x == 0){
+        printf("Document Already exists. use command `#BOOKMARK` to update document");
+    }else{
+        strcpy(command,"touch ");
+        strcat(command,location);
+        strcat(command,COMMAND_POSTFIX);
+
+        printf("Document `%s` created successfully. You are into Data insertion mode now.\n Press enter twice to save your changes to the document.\n\n",documentName);
+        int carriageReturnCount = 0;
+        int inputFlag = 1;
+        char input[100];
+        char key[30] ="\0", value[100] ="\0", dataType[20] ="\0";
+        
+        fgets(input,2,stdin);
+        Pair pairs;
+        initPair(&pairs);
+        while(inputFlag){
+            fgets(input,100,stdin);
+            char *p = input;
+            int keyIndex = 0;
+            int valueIndex = 0;
+            int keyValueBAR =0; // if 0 key, else value
+            if(strcmp(input,"\n") == 0){
+                carriageReturnCount++;
+                // printf("carriage count ->  %d\n",carriageReturnCount);
+                if(carriageReturnCount == 2)
+                    break;
+                continue;
+            }else{
+                carriageReturnCount = 0;
+            }
+
+            FILE *fptr = fopen("testop","a+");
+            while(*p != '\0'){
+                if(*p == ':'){
+                    if(keyValueBAR == 0){
+                        key[keyIndex++] = '\0';
+                        // printf("*p+1 = %c\n",*(p+1));
+                       
+                        if(*(p+1) == '"')
+                            strcpy(dataType,"STRING");
+                        else if(*(p+1) == '\'')
+                            strcpy(dataType,"CHARACTER");
+                        else if(*(p+1) == 'T' || (*p+1) == 'F')
+                            strcpy(dataType,"BOOLEAN");
+                        else
+                            strcpy(dataType,"INTEGER");
+                    }
+                    keyValueBAR++;
+                }
+                else if(keyValueBAR == 0)
+                    key[keyIndex++] = *p;
+                else{
+                    value[valueIndex++] = *p;
+                    int isInteger = strcmp(dataType,"INTEGER");
+                    
+                    if(isInteger == 0 && *p != '\n' && *p != '.' && isdigit(*p) == 0 ){
+                        printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
+                        printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
+                        // #BOOKMARK -> FREE PAIR HERE 
+                        return;
+                    }
+                    if(isInteger == 0 && *p == '.')
+                        strcpy(dataType,"DOUBLE");
+                }
+                p++;
+            }
+            value[valueIndex-1] = '\0';
+            if(keyValueBAR == 0 && carriageReturnCount != 1){
+                printf("Incorrect INPUT format. refer to manual for input formats.\n");
+                return;
+            }
+
+            appendToPair(&pairs,key,value,dataType);
+        }
+        // #BOOKMARK -> Give PAIR to SARVESH HERE
+    }
+    return;
+}
+
+void useCollection(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to be logged in to use a collection.\n");
+        return;
+    }
+    char * collectionName = (char *) malloc(sizeof(char) * 100);
+    printf("Enter Collection Name : ");
+    fscanf(stdin,"%s",collectionName);
+
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,collectionName);
+    strcat(location, COMMAND_POSTFIX);
+    strcat(command,location);
+    int x = system(command);
+    
+    if(x == 0){
+        strcpy(globals.collection, collectionName);
+        strcpy(globals.document,"");
+        printf("Selected Collection `%s`.\n",collectionName);
+        return;
+    }else{
+        printf("Collection does not exist. use `ls collections` to view all your collections.\n");
+        return;
+    }
+}
+
+void useDocument(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to be logged in to use a collection.\n");
+        return;
+    }
+    if(strcmp(globals.collection,"") == 0){
+        printf("You need to have selected a collection to use a document.\n");
+        return;
+    }
+
+    char * documentName = (char *) malloc(sizeof(char) * 100);
+    printf("Enter document Name : ");
+    fscanf(stdin,"%s",documentName);
+    
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,globals.collection);
+    strcat(location,"/");
+    strcat(location,documentName);
+    strcat(location, COMMAND_POSTFIX);
+    strcat(command,location);
+    int x = system(command);
+    if(x == 0){
+        strcpy(globals.document,documentName);
+        printf("Selected Document `%s`.\n",documentName);
+    }else{
+        printf("Document does not exist. use `ls docs` to use a document.\n");
+    }
+    return;
+}
+
+void removeCollection(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You must be logged in to delete a collection\n");
+        return;
+    }
+
+    printf("Enter Collection Name : ");
+    char * collectionName = (char *) calloc(100,sizeof(char));
+    fscanf(stdin,"%s",collectionName);
+    
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,collectionName);
+    strcat(location,COMMAND_POSTFIX);
+    strcat(command,location);
+    int code = system(command);
+    // printf("`%s` `%s` %d\n",location,command,code);
+    if(code == 0){
+        code = validateUser(globals.user);
+        if(code == PASSWORDS_MATCH){
+            strcpy(command,"rm -r ");
+            strcat(command,location);
+            system(command);
+            printf("Collection `%s` deleted successfully!\n",collectionName);
+        }else{
+            printf("Incorrect Password! Collection cannot be deleted with incorrect credentials.");
+        }
+    }else{
+        printf("Collection does not exist. Check Collection Name again or try `ls collections` to get list of collections\n");
+    }
+    free(collectionName); 
+    return;
+}
+
+void removeDocument(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You must be logged in to delete a collection\n");
+        return;
+    }
+
+    if(strcmp(globals.collection,"") == 0){
+        printf("You must have a collection selected to delete a document\n");
+        return;
+    }
+
+    char * str = "Enter Document Name : ";
+    char * documentName = (char *) malloc(sizeof(char) * 100);
+    // printDashes(getLength(str));
+    printf("%s",str);
+    fscanf(stdin,"%s",documentName);
+
+    char command[100] = "ls -d ";
+    char location[100] = ".root/";
+    strcat(location,globals.user);
+    strcat(location,"/");
+    strcat(location,globals.collection);
+    strcat(location,"/");
+    strcat(location,documentName);
+    strcat(location,COMMAND_POSTFIX);
+    strcat(command,location);
+
+    int code = system(command);
+    // printf("`%s` `%s` %d\n",location,command,code);
+    if(code == 0){
+        code = validateUser(globals.user);
+        if(code == PASSWORDS_MATCH){
+            strcpy(command,"rm -r ");
+            strcat(command,location);
+            system(command);
+            printf("Document `%s` deleted successfully!\n",documentName);
+        }else{
+            printf("Incorrect Password! Document cannot be deleted with incorrect credentials.\n");
+        }
+    }else{
+        printf("Document does not exist. Check Document Name again or try `ls docs` to get list of documents\n");
+    }
+    free(documentName); 
+    return;
+
 }
 
 void noSQLMenu(){
@@ -497,56 +875,162 @@ void noSQLMenu(){
         command = getInput();
         // printf("command -> %d",command);
         // exit(0);
-        if(command == man){
-            displayMAN();
-            system("clear");
-            printWelcomeMessage();
-        }else if(command == ls){
-            printf("use `ls` with one of the following parameters:\n");
-            printf("   1. <SYNTAX> => `ls users`\n");
-            printf("   2. <SYNTAX> => `ls docs`\n");
-            printf("   3. <SYNTAX> => `ls cols`\n");
-            printf("use command `man` for more details\n");
-        }else if(command == ls_users){
-            showUsers();
-        }else if(command == create){
-            printf("use `create` with one of the following parameters:\n");
-            printf("   1. <SYNTAX> => `create user`\n");
-            printf("   2. <SYNTAX> => `create document`\n");
-            printf("   3. <SYNTAX> => `create collection`\n");
-            printf("use command `man` for more details\n");
-        }else if(command == create_user){
-            createUser();
-            system("clear");
-            printWelcomeMessage();
-        }else if(command == delete_user){
-            removeUser();
-            system("clear");
-            printWelcomeMessage();
-        }else if(command == login){
-            loginUser();
-            system("clear");
-            printWelcomeMessage();
-        }else if(command == clear){
-            system("clear");
-            printWelcomeMessage();
-        }else if(command == logout){
-            if(strcmp(globals.user,"") == 0)
-                printf("user has to be logged in for using `logout` command.\n");
-            else{
-                printf("user `%s` ", globals.user);
-                strcpy(globals.user,"");
-                strcpy(globals.collection,"");
-                strcpy(globals.document,"");
-                printf("has logged out successfully.\n");
-            }
-        }else if(command == NOP){
-            printf("\b \b");
-            printf("\b \b");
-            printf("\b \b");
-        }
+        switch(command){
+            case man:
+                    displayMAN();
+                    system("clear");
+                    printWelcomeMessage();
+                    break;
+            case ls:
+                    printf("use `ls` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `ls users`\n");
+                    printf("   2. <SYNTAX> => `ls docs`\n");
+                    printf("   3. <SYNTAX> => `ls cols`\n");
+                    printf("use command `man` for more details\n");
+                    break;
+            case ls_users:
+                    showUsers();
+                    break;
+            case ls_collections:
+                    showCollections();
+                    break;
+            case ls_documents:
+                    showDocuments();
+                    break;
+            case create:
+                    printf("use `create` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `create user`\n");
+                    printf("   2. <SYNTAX> => `create document`\n");
+                    printf("   3. <SYNTAX> => `create collection`\n");
+                    printf("use command `man` for more details\n");
+                    break;                    
+            case create_user:
+                    createUser();
+                    system("clear");
+                    printWelcomeMessage();
+                    break;
+            case create_collection:
+                    createCollection();
+                    break;
+            case create_document:
+                    createDocument_FrontEnd();
+                    break;
+            case delete:
+                    printf("use `create` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `rm user`\n");
+                    printf("   2. <SYNTAX> => `rm doc`\n");
+                    printf("   3. <SYNTAX> => `rm col`\n");
+                    printf("use command `man` for more details\n");
+                    break;
+            case delete_user:
+                    removeUser();
+                    system("clear");
+                    printWelcomeMessage();                     
+                    break;
+            case delete_collection:
+                    removeCollection();
+                    break;
+            case delete_document:
+                    removeDocument();
+                    break;
+            case use_collection:
+                    useCollection();
+                    break;
+            case use_document:
+                    useDocument();
+                    break;
+            case login:
+                        
+                    if(strcmp(globals.user,"") != 0){
+                        printf("You are already Logged in. use the command `logout` before logging in with another user\n");
+                        break;
+                    }
+                    loginUser();
+                    system("clear");
+                    printWelcomeMessage();
+                    break;
+            case logout:
+                    if(strcmp(globals.user,"") == 0)
+                        printf("user has to be logged in for using `logout` command.\n");
+                    else{
+                        printf("user `%s` ", globals.user);
+                        strcpy(globals.user,"");
+                        strcpy(globals.collection,"");
+                        strcpy(globals.document,"");
+                        printf("has logged out successfully.\n");
+                    }
+                    break;
+            case clear:
+                    system("clear");
+                    printWelcomeMessage();
+                    break;
+            case NOP:
+                    printf("\b \b");
+                    printf("\b \b");
+                    printf("\b \b");
+                    break;                
+            default:
+                    break;
+
+        }             
+        // if(command == man){
+        //     displayMAN();
+        //     system("clear");
+        //     printWelcomeMessage();
+        // }else if(command == ls){
+        //     printf("use `ls` with one of the following parameters:\n");
+        //     printf("   1. <SYNTAX> => `ls users`\n");
+        //     printf("   2. <SYNTAX> => `ls docs`\n");
+        //     printf("   3. <SYNTAX> => `ls cols`\n");
+        //     printf("use command `man` for more details\n");
+        // }else if(command == ls_users){
+        //     showUsers();
+        // }else if(command == create){
+        //     printf("use `create` with one of the following parameters:\n");
+        //     printf("   1. <SYNTAX> => `create user`\n");
+        //     printf("   2. <SYNTAX> => `create document`\n");
+        //     printf("   3. <SYNTAX> => `create collection`\n");
+        //     printf("use command `man` for more details\n");
+        // }else if(command == create_user){
+        //     createUser();
+        //     system("clear");
+        //     printWelcomeMessage();
+        // }else if(command == delete_user){
+        //     removeUser();
+        //     system("clear");
+        //     printWelcomeMessage();
+        // }else if(command == login){
+        //     loginUser();
+        //     system("clear");
+        //     printWelcomeMessage();
+        // }else if(command == clear){
+        //     system("clear");
+        //     printWelcomeMessage();
+        // }else if(command == logout){
+        //     if(strcmp(globals.user,"") == 0)
+        //         printf("user has to be logged in for using `logout` command.\n");
+        //     else{
+        //         printf("user `%s` ", globals.user);
+        //         strcpy(globals.user,"");
+        //         strcpy(globals.collection,"");
+        //         strcpy(globals.document,"");
+        //         printf("has logged out successfully.\n");
+        //     }
+        // }else if(command == ls_collections){
+        //     showCollections();
+        // }else if(command == ls_documents){
+        //     showDocuments();
+        // }else if(command == create_collection){
+
+        // }else if(command == NOP){
+        //     printf("\b \b");
+        //     printf("\b \b");
+        //     printf("\b \b");
+        // }
 
     }
 }
 
 // Write a function to load all documents into AVL tree
+
+// refs -> https://stackoverflow.com/questions/26606003/disable-console-output-from-external-program-c
