@@ -1170,15 +1170,14 @@ void updateDocument_frontEnd()
 
     showFieldsDocuments();
     printf("\n");
-       int carriageReturnCount = 0;
-       int inputFlag = 1;
-       char input[100];
-       char key[30] = "\0", value[100] = "\0", dataType[20] = "\0";
-    //    fgets(input, 2, stdin);
-       Pair pairs;
-       initPair(&pairs);
-       while (inputFlag)
-        {
+    int carriageReturnCount = 0;
+    int inputFlag = 1;
+    char input[100];
+    char key[30] = "\0", value[100] = "\0", dataType[20] = "\0";
+    Pair pairs;
+    initPair(&pairs);
+    while (inputFlag)
+    {
             fgets(input, 100, stdin);
             char *p = input;
             int keyIndex = 0;
@@ -1196,41 +1195,101 @@ void updateDocument_frontEnd()
             {
                 carriageReturnCount = 0;
             }
+
+            FILE *fptr = fopen("testop", "a+");
+            while (*p != '\0')
+            {
+                if (*p == ':')
+                {
+                    if (keyValueBAR == 0)
+                    {
+                        key[keyIndex++] = '\0';
+                        // printf("*p+1 = %c\n",*(p+1));
+
+                        if (*(p + 1) == '"')
+                            strcpy(dataType, "STRING");
+                        else if (*(p + 1) == '\'')
+                            strcpy(dataType, "CHARACTER");
+                        else if (*(p + 1) == 'T' || (*p + 1) == 'F')
+                            strcpy(dataType, "BOOLEAN");
+                        else
+                            strcpy(dataType, "INTEGER");
+                    }
+                    keyValueBAR++;
+                }
+                else if (keyValueBAR == 0)
+                    key[keyIndex++] = *p;
+                else
+                {
+                    value[valueIndex++] = *p;
+                    int isInteger = strcmp(dataType, "INTEGER");
+
+                    if (isInteger == 0 && *p != '\n' && *p != '.' && isdigit(*p) == 0)
+                    {
+                        printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
+                        printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
+                        // #BOOKMARK -> FREE PAIR HERE
+                        return;
+                    }
+                    if (isInteger == 0 && *p == '.')
+                        strcpy(dataType, "DOUBLE");
+                }
+                p++;
+            }
+            value[valueIndex - 1] = '\0';
+            if (keyValueBAR == 0 && carriageReturnCount != 1)
+            {
+                printf("Incorrect INPUT format. refer to manual for input formats.\n");
+                return;
+            }
+
+            if (strcmp(dataType, "STRING") == 0 || strcmp(dataType, "CHARACTER") == 0)
+            {
+                int i = 0;
+                for (; i < getLength(value) - 2; i++)
+                {
+                    value[i] = value[i + 1];
+                }
+                value[i - 1] = '\0';
+            }
+
+            appendToPair(&pairs, key, value, dataType);
         }
+    helpUpdatingTheDocument(pairs);
 }
 
 void test1(){
 
 
-    DocumentHashMap tnode;
-    initDocumentHashMap(&tnode);
-    globals.collection = "a";
-    globals.user = "a";
-    globals.document = "a";
+    // DocumentHashMap tnode;
+    // initDocumentHashMap(&tnode);
+    // globals.collection = "a";
+    // globals.user = "a";
+    // globals.document = "a";
 
-    Pair new;
-    initPair(&new);
-    appendToPair(&new,"name","COEP","STRING");
-    appendToPair(&new,"yesorno","T","BOOLEAN");
-    appendToPair(&new,"yeda","1","INTEGER");
+    // Pair new;
+    // initPair(&new);
+    // appendToPair(&new,"name","COEP","STRING");
+    // appendToPair(&new,"yesorno","T","BOOLEAN");
+    // appendToPair(&new,"yeda","1","INTEGER");
 
 
-     Pair upadtePair;
-    initPair(&upadtePair);
-    appendToPair(&upadtePair,"name","YES","STRING");
-    appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
-    appendToPair(&upadtePair,"yeda","YES","STRING");
+    //  Pair upadtePair;
+    // initPair(&upadtePair);
+    // appendToPair(&upadtePair,"name","YES","STRING");
+    // appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
+    // appendToPair(&upadtePair,"yeda","YES","STRING");
 
-    helpInsertingIntoDocumentFile(&new);
-    // showFieldsDocuments();   
-    helpUpdatingTheDocument(upadtePair);
+    // helpInsertingIntoDocumentFile(&new);
+    // // showFieldsDocuments();   
+    // helpUpdatingTheDocument(upadtePair);
     
-    // helpUpdatingField("name","Sarvesh", "STRING");
-    // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
-    showFieldsDocuments();
-    exit(0);
+    // // helpUpdatingField("name","Sarvesh", "STRING");
+    // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+    // showFieldsDocuments();
+    // exit(0);
     strcpy(globals.user,"sohel");
-    strcpy(globals.collection,"abc");
+    strcpy(globals.collection,"1");
     strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();

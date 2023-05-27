@@ -566,7 +566,9 @@ int helpUpdatingField(char* key,char* value,char* datatype){
 
     Pair result = updateValue(key,value,datatype);
     if(!result){
-        return 0;
+        insertIntoDocumentHashMap(key,value,datatype);
+        // helpInsertingIntoDocumentFile
+        // return 0;
     }
     document* docs = (document*)malloc(sizeof(document));
     docs->documentId = globals.document;
@@ -586,7 +588,7 @@ int helpUpdatingTheDocument(Pair newPair){
     int result = 0;
     while(mainPair ){
         int status = helpUpdatingField(mainPair->key, mainPair-> value,mainPair -> datatype);
-
+        // if(!)
         if(status)
         {
             result = 1; 
