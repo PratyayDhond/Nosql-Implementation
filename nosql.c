@@ -49,6 +49,7 @@ typedef enum Commands
     clear,              //
     quit,               //
     open_document,      //
+    show_current_user,
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
@@ -402,6 +403,8 @@ int getInput()
         command = clear;
     else if (strcmp(input, "ls") == 0)
         command = ls;
+    else if(strcmp(input,"whoami") == 0)
+        command = show_current_user;
     else if (strcmp(input, "ls users") == 0 || strcmp(input, "ls user") == 0)
         command = ls_users;
     else if (strcmp(input, "ls docs") == 0 || strcmp(input, "ls documents") == 0)
@@ -885,7 +888,7 @@ void createDocument_FrontEnd()
         }
         char command[100];
         helpInsertingIntoDocumentFile(&pairs);
-        // #BOOKMARK -> Give PAIR to SARVESH HERE
+        freePairs(&pairs);
     }
     strcpy(globals.document, "");
     free(documentName);
@@ -1283,7 +1286,8 @@ void deleteData_frontEnd(){
     printf("\nEnter `key` of the data to be deleted.\n >> ");
     char key[100];
     fscanf(stdin,"%s",key);
-    helpRemoveFieldFromDocument(globals.collection,globals.document,key);
+    int status = helpRemoveFieldFromDocument(globals.collection,globals.document,key);
+    
 return;
 }
 
@@ -1317,6 +1321,9 @@ void test1(){
     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
     // showFieldsDocuments();
     // exit(0);
+    strcpy(globals.user,"test");
+    strcpy(globals.collection,"one");
+    strcpy(globals.document,"");
     strcpy(globals.user,"sohel");
     strcpy(globals.collection,"col1");
     strcpy(globals.document,"doc1");
@@ -1326,6 +1333,15 @@ void test1(){
     // updateDocument_frontEnd();
     // test1();
 }
+
+void displayCurrentUser(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to be logged in to view current user.\n");
+    }
+    printf("%s\n",globals.user);
+return;
+}
+
 
 void noSQLMenu()
 {
@@ -1421,6 +1437,9 @@ void noSQLMenu()
             break;
         case open_document:
             openDocument_FrontEnd(); // not complete
+            break;
+        case show_current_user:
+            displayCurrentUser();
             break;
         case login:
             if (strcmp(globals.user, "") != 0)
