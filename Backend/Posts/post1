@@ -1,5 +1,1 @@
-(STRING) name: "Sohel"
-(INTEGER) age: 20
-(BOOLEAN) student: T
-(DOUBLE) weight: 56.99
-(CHARACTER) gender: 'M'
+(STRING) name: "Sohel"(INTEGER) age: 20(BOOLEAN) student: T(DOUBLE) weight: 56.99(CHARACTER) gender: 'M'

@@ -773,24 +773,24 @@ char* jsonfiyCollection(char *collectionName)
     return collectionJSONString;
 }
 
-int exportDocument(char* documentId)
+int exportDocument(char* collectionName, char* documentId)
 {
-    if(strlen(documentId) == 0) return 0;
+    // if(strlen(documentId) == 0) return 0;
 
-    char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
+    // char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
 
-    if(strlen(exportJSONString) == 0) return 0;
+    // if(strlen(exportJSONString) == 0) return 0;
 
-    char filename[MAX_LINE_LENGTH];
-    strcat(filename, documentId);
-    strcat(filename, "_exported.json");
+    // char filename[MAX_LINE_LENGTH];
+    // strcat(filename, documentId);
+    // strcat(filename, "_exported.json");
 
-    fileptr = fopen(filename, "w+");
+    // fileptr = fopen(filename, "w+");
 
-    if(!fileptr) return 0;
-    fprintf(fileptr,"%s", exportJSONString);
+    // if(!fileptr) return 0;
+    // fprintf(fileptr,"%s", exportJSONString);
 
-    fclose(fileptr);
+    // fclose(fileptr);
 
     return 1;
 
@@ -824,31 +824,31 @@ int exportCollection(char *collectionName)
 
 int exportUser(char *username)
 {
-    if(strlen(username) == 0) return 0;
+    // if(strlen(username) == 0) return 0;
 
-    char listCommand[200] = "ls ./";
-    strcat(listCommand, username);
-    fp = popen(listCommand, "r");
+    // char listCommand[200] = "ls ./";
+    // strcat(listCommand, username);
+    // fp = popen(listCommand, "r");
 
-    if(!fp) return 0;
+    // if(!fp) return 0;
 
-    char line[MAX_LINE_LENGTH];
-    while(fgets(line, MAX_LINE_LENGTH, fp)){
+    // char line[MAX_LINE_LENGTH];
+    // while(fgets(line, MAX_LINE_LENGTH, fp)){
     
-        if(!collection)
-        {
-            char filename[200];
-            strcat(filename, "exports_");
-            strcat(filename, username);
-            strcat(filename, "/");
+    //     if(!collection)
+    //     {
+    //         char filename[200];
+    //         strcat(filename, "exports_");
+    //         strcat(filename, username);
+    //         strcat(filename, "/");
 
-            exportCollection(filename);
-            freeCollection(collection);
-            return 0;
-        }
-    }
+    //         exportCollection(filename);
+    //         freeCollection(collection);
+    //         return 0;
+    //     }
+    // }
 
-    fclose(fp);
+    // fclose(fp);
 
     return 1;
 }
