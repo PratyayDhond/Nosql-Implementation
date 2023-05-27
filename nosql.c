@@ -38,7 +38,11 @@ typedef enum Commands{
     delete,                     //
     delete_user,                //
     delete_collection,          //
-    delete_document,            //                      
+    delete_document,            //
+    export,
+    export_user,
+    export_collection,          
+    export_document,            
     use_document,               //
     use_collection,             //
     clear,                      //
@@ -334,6 +338,12 @@ int getInput(){
     int command = NOP;
     fgets(input,100,stdin);
     toLower(input);
+    for(int i = getLength(input)-1; i>=0;i--){
+        if(isalpha(input[i])){
+            input[i+1] = '\0'; 
+            break;
+        }
+    }
     // printf("input -> `%s`",input);
     if(strcmp(input,"man") == 0)
         command = man;
@@ -381,6 +391,14 @@ int getInput(){
         command = use_collection;
     else if(strcmp(input,"use doc") == 0 || strcmp(input,"use document") == 0)
         command = use_document;
+    else if(strcmp(input,"export") == 0)
+        command = export;    
+    else if(strcmp(input,"export user") == 0)
+        command = export_user;
+    else if(strcmp(input,"export doc") == 0 || strcmp(input,"export document") == 0)
+        command = export_document;
+    else if(strcmp(input,"export collection") == 0 || strcmp(input,"export col") == 0)
+        command = export_collection;
     else if(strcmp(input,"exit") == 0 || strcmp(input,"quit") == 0)
         command = quit;
     else    
@@ -726,6 +744,7 @@ void createDocument_FrontEnd(){
 
             appendToPair(&pairs,key,value,dataType);
         }
+        
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
@@ -876,6 +895,29 @@ void removeDocument(){
 
 }
 
+void exportUser(){
+    if(strcmp(globals.user,"") == 0){
+        printf("You need to login in order to export User data.");
+        return;
+    }
+
+    char command[100] = "mkdir ";
+    char location[80] = "'exports_";
+    strcat(location,globals.user);
+    strcat(location,"'");
+    strcat(command,location);
+    strcat(command,COMMAND_POSTFIX);
+    system(command);
+
+
+
+    strcpy(command,"rmdir");
+    strcat(command,location);
+    strcat(command,COMMAND_POSTFIX);
+    system(command);
+return;
+}
+
 void noSQLMenu(){
     initGlobals();
     ioctl(0,TIOCGWINSZ,&sz);
@@ -928,7 +970,7 @@ void noSQLMenu(){
                     createDocument_FrontEnd();
                     break;
             case delete:
-                    printf("use `create` with one of the following parameters:\n");
+                    printf("use `remove` with one of the following parameters:\n");
                     printf("   1. <SYNTAX> => `rm user`\n");
                     printf("   2. <SYNTAX> => `rm doc`\n");
                     printf("   3. <SYNTAX> => `rm col`\n");
@@ -951,6 +993,22 @@ void noSQLMenu(){
             case use_document:
                     useDocument();
                     break;
+            case export:
+                    printf("use `export` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `export user`\n");
+                    printf("   2. <SYNTAX> => `export doc`\n");
+                    printf("   3. <SYNTAX> => `export col`\n");
+                    printf("use command `man` for more details\n");
+                    break;
+            case export_document:
+
+                    break;
+            case export_collection:
+
+                    break;
+            case export_user:
+                    exportUser();
+                    break;
             case login:
                     if(strcmp(globals.user,"") != 0){
                         printf("You are already Logged in. use the command `logout` before logging in with another user\n");
@@ -972,6 +1030,7 @@ void noSQLMenu(){
                     destroyGlobals();
                     break;
             case NOP:
+                    printf("Incorrect Command Syntax. Check your inputted command for typos or refer to `man`.\n");
                     printf("\b \b");
                     printf("\b \b");
                     printf("\b \b");
