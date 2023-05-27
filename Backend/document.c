@@ -657,9 +657,9 @@ char* convertSinglePairIntoJSONString(node* singlePair)
     }
     else if(strcmp(pairDatatype, "CHARACTER") == 0)
     {
-        strcat(pairJSONString,"\'");
+        strcat(pairJSONString,"\"");
         strcat(pairJSONString, pairValue);
-        strcat(pairJSONString, "\'");
+        strcat(pairJSONString, "\"");
     }
     else if(strcmp(pairDatatype, "INTEGER") == 0)
     {
@@ -736,12 +736,13 @@ char* jsonfiyCollection(char *collectionName)
 {
     if(strlen(collectionName) == 0) return NULL;
 
+    // printf("%s\n", collectionName);
     Collection collection = getAllDocumentFromCollection(collectionName);
     if(!collection) return NULL;
 
     collectionNode* temp = collection;
 
-    char* collectionJSONString= (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
+    char* collectionJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
     strcat(collectionJSONString, "[\n");
 
     while(temp)
@@ -789,59 +790,60 @@ int exportDocument(char* collectionName, char* documentId)
     return 1;
 } 
 
-int exportCollection(char *collectionName)
+int exportCollection(char* username, char *collectionName)
 {
-    char* exportJSONString = jsonfiyCollection(collectionName);
+    FILE* fileptr;
+
+    char filename[MAX_LINE_LENGTH] = "";
+    strcat(filename, username);
+    strcat(filename, "/");
+    strcat(filename, collectionName);
+
+    char* exportJSONString = jsonfiyCollection(filename);
+    printf("%s\n", exportJSONString);
 
     if(!exportJSONString)
         return 0;
 
-
-    FILE* fileptr;
-
-    char filename[MAX_LINE_LENGTH];
+    strcpy(filename, "");
+    strcat(filename, "exports_");
+    strcat(filename, username);
+    strcat(filename, "/");
     strcat(filename, collectionName);
     strcat(filename, "_exported.json");
 
     printf("%s\n", filename);
-
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
+
     fprintf(fileptr,"%s", exportJSONString);
 
     fclose(fileptr);
-
     return 1;
 }
 
 int exportUser(char *username)
 {
-    // if(strlen(username) == 0) return 0;
+    if(strlen(username) == 0) return 0;
 
-    // char listCommand[200] = "ls ./";
-    // strcat(listCommand, username);
-    // fp = popen(listCommand, "r");
+    FILE* fp;
+    char listCommand[200] = "ls ./";
+    strcat(listCommand, username);
+    fp = popen(listCommand, "r");
 
-    // if(!fp) return 0;
+    if(!fp) return 0;
 
-    // char line[MAX_LINE_LENGTH];
-    // while(fgets(line, MAX_LINE_LENGTH, fp)){
-    
-    //     if(!collection)
-    //     {
-    //         char filename[200];
-    //         strcat(filename, "exports_");
-    //         strcat(filename, username);
-    //         strcat(filename, "/");
+    char *line = (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
+    char filename[MAX_LINE_LENGTH];
 
-    //         exportCollection(filename);
-    //         freeCollection(collection);
-    //         return 0;
-    //     }
-    // }
+    while(fgets(line, MAX_LINE_LENGTH, fp)){
+        line = trim_spaces(line);
+        exportCollection(username, filename);
+        break;
+    }
 
-    // fclose(fp);
-
+    free(line);
+    fclose(fp);
     return 1;
 }

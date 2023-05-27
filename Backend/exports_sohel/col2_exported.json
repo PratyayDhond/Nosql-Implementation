@@ -1,0 +1,18 @@
+[
+    {
+        "_docId":"doc3",
+        "name":"Pratyay",
+        "age":20,
+        "student":true,
+        "weight":56.99,
+        "gender":"M"
+    },
+    {
+        "_docId":"doc4",
+        "name":"Sarvesh",
+        "age":20,
+        "student":true,
+        "weight":56.99,
+        "gender":"M"
+    }
+]

@@ -1,0 +1,5 @@
+(STRING) name: Pratyay
+(INTEGER) age: 20
+(BOOLEAN) student: T
+(DOUBLE) weight: 56.99
+(CHARACTER) gender: M
