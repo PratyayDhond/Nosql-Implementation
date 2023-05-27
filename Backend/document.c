@@ -800,6 +800,8 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     fprintf(fileptr,"%s", exportJSONString);
 
     fclose(fileptr);
+    convertExportedDirectoryIntoTarFile(username);
+
 
     return 1;
 } 
@@ -833,7 +835,7 @@ int exportCollection(char* username, char *collectionName)
     if(!fileptr) return 0;
 
     fprintf(fileptr,"%s", exportJSONString);
-
+    convertExportedDirectoryIntoTarFile(username);
     fclose(fileptr);
     return 1;
 }
