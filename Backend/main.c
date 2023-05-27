@@ -42,6 +42,7 @@ int main()
 
     // Code for deleting a single field from a document
     int status = deleteFieldFromDocument("Posts", "post1", "name");
+    // if(status) printf("document field deleted\n");
 
 
     // Code for converting document structure into json object string
