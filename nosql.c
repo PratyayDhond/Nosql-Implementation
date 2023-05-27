@@ -9,8 +9,8 @@
 #include <string.h>   // for strcmp 
 #include <ctype.h> // for toLower
 #include <unistd.h> // for getPassword command
-// #include "Backend/document.h"
-#include "DocumentHashmap/DocumentHashMap.h"
+#include "Backend/document.h"
+#include "globals/globals.h"
 
 #define SIZE 32
 
@@ -20,6 +20,7 @@
 #define COMMAND_POSTFIX " >nul 2>nul"
 #define VALID_USER_NAME 1
 #define INVALID_USER_NAME 0
+
 
 
 typedef enum Commands{
@@ -41,11 +42,12 @@ typedef enum Commands{
     use_document,               //
     use_collection,             //
     clear,                      //
+    quit,
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
 struct winsize sz;
-
+Globals globals;    // declaring global structure for cross library fields
 
 void println(){
     printf("===================================================================================================================");
@@ -69,6 +71,19 @@ void printHeading(char *str){
         printf(" ");
     printDashes(length);
 return;
+}
+
+void logOut(){
+    if(strcmp(globals.user,"") == 0)
+        printf("user has to be logged in for using `logout` command.\n");
+    else{
+        printf("user `%s` ", globals.user);
+        strcpy(globals.user,"");
+        strcpy(globals.collection,"");
+        strcpy(globals.document,"");
+        printf("has logged out successfully.\n");
+    }
+    return;
 }
 
 void printDeclaration(char * str){
@@ -332,6 +347,14 @@ int getInput(){
         command = ls_documents;
     else if(strcmp(input,"ls collections") == 0 || strcmp(input,"ls cols") == 0)
         command = ls_collections;
+    else if(strcmp(input,"show") == 0)
+        command = ls;    
+    else if(strcmp(input,"show users") == 0 || strcmp(input,"show user") == 0)
+        command = ls_users;
+    else if(strcmp(input,"show docs") == 0 || strcmp(input,"show documents") == 0)
+        command = ls_documents;
+    else if(strcmp(input,"show collections") == 0 || strcmp(input,"show cols") == 0)
+        command = ls_collections;
     else if(strcmp(input,"login") == 0)
         command = login;
     else if(strcmp(input,"logout") == 0)
@@ -358,6 +381,8 @@ int getInput(){
         command = use_collection;
     else if(strcmp(input,"use doc") == 0 || strcmp(input,"use document") == 0)
         command = use_document;
+    else if(strcmp(input,"exit") == 0 || strcmp(input,"quit") == 0)
+        command = quit;
     else    
         command = NOP;
 // use document
@@ -497,7 +522,7 @@ int validateUser(char * username){
 void removeUser(){
     system("clear");
     printHeading("Remove User");
-    printDeclaration("User removal is a dangerous process! All the collections and the documents of the user would be deleted along with the user metadate. Please make sure that you are at the right place before proceeding.");
+    printDeclaration("User removal is a dangerous process! All the collections and the documents of the user would be deleted along with the user metadata. Please make sure that you are at the right place before proceeding.");
     printf("Enter username : ");
     char * username = (char *) calloc(100,sizeof(char));
     fscanf(stdin,"%s",username);
@@ -515,6 +540,8 @@ void removeUser(){
             strcat(command, "'");
             strcat(command, COMMAND_POSTFIX);
             system(command);
+            if(strcmp(globals.user,username) == 0)
+                logOut();
             printf("User `%s` deleted successfully!\n",username);
         }else{
             printf("Incorrect Password! User cannot be deleted with incorrect credentials.");
@@ -586,7 +613,7 @@ void createCollection(){
     strcat(command,location);
     int x = system(command);
     if(x == 0){
-        printf("The collection `%s` already exists",collectionName);
+        printf("The collection `%s` already exists\n",collectionName);
     }else{
         strcpy(command,"mkdir ");
         strcat(command,location);
@@ -699,7 +726,6 @@ void createDocument_FrontEnd(){
 
             appendToPair(&pairs,key,value,dataType);
         }
-        helpInsertingIntoDocumentFile(&pairs);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
@@ -855,7 +881,8 @@ void noSQLMenu(){
     ioctl(0,TIOCGWINSZ,&sz);
     printWelcomeMessage();
     int command;
-    while(1){
+    int programRunning = 1;
+    while(programRunning){
         printf(">> ");
         command = getInput();
         // printf("command -> %d",command);
@@ -867,10 +894,10 @@ void noSQLMenu(){
                     printWelcomeMessage();
                     break;
             case ls:
-                    printf("use `ls` with one of the following parameters:\n");
-                    printf("   1. <SYNTAX> => `ls users`\n");
-                    printf("   2. <SYNTAX> => `ls docs`\n");
-                    printf("   3. <SYNTAX> => `ls cols`\n");
+                    printf("use `show` with one of the following parameters:\n");
+                    printf("   1. <SYNTAX> => `show users`\n");
+                    printf("   2. <SYNTAX> => `show docs`\n");
+                    printf("   3. <SYNTAX> => `show cols`\n");
                     printf("use command `man` for more details\n");
                     break;
             case ls_users:
@@ -925,7 +952,6 @@ void noSQLMenu(){
                     useDocument();
                     break;
             case login:
-                        
                     if(strcmp(globals.user,"") != 0){
                         printf("You are already Logged in. use the command `logout` before logging in with another user\n");
                         break;
@@ -935,19 +961,15 @@ void noSQLMenu(){
                     printWelcomeMessage();
                     break;
             case logout:
-                    if(strcmp(globals.user,"") == 0)
-                        printf("user has to be logged in for using `logout` command.\n");
-                    else{
-                        printf("user `%s` ", globals.user);
-                        strcpy(globals.user,"");
-                        strcpy(globals.collection,"");
-                        strcpy(globals.document,"");
-                        printf("has logged out successfully.\n");
-                    }
+                    logOut();
                     break;
             case clear:
                     system("clear");
                     printWelcomeMessage();
+                    break;
+            case quit:
+                    programRunning = 0;
+                    destroyGlobals();
                     break;
             case NOP:
                     printf("\b \b");
@@ -956,66 +978,10 @@ void noSQLMenu(){
                     break;                
             default:
                     break;
+
         }             
-        ioctl(0,TIOCGWINSZ,&sz);
-        // if(command == man){
-        //     displayMAN();
-        //     system("clear");
-        //     printWelcomeMessage();
-        // }else if(command == ls){
-        //     printf("use `ls` with one of the following parameters:\n");
-        //     printf("   1. <SYNTAX> => `ls users`\n");
-        //     printf("   2. <SYNTAX> => `ls docs`\n");
-        //     printf("   3. <SYNTAX> => `ls cols`\n");
-        //     printf("use command `man` for more details\n");
-        // }else if(command == ls_users){
-        //     showUsers();
-        // }else if(command == create){
-        //     printf("use `create` with one of the following parameters:\n");
-        //     printf("   1. <SYNTAX> => `create user`\n");
-        //     printf("   2. <SYNTAX> => `create document`\n");
-        //     printf("   3. <SYNTAX> => `create collection`\n");
-        //     printf("use command `man` for more details\n");
-        // }else if(command == create_user){
-        //     createUser();
-        //     system("clear");
-        //     printWelcomeMessage();
-        // }else if(command == delete_user){
-        //     removeUser();
-        //     system("clear");
-        //     printWelcomeMessage();
-        // }else if(command == login){
-        //     loginUser();
-        //     system("clear");
-        //     printWelcomeMessage();
-        // }else if(command == clear){
-        //     system("clear");
-        //     printWelcomeMessage();
-        // }else if(command == logout){
-        //     if(strcmp(globals.user,"") == 0)
-        //         printf("user has to be logged in for using `logout` command.\n");
-        //     else{
-        //         printf("user `%s` ", globals.user);
-        //         strcpy(globals.user,"");
-        //         strcpy(globals.collection,"");
-        //         strcpy(globals.document,"");
-        //         printf("has logged out successfully.\n");
-        //     }
-        // }else if(command == ls_collections){
-        //     showCollections();
-        // }else if(command == ls_documents){
-        //     showDocuments();
-        // }else if(command == create_collection){
-
-        // }else if(command == NOP){
-        //     printf("\b \b");
-        //     printf("\b \b");
-        //     printf("\b \b");
-        // }
-
     }
 }
 
-// Write a function to load all documents into AVL tree
 
 // refs -> https://stackoverflow.com/questions/26606003/disable-console-output-from-external-program-c
