@@ -1156,6 +1156,43 @@ void noSQLMenu()
     initGlobals();
     ioctl(0,TIOCGWINSZ,&sz);
 
+    DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
+    Pair new;
+    globals.collection = "Posts";
+    globals.user = "Sarvesh";
+    globals.document = "testing";
+
+    initPair(&new);
+    appendToPair(&new,"name","COEP","STRING");
+    appendToPair(&new,"yesorno","T","BOOLEAN");
+    appendToPair(&new,"yeda","1","INTEGER");
+
+    helpInsertingIntoDocumentFile(&new);
+    helpRemoveFieldFromDocument(globals.collection,globals.document,"yesorno");
+    helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+
+    // showFieldsDocuments();
+    exit(0);
+    // DocumentHashMap tnode;
+    // initDocumentHashMap(&tnode);
+    // Pair new;
+    // globals.collection = "Backend/Posts";
+    // globals.user = "Sarvesh";
+    // globals.document = "testing";
+// 
+    // initPair(&new);
+    // appendToPair(&new,"mango","COEP","string");
+    // appendToPair(&new,"nano","COEP","string");
+    // appendToPair(&new,"yeda","COEP","string");
+    // appendToPair(&new,"zebra","coepian","string");
+    // appendToPair(&new,"sarvesh","coepian","string");
+// 
+    // helpInsertingIntoDocumentFile(&new);
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    // destroyTree();
+    // exit(0);
+    ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;
     int programRunning = 1;
