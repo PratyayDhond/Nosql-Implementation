@@ -63,4 +63,6 @@ char *trim_spaces(char *str);
 char* convertSinglePairIntoJSONString(node* singlePair);
 char* convertSingleDocumentIntoJSONString(document *doc);
 char* jsonfiyCollection(char* collectionName);
+
+int exportDocument(char* documentId);
 int exportCollection(char *collectionName);

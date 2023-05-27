@@ -770,6 +770,29 @@ char* jsonfiyCollection(char *collectionName)
     return collectionJSONString;
 }
 
+int exportDocument(char* documentId)
+{
+    if(strlen(documentId) == 0) return 0;
+
+    char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
+
+    if(strlen(exportJSONString) == 0) return 0;
+
+    char filename[MAX_LINE_LENGTH];
+    strcat(filename, documentId);
+    strcat(filename, "_exported.json");
+
+    fileptr = fopen(filename, "w+");
+
+    if(!fileptr) return 0;
+    fprintf(fileptr,"%s", exportJSONString);
+
+    fclose(fileptr);
+
+    return 1;
+
+} 
+
 int exportCollection(char *collectionName)
 {
     char* exportJSONString = jsonfiyCollection(collectionName);
@@ -792,6 +815,34 @@ int exportCollection(char *collectionName)
     fprintf(fileptr,"%s", exportJSONString);
 
     fclose(fileptr);
+
+    return 1;
+}
+
+int exportUser(char *username)
+{
+    if(strlen(username) == 0) return 0;
+
+    char listCommand[200] = "ls ./";
+    strcat(listCommand, collectionName);
+    fp = popen(listCommand, "r");
+
+    if(!fp) return 0;
+
+    char line[MAX_LINE_LENGTH];
+    while(fgets(line, MAX_LINE_LENGTH, fp)){
+    
+        document *doc = getDocument(collectionName, line);
+        if(!doc)
+        {
+
+            free(collection);
+            return 0;
+        }
+        addDocumentToCollection(&collection, doc);
+    }
+
+    fclose(fp);
 
     return 1;
 }
