@@ -695,7 +695,6 @@ char* convertSinglePairIntoJSONString(node* singlePair)
 
 char* convertSingleDocumentIntoJSONString(document *doc)
 {
-
     if(!doc) return NULL;
 
     char* documentJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
@@ -742,7 +741,6 @@ char* jsonfiyCollection(char *collectionName)
 
     if(!collection) return NULL;
 
-
     collectionNode* temp = collection;
 
     char* collectionJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
@@ -780,9 +778,10 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     if(!doc) return 0;
 
     char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
-    printf("%s\n", exportJSONString);
 
-    if(strlen(exportJSONString) == 0) return 0;
+    if(!exportJSONString) return 0;
+    
+    printf("%s\n", exportJSONString);
     
     FILE *fileptr;
 
@@ -794,8 +793,6 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     strcat(filename, "_");
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
-
-    printf("%s\n", filename);
 
     fileptr = fopen(filename, "w+");
 
@@ -822,6 +819,8 @@ int exportCollection(char* username, char *collectionName)
     if(!exportJSONString)
         return 0;
 
+    printf("%s\n", exportJSONString);
+
     strcpy(filename, "");
     strcat(filename, "exports_");
     strcat(filename, username);
@@ -829,7 +828,6 @@ int exportCollection(char* username, char *collectionName)
     strcat(filename, collectionName);
     strcat(filename, "_exported.json");
 
-    // printf("%s\n", filename);
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
@@ -855,11 +853,46 @@ int exportUser(char *username)
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
-        printf("%s\n", line);
         exportCollection(username, line);
     }
-
+    convertExportedDirectoryIntoTarFile(username);
     free(line);
     fclose(fp);
+    return 1;
+}
+
+int convertExportedDirectoryIntoTarFile(char* username)
+{
+    char command[200] = "test -d ";
+
+    strcat(command, "exports_");
+    strcat(command, username);
+    int status = system(command);
+    printf("%d\n", status);
+    // if collection directory not exists then simply return
+    if(status)
+        return 0;
+
+    char tarcommand[200] = "tar -czvf exports_";
+
+    strcat(tarcommand, username);
+    strcat(tarcommand, ".tar exports_");
+    strcat(tarcommand, username);
+
+    int y = system(tarcommand);
+    // if collection directory not exists then simply return
+    if(y)
+        return 0;
+
+    char delcommand[200] = "rm -r ";
+
+    strcat(delcommand, "exports_");
+    strcat(delcommand, username);
+    int x = system(delcommand);
+    // if collection directory not exists then simply return
+    if(x)
+        return 0;
+
+
     return 1;
 }

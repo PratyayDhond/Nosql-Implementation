@@ -1079,12 +1079,10 @@ void exportUser_FrontEnd()
     system(command);
 
     int code = exportUser(globals.user);
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
 
-    strcpy(command, "rmdir");
-    strcat(command, location);
-    strcat(command, COMMAND_POSTFIX);
-    system(command);
-    return;
+return;
 }
 
 void exportCollection_FrontEnd()
@@ -1112,13 +1110,8 @@ void exportCollection_FrontEnd()
     system(command);
 
     int code = exportUser(globals.user);
-
-    strcpy(command, "rmdir");
-    strcat(command, location);
-    strcat(command, COMMAND_POSTFIX);
-    system(command);
-    return;
-
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
     return;
 }
 
@@ -1146,7 +1139,9 @@ void exportDocument_FrontEnd()
     }
     sprintf(command, "mkdir exports_%s", globals.user);
 
-    exportDocument(globals.user, globals.collection, globals.document);
+    int code = exportDocument(globals.user, globals.collection, globals.document);
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
     // sprintf(command, "rmdir exports_%s",globals.user);
     // exportUser(globals.user);
     return;

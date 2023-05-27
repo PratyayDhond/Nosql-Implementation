@@ -68,3 +68,5 @@ char* jsonfiyCollection(char* collectionpath);
 int exportDocument(char* username, char* collectionName, char* documentId);
 int exportCollection(char* username, char *collectionName);
 int exportUser(char *username);
+int convertExportedDirectoryIntoTarFile(char* username);
+
