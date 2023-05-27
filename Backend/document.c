@@ -769,7 +769,7 @@ char* jsonfiyCollection(char *collectionName)
 int exportDocument(char* username, char* collectionName, char* documentId)
 {
     char filepath[MAX_LINE_LENGTH];
-    strcat(filepath, "/root/");
+    strcat(filepath, ".root/");
     strcat(filepath, username);
     strcat(filepath, "/");
     strcat(filepath, collectionName);
@@ -807,7 +807,7 @@ int exportCollection(char* username, char *collectionName)
     FILE* fileptr;
 
     char filename[MAX_LINE_LENGTH] = "";
-    strcat(filename, "/root/");
+    strcat(filename, ".root/");
     strcat(filename, username);
     strcat(filename, "/");
     strcat(filename, collectionName);
@@ -841,7 +841,7 @@ int exportUser(char *username)
     if(strlen(username) == 0) return 0;
 
     FILE* fp;
-    char listCommand[200] = "ls /root/";
+    char listCommand[200] = "ls .root/";
     strcat(listCommand, username);
     fp = popen(listCommand, "r");
 
