@@ -1,8 +1,0 @@
-    {
-        "_docId":"post1",
-        "name":"Sohel",
-        "age":20,
-        "student":true,
-        "weight":56.99,
-        "gender":'M'
-    }

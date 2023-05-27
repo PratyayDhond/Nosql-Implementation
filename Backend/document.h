@@ -66,5 +66,5 @@ char* jsonfiyCollection(char* collectionName);
 
 // Exporting functions
 int exportDocument(char* collectionName, char* documentId);
-int exportCollection(char *collectionName);
+int exportCollection(char* username, char *collectionName);
 int exportUser(char *username);
