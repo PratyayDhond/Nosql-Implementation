@@ -1,2 +1,5 @@
-(string) name: Sohel Bargir
-(int) age: 15
+(STRING) name: Sohel Bargir
+(STRING) college: COEP
+(INT) age: 18
+(DOUBLE) CGPA: 7.52
+(BOOL) isStudying: T

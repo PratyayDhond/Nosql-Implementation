@@ -59,5 +59,7 @@ int validateDataFormatProtocol(char* line);
 void displayDocument(document doc);
 void displayCollection(Collection collection);
 
+char *trim_spaces(char *str);
+char* convertSinglePairIntoJSONString(node* singlePair);
 char* convertSingleDocumentIntoJSONString(document *doc);
-char* jsonify(Collection collection);
+char* jsonfiyCollection(char* collectionName);
