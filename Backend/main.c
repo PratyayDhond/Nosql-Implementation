@@ -58,8 +58,9 @@ int main()
     // printf("%s\n", convertSingleDocumentIntoJSONString(d1));
     // printf("%s\n", convertSingleDocumentIntoJSONString(d2));
 
-    printf("%s\n", jsonfiyCollection("Posts"));
+    // printf("%s\n", jsonfiyCollection("Posts"));
 
+    exportCollection("Posts");
 
     return 0;
 }

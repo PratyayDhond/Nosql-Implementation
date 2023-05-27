@@ -2,4 +2,4 @@
 (STRING) college: COEP
 (INT) age: 18
 (DOUBLE) CGPA: 7.52
-(BOOL) isStudying: T
+(BOOL) isStudying: F

@@ -359,7 +359,7 @@ document* initilizeAndCreateDocument(char* documentId, Pair pairs)
     doc->documentId = (char*) malloc(sizeof(document));
     
     if(!doc->documentId) return NULL;
-    
+    documentId = trim_spaces(documentId);
     strcpy(doc->documentId, documentId);
     doc->pairs = pairs;
     return doc;
@@ -655,11 +655,6 @@ char* convertSinglePairIntoJSONString(node* singlePair)
     strcat(pairJSONString, pairKey);
     strcat(pairJSONString, "\":");
 
-    // string
-    // char
-    // int 
-    // double
-    // bool - T F
     if(strcmp(pairDatatype, "STRING") == 0)
     {
         strcat(pairJSONString,"\"");
@@ -715,6 +710,14 @@ char* convertSingleDocumentIntoJSONString(document *doc)
 
     node* temp = pairs;
 
+    if(temp)
+    {
+        strcat(documentJSONString, "        \"_docId\":");
+        strcat(documentJSONString, "\"");
+        strcat(documentJSONString, doc->documentId);
+        strcat(documentJSONString, "\",\n");
+    }
+
     while(temp)
     {
         char* pairJSONString = convertSinglePairIntoJSONString(temp);
@@ -743,15 +746,6 @@ char* jsonfiyCollection(char *collectionName)
     if(!collection) return NULL;
 
     collectionNode* temp = collection;
-
-    FILE *fileptr;
-
-    char filename[MAX_LINE_LENGTH];
-    strcat(filename, "users");
-    strcat(filename, ".json");
-    fileptr = fopen(filename, "w+");
-
-    if(!fileptr) return NULL; 
 
     char* collectionJSONString= (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
     strcat(collectionJSONString, "[\n");
@@ -783,16 +777,21 @@ int exportCollection(char *collectionName)
     if(!exportJSONString)
         return 0;
 
+
     FILE* fileptr;
 
-    strcat(collectionName, "_exported.json")
+    char filename[MAX_LINE_LENGTH];
+    strcat(filename, collectionName);
+    strcat(filename, "_exported.json");
 
-    fileptr = fopen(collectionName, "w+");
+    printf("%s\n", filename);
+
+    fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
+    fprintf(fileptr,"%s", exportJSONString);
 
-    // fprintf(fp,"", temp->datatype, temp->key, temp->value);
+    fclose(fileptr);
 
-
-
+    return 1;
 }
