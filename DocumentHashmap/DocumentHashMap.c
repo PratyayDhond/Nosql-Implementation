@@ -231,8 +231,9 @@ void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
     createPairToInsertIntoDocument(pair,temp -> right);
 }
 int helpInsertingIntoDocumentFile(Pair* pair){
-    char* collectionName = globals.collection;
-    char* documentName = globals.document;
+    char collectionPath[100]  = "";
+     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+     printf("Collections : %s\n",collectionPath);
     node* temp = *pair;
     
     while(temp){
@@ -249,8 +250,8 @@ int helpInsertingIntoDocumentFile(Pair* pair){
     Pair newPair ; 
     initPair(&newPair);
     createPairToInsertIntoDocument(&newPair,tnode);
-    document* docs = initilizeAndCreateDocument(documentName, newPair);
-    int status = createDocument(collectionName, docs );
+    document* docs = initilizeAndCreateDocument(globals.document, newPair);
+    int status = createDocument(collectionPath, docs);
     if( status == 0){
         destroyTree(&tnode);
         return 0;
@@ -258,17 +259,55 @@ int helpInsertingIntoDocumentFile(Pair* pair){
 
     return 1;
 }
+ void getBrackets(int brackets){
+        if(brackets == 1){
+            printf("\"");
+        }
+        else if(brackets == 2){
+            printf("\'");
+        }
+    }
+void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
+    int brackets = 0;
+    if(strcmp(tdocumentHashmap -> datatype , "STRING") == 0){
+        brackets = 1;
+    }
+    else if(tdocumentHashmap -> datatype == "CHARACTER")
+    {
+        brackets = 2;
+    }
+    getBrackets(brackets);
+      if(strcmp(tdocumentHashmap -> value,"T") == 0){
+        printf("TRUE");
+    }
+    else if(strcmp(tdocumentHashmap -> value,"F") == 0){
+        printf("TRUE");
+    }
+    else
+        printf("%s",tdocumentHashmap -> value );
+    getBrackets(brackets);
 
-void inOrder(DocumentHashMap tdocumentHashmap)
+   
+}
+void showDocs(DocumentHashMap tdocumentHashmap)
 {
     if (!tdocumentHashmap)
         return;
 
-    inOrder(tdocumentHashmap->left);
-    // printf("documentHashmap: %s , Pa rent : %s ,BF : %d , Left : %s , Right : %s\n", tdocumentHashmap->data.key,
-        //    tdocumentHashmap->parent ? tdocumentHashmap->parent->data.key : "", tdocumentHashmap->bf, tdocumentHashmap->left ? tdocumentHashmap->left->data.key : "", tdocumentHashmap->right ? tdocumentHashmap->right->key : "");
-    inOrder(tdocumentHashmap->right);
+    showDocs(tdocumentHashmap->left);
+    printf("%s : ",tdocumentHashmap -> key );
+    displayValueWithBrackets(tdocumentHashmap);
+    printf("\n");
+    showDocs(tdocumentHashmap->right);
 }
+void showFieldsDocuments(DocumentHashMap tdocumentHashmap)
+{
+    printf("\n");
+    showDocs(tnode);
+    printf("\n");
+
+}
+
 
 void preOrder(DocumentHashMap tdocumentHashmap)
 {

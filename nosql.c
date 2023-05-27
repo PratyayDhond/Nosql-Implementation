@@ -1,6 +1,3 @@
-//    strcat(location , " >nul 2>nul"); the > 2> are redirections to avoid unnecessary details being printed on the terminal
-//
-
 #include "nosql.h"
 #include "Encryption/cipher.h"
 #include <stdio.h>
@@ -9,10 +6,8 @@
 #include <string.h> // for strcmp
 #include <ctype.h>  // for toLower
 #include <unistd.h> // for getPassword command
-// // #include "Backend/document.h"
 #include "DocumentHashmap/DocumentHashMap.h"
 #include "globals/globals.h"
-#include "DocumentHashmap/DocumentHashMap.h"
 
 #define SIZE 32
 
@@ -1088,20 +1083,18 @@ void noSQLMenu()
     DocumentHashMap tnode;
     initDocumentHashMap(&tnode);
     Pair new;
-    globals.collection = "Backend/Posts";
+    globals.collection = "Posts";
     globals.user = "Sarvesh";
     globals.document = "testing";
 
     initPair(&new);
-    appendToPair(&new,"mango","COEP","string");
-    appendToPair(&new,"nano","COEP","string");
-    appendToPair(&new,"yeda","COEP","string");
-    appendToPair(&new,"zebra","coepian","string");
-    appendToPair(&new,"sarvesh","coepian","string");
+    appendToPair(&new,"name","COEP","STRING");
+    appendToPair(&new,"yesorno","T","BOOLEAN");
+    appendToPair(&new,"yeda","1","INTEGER");
 
     helpInsertingIntoDocumentFile(&new);
+    showFieldsDocuments();
     helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
-    // destroyTree();
     exit(0);
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
