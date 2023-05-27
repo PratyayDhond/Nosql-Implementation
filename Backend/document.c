@@ -232,12 +232,17 @@ Pair getAllPairsOfDocument(FILE *file)
     int counter = 0;
 
     // To fetch data from file line by line 
-    char line[MAX_LINE_LENGTH]; 
+    char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH); 
 
     // For extracting key, values and datatype fields from line
-    char key[MAX_LINE_LENGTH], value[MAX_LINE_LENGTH], datatype[20];
+    char key[MAX_LINE_LENGTH], datatype[20];
+    char *value = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
 
     while(fgets(line, MAX_LINE_LENGTH, file)){
+
+        line = dataDecrypt(line);
+        line = trim_spaces(line);
+        printf("%s\n", line);
 
         if(validateDataFormatProtocol(line) == REG_NOMATCH) 
         {
@@ -279,11 +284,21 @@ Pair getAllPairsOfDocument(FILE *file)
             value[counter++] = line[lineTraverse++];
         }
         value[counter] = '\0';
-
+        value = trim_spaces(value);
+        int len = strlen(value);
+        if (value[len - 2] == '\n') {
+            value[len - 2] = '\0';
+        }
+       
+        // value = trim_spaces(value);
+        printf("`%s` `%s` `%s`\n", key, value, datatype);
         appendToPair(&pairs, key, value, datatype);
 
         counter = 0, lineTraverse = 0;
     }
+
+    free(line);
+    free(value);
 
     fclose(file);
 
@@ -412,11 +427,16 @@ int createDocument(char* collection, document* doc)
 
     node* temp = doc->pairs;
 
+    char *line;
 
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        sprintf(line, "(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        line = dataEncrypt(line);
+        // fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"%s\n", line);
         temp = temp -> next;
+
     }
 
     printf("Document created successfully\n");

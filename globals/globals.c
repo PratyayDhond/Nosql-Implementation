@@ -62,7 +62,7 @@ char* dataDecrypt(char * encrypted){
     int i = 0;
     int index = 0;
     char *p = encrypted;
-    char * data = calloc(getLength(data),sizeof(char));
+    char * data = calloc(getLength(encrypted),sizeof(char));
     while(*p != '\0'){
         i+=3;
         data[index++] = (*p) + i;

@@ -299,8 +299,7 @@ void showDocs(DocumentHashMap tdocumentHashmap)
         return;
 
     showDocs(tdocumentHashmap->left);
-    printf("%s : ",tdocumentHashmap -> key );
-    displayValueWithBrackets(tdocumentHashmap);
+    printf("%s : %s",tdocumentHashmap -> key ,tdocumentHashmap -> value);
     printf("\n");
     showDocs(tdocumentHashmap->right);
 }
@@ -343,8 +342,10 @@ void removedocumentHashmapHelper(DocumentHashMap* parent)
 int getDocumentInHashMap(DocumentHashMap *tnode){
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     document* fetchData =  getDocument(collectionPath,globals.document);
+
     Pair newPair = fetchData -> pairs;
         while(newPair){
+            // printf("\nDEBUG : %s",newPair -> value);
             int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
             if(status == INT_MIN){
                 destroyTree(tnode);
