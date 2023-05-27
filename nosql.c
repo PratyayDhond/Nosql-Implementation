@@ -1026,6 +1026,7 @@ void removeDocument()
 
     char command[100] = "ls -d ";
     char location[100] = ".root/";
+    
     strcat(location, globals.user);
     strcat(location, "/");
     strcat(location, globals.collection);
