@@ -62,7 +62,7 @@ int main()
     // printf("%s\n", jsonfiyCollection("Posts"));
 
     // exportDocument("Posts","post1");
-    exportCollection("sohel","col2");
+    // exportCollection("sohel","");
     // exportUser("sohel");
 
     return 0;

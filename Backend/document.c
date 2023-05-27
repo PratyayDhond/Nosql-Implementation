@@ -774,7 +774,7 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     strcat(filepath, "/");
     strcat(filepath, collectionName);
 
-    document* doc = getDocument(collectionName, documentId);
+    document* doc = getDocument(filepath, documentId);
     if(doc) return 0;
 
     char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
