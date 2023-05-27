@@ -235,14 +235,14 @@ Pair getAllPairsOfDocument(FILE *file)
     char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH); 
 
     // For extracting key, values and datatype fields from line
-    char key[MAX_LINE_LENGTH], datatype[20];
     char *value = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
+    char key[MAX_LINE_LENGTH], datatype[20];
 
     while(fgets(line, MAX_LINE_LENGTH, file)){
 
         line = dataDecrypt(line);
         line = trim_spaces(line);
-        printf("%s\n", line);
+        // printf("%s\n", line);
 
         if(validateDataFormatProtocol(line) == REG_NOMATCH) 
         {
@@ -291,14 +291,14 @@ Pair getAllPairsOfDocument(FILE *file)
         }
        
         // value = trim_spaces(value);
-        printf("`%s` `%s` `%s`\n", key, value, datatype);
+        // printf("`%s` `%s` `%s`\n", key, value, datatype);
         appendToPair(&pairs, key, value, datatype);
 
         counter = 0, lineTraverse = 0;
     }
 
-    free(line);
     free(value);
+    free(line);
 
     fclose(file);
 
@@ -427,15 +427,15 @@ int createDocument(char* collection, document* doc)
 
     node* temp = doc->pairs;
 
-    char *line;
+    char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
 
     while(temp)
     {
         sprintf(line, "(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
-        line = dataEncrypt(line);
-        // fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
-        fprintf(fp,"%s\n", line);
+        char* data = dataEncrypt(line);
+        fprintf(fp,"%s\n", data);
         temp = temp -> next;
+        free(data);
 
     }
 
@@ -495,9 +495,13 @@ int updateDocument(char* collection, document* doc)
 
     node* temp = doc->pairs;
 
+    char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
+
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        sprintf(line, "(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
+        char* data = dataEncrypt(line);
+        fprintf(fp,"%s\n", data);
         temp = temp -> next;
     }
 
@@ -903,7 +907,6 @@ int convertExportedDirectoryIntoTarFile(char* username)
     strcat(tarcommand, username);
     strcat(tarcommand, ".tar exports_");
     strcat(tarcommand, username);
-    printf("\n `%s`\n", tarcommand);
 
     int y = system(tarcommand); 
     // if collection directory not exists then simply return

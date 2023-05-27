@@ -1318,8 +1318,8 @@ void test1(){
     // showFieldsDocuments();
     // exit(0);
     strcpy(globals.user,"sohel");
-    strcpy(globals.collection,"1");
-    strcpy(globals.document,"sample");
+    strcpy(globals.collection,"col1");
+    strcpy(globals.document,"doc1");
 
     // exportDocument_FrontEnd();
     // exportUser_FrontEnd();
