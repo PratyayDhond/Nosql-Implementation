@@ -74,5 +74,62 @@ Available Commands:
 - man:
            Used to Invoke the Manual Page instruction
 
-           
+- create user: 
+           Used to create a Unique User by username provided by the user.
+           The user must be looged in before accessing the database.
+           There cant be multiple users with the same username
+           <SYNTAX> => `create user USER_NAME`
 
+- create collection: 
+           Used to create a Unique collection by collectionname provided by the user.
+           The user must be looged in before accessing the database
+           There cant be multiple collections with the same username
+           <SYNTAX> => `create collection COLLECTION_NAME`
+
+- create document: 
+           Used to create a Unique document by documentname provided by the user.
+           The user must be looged in before accessing the database.
+           There cant be multiple users with the same document
+           <SYNTAX> => `create document DOCUMENT_NAME` 
+
+- Delete user: 
+           Used to delete a user by authenticating the user.
+           <SYNTAX> => `rm user USER_NAME` 
+
+- Delete col: 
+           Used to delete a collection by authenticating the user.
+           <SYNTAX> => `rm col COLLECTION_NAME` 
+
+- Delete document: 
+           Used to delete a document by authenticating the user.
+           <SYNTAX> => `rm docs DOCUMENT_NAME` 
+
+- Delete data: 
+           Used to delete a data in document.
+           <SYNTAX> => `rm field KEY` 
+
+- Export user: 
+           Used to export the data in JSON format
+           <SYNTAX> => `export user` 
+
+- Export collection: 
+           Used to export the speific collection in JSON format.You must have called 'use collection' command for exporting the collection.
+           <SYNTAX> => `export col COLLECTION_NAME`
+
+- Export document: 
+           Used to export the speific document in JSON format.You must have called 'use document' command for exporting the document.
+           <SYNTAX> => `export document`
+
+- Update document:
+           Used to update the data in the document.You must have called the 'use document' command for updating the document.
+            <SYNTAX> => `update doc UPDATE_NAME`
+
+- Clear:
+           Used to clear the screen.
+
+- Quit: 
+           Used to get out from the database.
+
+- Open Document:
+           Used to view the contents of the document.There must be a document already created for using this command
+           <SYNTAX> => `open doc DOCUMENT_NAME`
