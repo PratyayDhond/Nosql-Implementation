@@ -332,6 +332,8 @@ Collection getAllDocumentFromCollection(char* collectionName)
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         document *doc = getDocument(collectionName, line);
+        displayDocument(* doc);
+        printf("\n\n");
         if(!doc)
         {
             freeCollection(&collection);
@@ -734,10 +736,10 @@ char* convertSingleDocumentIntoJSONString(document *doc)
         strcat(documentJSONString, doc->documentId);
         strcat(documentJSONString, "\",\n");
     }
-
     while(temp)
     {
         char* pairJSONString = convertSinglePairIntoJSONString(temp);
+        printf("%s",pairJSONString);
         if(!pairJSONString) return NULL;
         if(!temp->next)
         {
@@ -836,7 +838,8 @@ int exportCollectionHelper(char* username, char *collectionName)
     strcat(filename, collectionName);
 
     char* exportJSONString = jsonfiyCollection(filename);
-    
+    perror("NIGGA3");
+    printf("%s",exportJSONString);
     if(!exportJSONString)
         return 0;
 
@@ -853,21 +856,21 @@ int exportCollectionHelper(char* username, char *collectionName)
 
     fprintf(fileptr,"%s", exportJSONString);
     fclose(fileptr);
-
+    free(exportJSONString);
     printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
     return 1;
 }
 
 int exportCollection(char* username, char *collectionName)
 {
+    perror("NIGGA");
     int x = exportCollectionHelper(username, collectionName);
+    perror("NIGGA2");
     convertExportedDirectoryIntoTarFile(username);
 }
 
 int exportUser(char *username)
 {
-    perror("HELLO");
-        
     if(strlen(username) == 0) return 0;
 
     FILE* fp;
@@ -876,7 +879,6 @@ int exportUser(char *username)
     fp = popen(listCommand, "r");
 
     if(!fp) return 0;
-    perror("HOOO2");
     char *line = (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
@@ -885,7 +887,7 @@ int exportUser(char *username)
         exportCollectionHelper(username, line);
     }
     fclose(fp);
-    convertExportedDirectoryIntoTarFile(username);
+    // convertExportedDirectoryIntoTarFile(username);
     printf("Data of user `%s` exported successfully to `exports_%s.tar`.\n", username, username);
     free(line);
     return 1;

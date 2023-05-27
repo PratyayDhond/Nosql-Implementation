@@ -1077,9 +1077,9 @@ void exportUser_FrontEnd()
     }
 
     char command[100] = "mkdir ";
-    char location[80] = "'exports_";
+    char location[80] = "exports_";
     strcat(location, globals.user);
-    strcat(location, "'");
+    strcat(location, "");
     strcat(command, location);
     strcat(command, COMMAND_POSTFIX);
     system(command);
@@ -1322,11 +1322,11 @@ void test1(){
     // showFieldsDocuments();
     // exit(0);
     strcpy(globals.user,"test");
-    strcpy(globals.collection,"one");
+    strcpy(globals.collection,"1");
     strcpy(globals.document,"");
-    strcpy(globals.user,"sohel");
-    strcpy(globals.collection,"col1");
-    strcpy(globals.document,"doc1");
+    // strcpy(globals.user,"sohel");
+    // strcpy(globals.collection,"col1");
+    // strcpy(globals.document,"doc1");
 
     // exportDocument_FrontEnd();
     // exportUser_FrontEnd();
