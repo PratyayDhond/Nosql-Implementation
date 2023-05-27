@@ -1094,8 +1094,26 @@ void noSQLMenu()
 
     helpInsertingIntoDocumentFile(&new);
     showFieldsDocuments();
-    helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
     exit(0);
+    // DocumentHashMap tnode;
+    // initDocumentHashMap(&tnode);
+    // Pair new;
+    // globals.collection = "Backend/Posts";
+    // globals.user = "Sarvesh";
+    // globals.document = "testing";
+// 
+    // initPair(&new);
+    // appendToPair(&new,"mango","COEP","string");
+    // appendToPair(&new,"nano","COEP","string");
+    // appendToPair(&new,"yeda","COEP","string");
+    // appendToPair(&new,"zebra","coepian","string");
+    // appendToPair(&new,"sarvesh","coepian","string");
+// 
+    // helpInsertingIntoDocumentFile(&new);
+    // helpRemoveFieldFromDocument(globals.collection,globals.document,"mango");     
+    // destroyTree();
+    // exit(0);
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;
