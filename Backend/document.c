@@ -780,9 +780,10 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     if(!doc) return 0;
 
     char* exportJSONString = convertSingleDocumentIntoJSONString(doc);
-    printf("%s\n", exportJSONString);
 
-    if(strlen(exportJSONString) == 0) return 0;
+    if(!exportJSONString) return 0;
+    
+    printf("%s\n", exportJSONString);
     
     FILE *fileptr;
 
@@ -794,8 +795,6 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     strcat(filename, "_");
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
-
-    printf("%s\n", filename);
 
     fileptr = fopen(filename, "w+");
 
@@ -822,6 +821,8 @@ int exportCollection(char* username, char *collectionName)
     if(!exportJSONString)
         return 0;
 
+    printf("%s\n", exportJSONString);
+
     strcpy(filename, "");
     strcat(filename, "exports_");
     strcat(filename, username);
@@ -829,7 +830,6 @@ int exportCollection(char* username, char *collectionName)
     strcat(filename, collectionName);
     strcat(filename, "_exported.json");
 
-    // printf("%s\n", filename);
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
@@ -855,7 +855,6 @@ int exportUser(char *username)
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
-        printf("%s\n", line);
         exportCollection(username, line);
     }
 
