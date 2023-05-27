@@ -5,6 +5,7 @@
 #include"document.h"
 #include<limits.h>
 #include "../globals/globals.h"
+
 #define MAX_LINE_LENGTH 256
 
 // Initilizing the pairs linkedlist
@@ -765,7 +766,7 @@ char* jsonfiyCollection(char *collectionName)
     return collectionJSONString;
 }
 
-int exportDocument(char* collectionName, char* documentId)
+int exportDocument(char* username, char* collectionName, char* documentId)
 {
     document* doc = getDocument(collectionName, documentId);
 
@@ -777,8 +778,12 @@ int exportDocument(char* collectionName, char* documentId)
     FILE *fileptr;
 
     char filename[MAX_LINE_LENGTH];
+    strcat(filename, "exports_");
+    strcat(filename, username);
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
+
+    printf("%s\n", filename);
 
     fileptr = fopen(filename, "w+");
 
@@ -839,7 +844,7 @@ int exportUser(char *username)
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
-        exportCollection(username, filename);
+        exportCollection(username, line);
         break;
     }
 
