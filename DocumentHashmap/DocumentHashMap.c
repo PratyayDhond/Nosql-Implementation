@@ -266,7 +266,7 @@ int helpInsertingIntoDocumentFile(Pair* pair){
  void getBrackets(int brackets){
         if(brackets == 1){
             printf("\"");
-        }
+        } 
         else if(brackets == 2){
             printf("\'");
         }
@@ -276,7 +276,7 @@ void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
     if(strcmp(tdocumentHashmap -> datatype , "STRING") == 0){
         brackets = 1;
     }
-    else if(strcmp(tdocumentHashmap -> datatype , "CHARACTER") == 0)
+    else if(strcmp(tdocumentHashmap -> datatype , "CHARACTER ") == 0)
     {
         brackets = 2;
     }
