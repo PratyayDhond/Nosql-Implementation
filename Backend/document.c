@@ -715,6 +715,7 @@ char* convertSinglePairIntoJSONString(node* singlePair)
         printf("Error generating JSON string\n");
         return NULL;
     }
+
     return pairJSONString;
 }
 
@@ -739,7 +740,6 @@ char* convertSingleDocumentIntoJSONString(document *doc)
     while(temp)
     {
         char* pairJSONString = convertSinglePairIntoJSONString(temp);
-        printf("%s",pairJSONString);
         if(!pairJSONString) return NULL;
         if(!temp->next)
         {
@@ -760,8 +760,9 @@ char* convertSingleDocumentIntoJSONString(document *doc)
 char* jsonfiyCollection(char *collectionName)
 {
     if(strlen(collectionName) == 0) return NULL;
-
+    perror("NIGGA 1.11");
     Collection collection = getAllDocumentFromCollection(collectionName);
+    perror("NIGGA 1.29");
 
     if(!collection) return NULL;
 
@@ -770,10 +771,13 @@ char* jsonfiyCollection(char *collectionName)
     char* collectionJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
     strcat(collectionJSONString, "[\n");
 
+    char* documentJSONString = NULL;
+    document* doc = NULL;
     while(temp)
     {
-        document* doc = temp->document;
-        char* documentJSONString = convertSingleDocumentIntoJSONString(doc);
+        doc = temp->document;
+        documentJSONString = convertSingleDocumentIntoJSONString(doc);
+        perror("NIGGA 1.39");
         if(!documentJSONString) return NULL;
         if(!temp->next){       
             strcat(documentJSONString, "\n");
@@ -781,9 +785,12 @@ char* jsonfiyCollection(char *collectionName)
             strcat(documentJSONString, ",\n");
         }
         strcat(collectionJSONString, documentJSONString);
-        free(documentJSONString);
+        perror("NIGGA 1.69");    
+        // free(documentJSONString);
+        perror("NIGGA 1.79");    
         temp = temp -> next;
     }
+    perror("NIGGA 1.9");
 
     strcat(collectionJSONString, "]");
 
@@ -836,9 +843,10 @@ int exportCollectionHelper(char* username, char *collectionName)
     strcat(filename, username);
     strcat(filename, "/");
     strcat(filename, collectionName);
-
-    char* exportJSONString = jsonfiyCollection(filename);
-    perror("NIGGA3");
+    
+    perror("NIGGA 1.01");
+        char* exportJSONString = jsonfiyCollection(filename);
+    perror("NIGGA 1.99");
     printf("%s",exportJSONString);
     if(!exportJSONString)
         return 0;
@@ -863,7 +871,6 @@ int exportCollectionHelper(char* username, char *collectionName)
 
 int exportCollection(char* username, char *collectionName)
 {
-    perror("NIGGA");
     int x = exportCollectionHelper(username, collectionName);
     perror("NIGGA2");
     convertExportedDirectoryIntoTarFile(username);
