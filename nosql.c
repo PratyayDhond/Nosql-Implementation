@@ -888,7 +888,7 @@ void createDocument_FrontEnd()
         }
         char command[100];
         helpInsertingIntoDocumentFile(&pairs);
-        // #BOOKMARK -> Give PAIR to SARVESH HERE
+        freePairs(&pairs);
     }
     strcpy(globals.document, "");
     free(documentName);
@@ -1321,6 +1321,9 @@ void test1(){
     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
     // showFieldsDocuments();
     // exit(0);
+    strcpy(globals.user,"test");
+    strcpy(globals.collection,"one");
+    strcpy(globals.document,"");
     strcpy(globals.user,"sohel");
     strcpy(globals.collection,"1");
     strcpy(globals.document,"sample");
@@ -1336,7 +1339,7 @@ void displayCurrentUser(){
         printf("You need to be logged in to view current user.\n");
     }
     printf("%s\n",globals.user);
-    return;
+return;
 }
 
 
@@ -1344,7 +1347,7 @@ void noSQLMenu()
 {
     initGlobals();
     ioctl(0, TIOCGWINSZ, &sz);
-    // test1();
+    test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;
