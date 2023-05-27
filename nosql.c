@@ -1302,7 +1302,7 @@ void noSQLMenu()
 {
     initGlobals();
     ioctl(0, TIOCGWINSZ, &sz);
-    test1();
+    // test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;

@@ -276,7 +276,7 @@ void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
     if(strcmp(tdocumentHashmap -> datatype , "STRING") == 0){
         brackets = 1;
     }
-    else if(tdocumentHashmap -> datatype == "CHARACTER")
+    else if(strcmp(tdocumentHashmap -> datatype , "CHARACTER") == 0)
     {
         brackets = 2;
     }
