@@ -20,9 +20,11 @@ int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* ke
 void destroyTree();
 void showFieldsDocuments();
 int removedocumentHashmap(char* );
+
 Pair findAndFetchDocument(char* );
 Pair updateValue(char*,char*,char*);
 void destroyTree();
 
 //Traversals
 void preOrder();
+

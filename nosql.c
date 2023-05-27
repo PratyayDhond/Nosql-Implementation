@@ -1288,10 +1288,9 @@ return;
 }
 
 void test1(){
-
-
-    // DocumentHashMap tnode;
-    // initDocumentHashMap(&tnode);
+    // insertIntoDocumentHashMap("sarvesh","aserv","datra");
+    // preOrder(tnode);
+    // exit(0);
     // globals.collection = "a";
     // globals.user = "a";
     // globals.document = "a";
@@ -1310,10 +1309,11 @@ void test1(){
     // appendToPair(&upadtePair,"yeda","YES","STRING");
 
     // helpInsertingIntoDocumentFile(&new);
-    // // showFieldsDocuments();   
+    // showFieldsDocuments();   
+    // exit(0);
     // helpUpdatingTheDocument(upadtePair);
     
-    // // helpUpdatingField("name","Sarvesh", "STRING");
+    // helpUpdatingField("name","Sarvesh", "STRING");
     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
     // showFieldsDocuments();
     // exit(0);

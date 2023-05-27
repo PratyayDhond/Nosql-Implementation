@@ -18,13 +18,13 @@ void disp(Pair docs){
     return;
 }
 int main(){
-    Pair new;
-    initPair(&new);
-    appendToPair(&new,"sarvesh","Sarvesh","string");
-    appendToPair(&new,"pratyay","COEP","string");
-    appendToPair(&new,"sohel","COEP","string");
-    appendToPair(&new,"aditya","COEP","string");
-    appendToPair(&new,"raul","COEP","string");
+    // Pair new;
+    // initPair(&new);
+    // appendToPair(&new,"sarvesh","Sarvesh","string");
+    // appendToPair(&new,"pratyay","COEP","string");
+    // appendToPair(&new,"sohel","COEP","string");
+    // appendToPair(&new,"aditya","COEP","string");
+    // appendToPair(&new,"raul","COEP","string");
 
     // helpInsertingIntoDocumentFile(&new);
 
