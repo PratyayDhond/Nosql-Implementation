@@ -11,6 +11,8 @@ DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
 
 
+int getDocumentInHashMap(DocumentHashMap *tnode);
+
 int max(int a, int b)
 {
    return a > b ? a : b;
@@ -279,11 +281,13 @@ void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
         brackets = 2;
     }
     getBrackets(brackets);
-      if(strcmp(tdocumentHashmap -> value,"T") == 0){
-        printf("TRUE");
-    }
-    else if(strcmp(tdocumentHashmap -> value,"F") == 0){
-        printf("TRUE");
+    if(tdocumentHashmap -> datatype == "BOOLEAN"){
+        if(strcmp(tdocumentHashmap -> value,"T") == 0){
+            printf("TRUE");
+        }
+        else if(strcmp(tdocumentHashmap -> value,"F") == 0){
+            printf("FALSE");
+        }
     }
     else
         printf("%s",tdocumentHashmap -> value );

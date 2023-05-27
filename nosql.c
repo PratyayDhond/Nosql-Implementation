@@ -45,7 +45,7 @@ typedef enum Commands
     use_document,   //
     use_collection, //
     update_document,
-    clear,          //
+    clear, //
     quit,
     open_document,
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
@@ -397,63 +397,63 @@ int getInput()
     // printf("input -> `%s`\n",input);
     if (strcmp(input, "man") == 0)
         command = man;
-    else if(strcmp(input, "clear") == 0)
+    else if (strcmp(input, "clear") == 0)
         command = clear;
-    else if(strcmp(input, "ls") == 0)
+    else if (strcmp(input, "ls") == 0)
         command = ls;
-    else if(strcmp(input, "ls users") == 0 || strcmp(input, "ls user") == 0)
+    else if (strcmp(input, "ls users") == 0 || strcmp(input, "ls user") == 0)
         command = ls_users;
-    else if(strcmp(input, "ls docs") == 0 || strcmp(input, "ls documents") == 0)
+    else if (strcmp(input, "ls docs") == 0 || strcmp(input, "ls documents") == 0)
         command = ls_documents;
-    else if(strcmp(input, "ls collections") == 0 || strcmp(input, "ls cols") == 0)
+    else if (strcmp(input, "ls collections") == 0 || strcmp(input, "ls cols") == 0)
         command = ls_collections;
-    else if(strcmp(input, "show") == 0)
+    else if (strcmp(input, "show") == 0)
         command = ls;
-    else if(strcmp(input, "show users") == 0 || strcmp(input, "show user") == 0)
+    else if (strcmp(input, "show users") == 0 || strcmp(input, "show user") == 0)
         command = ls_users;
-    else if(strcmp(input, "show docs") == 0 || strcmp(input, "show documents") == 0)
+    else if (strcmp(input, "show docs") == 0 || strcmp(input, "show documents") == 0)
         command = ls_documents;
-    else if(strcmp(input, "show collections") == 0 || strcmp(input, "show cols") == 0)
+    else if (strcmp(input, "show collections") == 0 || strcmp(input, "show cols") == 0)
         command = ls_collections;
-    else if(strcmp(input, "login") == 0)
+    else if (strcmp(input, "login") == 0)
         command = login;
-    else if(strcmp(input, "logout") == 0)
+    else if (strcmp(input, "logout") == 0)
         command = logout;
-    else if(strcmp(input, "create") == 0)
+    else if (strcmp(input, "create") == 0)
         command = create;
-    else if(strcmp(input, "create user") == 0)
+    else if (strcmp(input, "create user") == 0)
         command = create_user;
-    else if(strcmp(input, "create doc") == 0 || strcmp(input, "create document") == 0)
+    else if (strcmp(input, "create doc") == 0 || strcmp(input, "create document") == 0)
         command = create_document;
-    else if(strcmp(input, "create collection") == 0 || strcmp(input, "create col") == 0)
+    else if (strcmp(input, "create collection") == 0 || strcmp(input, "create col") == 0)
         command = create_collection;
-    else if(strcmp(input, "remove user") == 0 || strcmp(input, "rm user") == 0)
+    else if (strcmp(input, "remove user") == 0 || strcmp(input, "rm user") == 0)
         command = delete_user;
-    else if(strcmp(input, "remove col") == 0 || strcmp(input, "rm col") == 0)
+    else if (strcmp(input, "remove col") == 0 || strcmp(input, "rm col") == 0)
         command = delete_collection;
-    else if(strcmp(input, "remove collection") == 0 || strcmp(input, "rm collection") == 0)
+    else if (strcmp(input, "remove collection") == 0 || strcmp(input, "rm collection") == 0)
         command = delete_collection;
-    else if(strcmp(input, "remove doc") == 0 || strcmp(input, "rm document") == 0)
+    else if (strcmp(input, "remove doc") == 0 || strcmp(input, "rm document") == 0)
         command = delete_document;
-    else if(strcmp(input, "remove document") == 0 || strcmp(input, "rm doc") == 0)
+    else if (strcmp(input, "remove document") == 0 || strcmp(input, "rm doc") == 0)
         command = delete_document;
-    else if(strcmp(input, "use col") == 0 || strcmp(input, "use collection") == 0)
+    else if (strcmp(input, "use col") == 0 || strcmp(input, "use collection") == 0)
         command = use_collection;
-    else if(strcmp(input, "use doc") == 0 || strcmp(input, "use document") == 0)
+    else if (strcmp(input, "use doc") == 0 || strcmp(input, "use document") == 0)
         command = use_document;
-    else if(strcmp(input, "export") == 0)
+    else if (strcmp(input, "export") == 0)
         command = export;
-    else if(strcmp(input, "export user") == 0)
+    else if (strcmp(input, "export user") == 0)
         command = export_user;
-    else if(strcmp(input, "export doc") == 0 || strcmp(input, "export document") == 0)
+    else if (strcmp(input, "export doc") == 0 || strcmp(input, "export document") == 0)
         command = export_document;
-    else if(strcmp(input, "export collection") == 0 || strcmp(input, "export col") == 0)
+    else if (strcmp(input, "export collection") == 0 || strcmp(input, "export col") == 0)
         command = export_collection;
-    else if(strcmp(input, "exit") == 0 || strcmp(input, "quit") == 0)
+    else if (strcmp(input, "exit") == 0 || strcmp(input, "quit") == 0)
         command = quit;
-    else if(strcmp(input, "open") == 0)
+    else if (strcmp(input, "open doc") == 0 || strcmp(input, "open document") == 0)
         command = open_document;
-    else if(strcmp(input, "update doc") == 0 || strcmp(input,"update document") == 0)
+    else if (strcmp(input, "update doc") == 0 || strcmp(input, "update document") == 0)
         command = update_document;
     else
         command = NOP;
@@ -663,6 +663,8 @@ void openDocument_FrontEnd()
         return;
     }
 
+    showFieldsDocuments();
+
     return;
 }
 
@@ -776,7 +778,7 @@ void createDocument_FrontEnd()
     strcat(location, COMMAND_POSTFIX);
     strcat(command, location);
 
-    strcpy(globals.document,documentName);
+    strcpy(globals.document, documentName);
 
     int x = system(command);
 
@@ -866,15 +868,15 @@ void createDocument_FrontEnd()
                 return;
             }
 
-            if( strcmp(dataType,"STRING") == 0 || strcmp(dataType,"CHARACTER") == 0 ){
+            if (strcmp(dataType, "STRING") == 0 || strcmp(dataType, "CHARACTER") == 0)
+            {
                 int i = 0;
-                for(; i < getLength(value) -2; i++){
-                    value[i] = value[i+1];
+                for (; i < getLength(value) - 2; i++)
+                {
+                    value[i] = value[i + 1];
                 }
-                value[i-1] = '\0';
-            }            
-
-
+                value[i - 1] = '\0';
+            }
 
             appendToPair(&pairs, key, value, dataType);
         }
@@ -882,7 +884,7 @@ void createDocument_FrontEnd()
         helpInsertingIntoDocumentFile(&pairs);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
-    strcpy(globals.document,"");
+    strcpy(globals.document, "");
     free(documentName);
     return;
 }
@@ -1026,7 +1028,7 @@ void removeDocument()
 
     char command[100] = "ls -d ";
     char location[100] = ".root/";
-    
+
     strcat(location, globals.user);
     strcat(location, "/");
     strcat(location, globals.collection);
@@ -1077,15 +1079,14 @@ void exportUser_FrontEnd()
     system(command);
 
     int code = exportUser(globals.user);
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
 
-    strcpy(command, "rmdir");
-    strcat(command, location);
-    strcat(command, COMMAND_POSTFIX);
-    system(command);
-    return;
+return;
 }
 
-void exportCollection_FrontEnd(){
+void exportCollection_FrontEnd()
+{
 
     if (strcmp(globals.user, "") == 0)
     {
@@ -1098,12 +1099,26 @@ void exportCollection_FrontEnd(){
         printf("You need to selecta a collection in order to export the collection.\n");
         return;
     }
-        exportCollection(globals.user,globals.collection);
+    exportCollection(globals.user, globals.collection);
 
-return;
+    char command[100] = "mkdir ";
+    char location[80] = "'exports_";
+    strcat(location, globals.user);
+    strcat(location, "'");
+    strcat(command, location);
+    strcat(command, COMMAND_POSTFIX);
+    system(command);
+
+    int code = exportUser(globals.user);
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
+    return;
 }
 
-void exportDocument_FrontEnd(){
+void exportDocument_FrontEnd()
+{
+
+    char command[100] = "";
 
     if (strcmp(globals.user, "") == 0)
     {
@@ -1122,14 +1137,18 @@ void exportDocument_FrontEnd(){
         printf("You need to select a document in order to export the document.\n");
         return;
     }
+    sprintf(command, "mkdir exports_%s", globals.user);
 
-
-    // exportDocument(globals.user,globals.collection,globals.document);
+    int code = exportDocument(globals.user, globals.collection, globals.document);
+    if(!code)
+        printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
+    // sprintf(command, "rmdir exports_%s",globals.user);
     // exportUser(globals.user);
-return;    
+    return;
 }
 
-void updateDocument_frontEnd(){
+void updateDocument_frontEnd()
+{
 
     if (strcmp(globals.user, "") == 0)
     {
@@ -1148,8 +1167,35 @@ void updateDocument_frontEnd(){
         printf("You need to select a document in order to export the document.\n");
         return;
     }
-    
-}
+
+    showFieldsDocuments();
+    printf("\n");
+       int carriageReturnCount = 0;
+       int inputFlag = 1;
+       char input[100];
+       char key[30] = "\0", value[100] = "\0", dataType[20] = "\0";
+    //    fgets(input, 2, stdin);
+       Pair pairs;
+       initPair(&pairs);
+       while (inputFlag)
+        {
+            fgets(input, 100, stdin);
+            char *p = input;
+            int keyIndex = 0;
+            int valueIndex = 0;
+            int keyValueBAR = 0; // if 0 key, else value
+            if (strcmp(input, "\n") == 0)
+            {
+                carriageReturnCount++;
+                // printf("carriage count ->  %d\n",carriageReturnCount);
+                if (carriageReturnCount == 2)
+                    break;
+                continue;
+            }
+            else
+            {
+                carriageReturnCount = 0;
+            }
 
 void test1(){
 
@@ -1179,9 +1225,9 @@ void test1(){
     strcpy(globals.document,"one");
 
     // exportDocument_FrontEnd();
-    exportUser_FrontEnd();
-    // exportCollection_FrontEnd();    
-    exit(0);
+    // exportUser_FrontEnd();
+    // updateDocument_frontEnd();
+    // test1();
 }
 
 void noSQLMenu()
@@ -1271,16 +1317,16 @@ void noSQLMenu()
             printf("use command `man` for more details\n");
             break;
         case export_document:
-            exportDocument_FrontEnd();     // not complete
+            exportDocument_FrontEnd(); // not complete
             break;
         case export_collection:
-            exportCollection_FrontEnd();    // not complete
+            exportCollection_FrontEnd(); // not complete
             break;
         case export_user:
-            exportUser_FrontEnd();    // not complete
+            exportUser_FrontEnd(); // not complete
             break;
         case open_document:
-            openDocument_FrontEnd();    // not complete
+            openDocument_FrontEnd(); // not complete
             break;
         case login:
             if (strcmp(globals.user, "") != 0)
