@@ -8,7 +8,7 @@ typedef node* Pair;
 
 typedef struct document
 {
-    char* key;
+    char* documentId;
     Pair pairs;
 } document;
 

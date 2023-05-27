@@ -112,18 +112,18 @@ void displayCollection(Collection collection)
 
     while(nn)
     {
-        printf("%s\n", nn->document->key);
+        printf("%s\n", nn->document->documentId);
         nn = nn->next;
     }
 }
 
 
 // this function returns a single document as a document structure
-document* getDocument(char *collection,char* key)
+document* getDocument(char *collection,char* documentId)
 {
     FILE *file;
 
-    if(strlen(collection) == 0 || strlen(key) == 0)
+    if(strlen(collection) == 0 || strlen(documentId) == 0)
         return NULL;
 
     // concatinating collection name and document key
@@ -139,10 +139,10 @@ document* getDocument(char *collection,char* key)
     documentpath[j++] = '/';
    
     i = 0;
-    while (key[i] != '\0') {
-        if(key[i] == '\n') key[i] = '\0';
+    while (documentId[i] != '\0') {
+        if(documentId[i] == '\n') documentId[i] = '\0';
         // printf("%c ",key[i]);
-        documentpath[j] = key[i];
+        documentpath[j] = documentId[i];
         i++;
         j++;
     }
@@ -172,8 +172,9 @@ document* getDocument(char *collection,char* key)
         return NULL;
     }
 
-    doc->key = (char*) malloc(strlen(key)*sizeof(char));
-    strcpy(doc->key, key);
+    doc->documentId = (char*) malloc(strlen(documentId)*sizeof(char));
+    if(!doc->documentId) return NULL;
+    strcpy(doc->documentId, documentId);
     doc->pairs = pairs;
     return doc;
     
@@ -181,7 +182,7 @@ document* getDocument(char *collection,char* key)
 
 void displayDocument(document doc)
 {
-    printf("Document Id: %s\n", doc.key);
+    printf("Document Id: %s\n", doc.documentId);
     node* temp = doc.pairs;
 
     while(temp)
@@ -227,6 +228,7 @@ Pair getAllPairsOfDocument(FILE *file)
         if(validateDataFormatProtocol(line) == REG_NOMATCH) 
         {
             printf("Error parsing the document\n");
+            free(pairs);
             return NULL;
         }
 
@@ -324,7 +326,7 @@ void createPair(Pair *pairs,char* key, char* value, char* datatype)
 }
 
 
-document* initilizeAndCreateDocument(char* key, Pair pairs)
+document* initilizeAndCreateDocument(char* documentId, Pair pairs)
 {
     document *doc = (document*) malloc(sizeof(document));
     
@@ -334,8 +336,11 @@ document* initilizeAndCreateDocument(char* key, Pair pairs)
         return NULL;
     }
 
-    doc->key = (char*) malloc(sizeof(key));
-    strcpy(doc->key, key);
+    doc->documentId = (char*) malloc(sizeof(document));
+    
+    if(!doc->documentId) return NULL;
+    
+    strcpy(doc->documentId, documentId);
     doc->pairs = pairs;
     return doc;
 }
@@ -361,9 +366,9 @@ int createDocument(char* collection, document* doc)
     documentpath[j++] = '/';
    
     i = 0;
-    while (doc->key[i] != '\0') {
-        if(doc->key[i] == '\n') doc->key[i] = '\0';
-        documentpath[j] = doc->key[i];
+    while (doc->documentId[i] != '\0') {
+        if(doc->documentId[i] == '\n') doc->documentId[i] = '\0';
+        documentpath[j] = doc->documentId[i];
         i++;
         j++;
     }
@@ -374,7 +379,7 @@ int createDocument(char* collection, document* doc)
 
     strcat(command, collection);
     strcat(command, "/");
-    strcat(command, doc->key);
+    strcat(command, doc->documentId);
 
     int status = system(command);
 
@@ -423,9 +428,9 @@ int updateDocument(char* collection, document* doc)
     documentpath[j++] = '/';
    
     i = 0;
-    while (doc->key[i] != '\0') {
-        if(doc->key[i] == '\n') doc->key[i] = '\0';
-        documentpath[j] = doc->key[i];
+    while (doc->documentId[i] != '\0') {
+        if(doc->documentId[i] == '\n') doc->documentId[i] = '\0';
+        documentpath[j] = doc->documentId[i];
         i++;
         j++;
     }
@@ -436,7 +441,7 @@ int updateDocument(char* collection, document* doc)
 
     strcat(command, collection);
     strcat(command, "/");
-    strcat(command, doc->key);
+    strcat(command, doc->documentId);
 
     int status = system(command);
 
@@ -527,7 +532,6 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
     if(strlen(collection) == 0) return 0;
     if(strlen(documentKey) == 0) return 0;
 
-
     document *doc = getDocument(collection, documentKey);
 
     if(!doc) return 0;
@@ -550,7 +554,6 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 
 }
 
-
 int freePairs(Pair *pairs)
 {
     if(!*pairs) return 0;
@@ -559,7 +562,6 @@ int freePairs(Pair *pairs)
     {
         node* temp = (*pairs);
         *pairs = (*pairs) -> next;
-        printf("deleted\n");
         free(temp);
     }
 
