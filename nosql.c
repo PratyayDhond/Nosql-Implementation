@@ -1077,7 +1077,6 @@ void exportUser_FrontEnd()
     strcat(command, location);
     strcat(command, COMMAND_POSTFIX);
     system(command);
-
     int code = exportUser(globals.user);
     if(!code)
         printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
@@ -1099,7 +1098,6 @@ void exportCollection_FrontEnd()
         printf("You need to selecta a collection in order to export the collection.\n");
         return;
     }
-    exportCollection(globals.user, globals.collection);
 
     char command[100] = "mkdir ";
     char location[80] = "'exports_";
@@ -1109,7 +1107,7 @@ void exportCollection_FrontEnd()
     strcat(command, COMMAND_POSTFIX);
     system(command);
 
-    int code = exportUser(globals.user);
+    int code = exportCollection(globals.user,globals.collection);
     if(!code)
         printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
     return;
@@ -1138,7 +1136,7 @@ void exportDocument_FrontEnd()
         return;
     }
     sprintf(command, "mkdir exports_%s", globals.user);
-
+    system(command);
     int code = exportDocument(globals.user, globals.collection, globals.document);
     if(!code)
         printf("Error! Exporting Failed. Please try again, if error persists try contacting the developers.\n");
@@ -1358,7 +1356,6 @@ void noSQLMenu()
             printf("   1. <SYNTAX> => `rm user`\n");
             printf("   2. <SYNTAX> => `rm doc`\n");
             printf("   3. <SYNTAX> => `rm col`\n");
-            printf("use command `man` for more details\n");
             break;
         case delete_user:
             removeUser();
