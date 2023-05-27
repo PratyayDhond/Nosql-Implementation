@@ -212,12 +212,15 @@ void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char*
         q->right = newdocumentHashmap;
 
     newdocumentHashmap->parent = q;
-
+   DocumentHashMap tnode;
+    initDocumentHashMap(&tnode);
    
     reassignBalanceFactor(&q);      //Reassinging balanace factor and  getting imbalanced documentHashmap
     getBalancedTree(tdocumentHashmap,q);
 }
+void controller(){
 
+}
 void helpInsertingIntoDocumentFile(Pair* pair){
     node* temp = *pair;
     DocumentHashMap tnode;
@@ -226,9 +229,7 @@ void helpInsertingIntoDocumentFile(Pair* pair){
         insertIntoDocumentHashMap(&tnode,temp->key,temp->value,temp->datatype);
         temp = temp -> next;
     }
-        // printf("sar\n");
-    // preOrder(tnode);
-        removedocumentHashmap(&tnode,"sarvesh");
+    removedocumentHashmap(&tnode,"sarvesh");
     preOrder(tnode);
     return ;
     
@@ -271,11 +272,14 @@ void removedocumentHashmapHelper(DocumentHashMap* parent,DocumentHashMap* tdocum
         *tdocumentHashmap = *parent;
 }
 
-void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
+void helpRemoveDocument(char* documentName,char* key){
+    // int result = removedocumentHashmap();
+}
+int removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
 {
     documentHashmap *p, *q;
     if (!*tdocumentHashmap)
-        return;
+        return INT_MIN;
 
     p = *tdocumentHashmap;
     while (p)
@@ -289,12 +293,15 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         else
             p = p->right;
     }
-    // if (p)
+    if (p){
+        // deleteFieldFromDocument();
+        deleteFieldFromDocument("", "documentKey", p -> key);
+    }
         // printf("%s Found\n", p->data);
     
     if (!p){
         // printf("\n %s Not Found\n", data);
-        return; // documentHashmap not present
+        return 0; // documentHashmap not present
     }
     // Now 4 cases
     
@@ -319,7 +326,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         free(deletedocumentHashmap);
         removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return;
+        return 1;
     }
         //1 child -> Only left child exists
     if (!p->right && p->left)
@@ -344,13 +351,12 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         free(deletedocumentHashmap);
         removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return;
+        return 1;
     }
     //1 Child , Only right child exists
     else if (p->right && !p->left)
 
     {
-        
         documentHashmap* deletedocumentHashmap = p;
         documentHashmap* temp = deletedocumentHashmap->parent;
         if (p == *tdocumentHashmap)
@@ -370,7 +376,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
         free(deletedocumentHashmap);
         removedocumentHashmapHelper(&temp,tdocumentHashmap);
 
-        return;
+        return 1;
     }
     //2 Childs i.e there exits both left and right
     else if (p->right && p->left)
@@ -408,6 +414,7 @@ void removedocumentHashmap(DocumentHashMap *tdocumentHashmap, char *key)
             free(temp);
         }
         removedocumentHashmapHelper(&parentOfTemp,tdocumentHashmap);
+        return 1;
     }
 }
 

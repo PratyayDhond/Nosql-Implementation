@@ -3,7 +3,7 @@
 #include<string.h>
 #include <regex.h>
 #include"document.h"
-
+#include<limits.h>
 #define MAX_LINE_LENGTH 100000
 
 // Initilizing the pairs linkedlist
@@ -16,6 +16,8 @@ void initPair(Pair *pairs)
 // For appending pair into pairs linkedlist
 void appendToPair(Pair *pair, char* key, char* value, char* datatype)
 {
+    if(strlen(key) == 0 || strlen(datatype) == 0 || strlen(value) == 0 ) return;
+
     node *nn = (node*) malloc(sizeof(node));
     nn->datatype = (char*) malloc(strlen(datatype)*sizeof(char));
     nn->key = (char*) malloc(strlen(key)*sizeof(char));
@@ -44,8 +46,13 @@ void appendToPair(Pair *pair, char* key, char* value, char* datatype)
     return;
 }
 
+// This is used to delete a single a pair from pairs linkedlist
 int deletePair(Pair *pairs, char *pairKey)
 {
+    if(!(*pairs))
+        return INT_MIN;
+
+    if(strlen(pairKey)) return -1;
     node * temp;
     if (strcmp((*pairs)->key, pairKey) == 0) {
 
@@ -81,12 +88,15 @@ void initCollection(Collection *c)
 // For appending document to collection linkedlist
 void addDocumentToCollection(Collection *collection, document* doc)
 {
+    if(!collection || !doc) return;
+
     collectionNode *nn = (collectionNode*) malloc(sizeof(collectionNode));
+    if(!nn)
+        return;
+
     nn->document = doc;
     nn -> next = NULL;
 
-    if(!nn)
-        return;
 
     if(!(*collection))
     {
@@ -118,7 +128,7 @@ void displayCollection(Collection collection)
 }
 
 
-// this function returns a single document as a document structure
+// This function returns a single document as a document structure
 document* getDocument(char *collection,char* documentId)
 {
     FILE *file;
@@ -168,6 +178,7 @@ document* getDocument(char *collection,char* documentId)
     
     if(!doc)
     {
+        free(pairs);
         printf("Cannot mallocate a document\n");
         return NULL;
     }
@@ -207,10 +218,10 @@ int validateDataFormatProtocol(char* line)
     return value;
 }
 
+// return pairs linked list by fetching all key-value pairs from document 
 Pair getAllPairsOfDocument(FILE *file)
 {
-    // Initilizing pairs linked list
-    
+    // Initilizing pairs linked list    
     Pair pairs; 
     initPair(&pairs);
 
@@ -274,6 +285,7 @@ Pair getAllPairsOfDocument(FILE *file)
     return pairs;
 }
 
+// It returns all documents from collection as linkedlist named as Collection
 Collection getAllDocumentFromCollection(char* collectionName)
 {
     Collection collection;
@@ -316,6 +328,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
 
 }
 
+// This function create key value pair mapping and attaches to a pairs linkedlist
 void createPair(Pair *pairs,char* key, char* value, char* datatype)
 {
     if(!pairs)
@@ -325,7 +338,7 @@ void createPair(Pair *pairs,char* key, char* value, char* datatype)
     return;
 }
 
-
+// This function accepts documentId and pairs as parameters and returns a document structure
 document* initilizeAndCreateDocument(char* documentId, Pair pairs)
 {
     document *doc = (document*) malloc(sizeof(document));
@@ -345,6 +358,7 @@ document* initilizeAndCreateDocument(char* documentId, Pair pairs)
     return doc;
 }
 
+// This function helps to create a single document
 int createDocument(char* collection, document* doc)
 {
     if(!doc) return 0;
@@ -407,6 +421,7 @@ int createDocument(char* collection, document* doc)
     return 1;
 }
 
+// This function helps to update the document
 int updateDocument(char* collection, document* doc)
 {
     if(!doc) return 0;
@@ -469,6 +484,7 @@ int updateDocument(char* collection, document* doc)
     return 1;
 }
 
+// This function helps to delete a single document
 int deleteDocument(char* collection, char* documentKey)
 {
     if(strlen(documentKey) == 0) return 0;
@@ -527,6 +543,7 @@ int deleteDocument(char* collection, char* documentKey)
     return 1;
 }
 
+// This function helps to delete single field from document
 int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 {
     if(strlen(collection) == 0) return 0;
@@ -554,6 +571,7 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 
 }
 
+// freeing up memory of pairs in a document
 int freePairs(Pair *pairs)
 {
     if(!*pairs) return 0;
@@ -566,5 +584,31 @@ int freePairs(Pair *pairs)
     }
 
     return 1;
+}
 
+// freeing up memory of a single document
+int freeDocument(document* document)
+{
+    if(!document) return 0;
+
+    Pair pairs = document->pairs;
+    freePairs(&pairs);
+    free(document);
+}
+
+// freeing up memory of a single collection
+int freeCollection(Collection *collection)
+{
+    if(!*collection) return 0;
+
+    while(*collection)
+    {
+        collectionNode* temp = (*collection);
+        *collection = (*collection) -> next;
+        document* doc = temp->document;
+        freeDocument(doc);
+        free(temp);
+    }
+
+    return 1;
 }
