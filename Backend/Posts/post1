@@ -1,5 +1,5 @@
-(STRING) name: Sohel Bargir
-(STRING) college: COEP
-(INT) age: 18
-(DOUBLE) CGPA: 7.52
-(BOOL) isStudying: F
+(STRING) name: "Sohel"
+(INTEGER) age: 20
+(BOOLEAN) student: T
+(DOUBLE) weight: 56.99
+(CHARACTER) gender: 'M'
