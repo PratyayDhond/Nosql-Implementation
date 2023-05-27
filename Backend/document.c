@@ -154,7 +154,6 @@ document* getDocument(char *collection,char* documentId)
     i = 0;
     while (documentId[i] != '\0') {
         if(documentId[i] == '\n') documentId[i] = '\0';
-        // printf("%c ",key[i]);
         documentpath[j] = documentId[i];
         i++;
         j++;
@@ -781,7 +780,6 @@ int exportDocument(char* username, char* collectionName, char* documentId)
 
     if(!exportJSONString) return 0;
     
-    printf("%s\n", exportJSONString);
     
     FILE *fileptr;
 
@@ -801,7 +799,7 @@ int exportDocument(char* username, char* collectionName, char* documentId)
 
     fclose(fileptr);
     convertExportedDirectoryIntoTarFile(username);
-
+    printf("Document %s exported successfully to exports_%s.tar", documentId, username);
 
     return 1;
 } 
@@ -821,8 +819,6 @@ int exportCollection(char* username, char *collectionName)
     if(!exportJSONString)
         return 0;
 
-    printf("%s\n", exportJSONString);
-
     strcpy(filename, "");
     strcat(filename, "exports_");
     strcat(filename, username);
@@ -837,6 +833,8 @@ int exportCollection(char* username, char *collectionName)
     fprintf(fileptr,"%s", exportJSONString);
     convertExportedDirectoryIntoTarFile(username);
     fclose(fileptr);
+
+    printf("Collection %s exported successfully to exports_%s.tar", collectionName, username);
     return 1;
 }
 
@@ -858,6 +856,7 @@ int exportUser(char *username)
         exportCollection(username, line);
     }
     convertExportedDirectoryIntoTarFile(username);
+    printf("User %s's data exported successfully exports_%s.tar", username);
     free(line);
     fclose(fp);
     return 1;
@@ -870,7 +869,6 @@ int convertExportedDirectoryIntoTarFile(char* username)
     strcat(command, "exports_");
     strcat(command, username);
     int status = system(command);
-    printf("%d\n", status);
     // if collection directory not exists then simply return
     if(status)
         return 0;
@@ -894,7 +892,6 @@ int convertExportedDirectoryIntoTarFile(char* username)
     // if collection directory not exists then simply return
     if(x)
         return 0;
-
-
+        
     return 1;
 }
