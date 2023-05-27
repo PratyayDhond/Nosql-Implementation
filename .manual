@@ -120,7 +120,8 @@ Available Commands:
 
 - Update document:
            Used to update the data in the document.You must have called the 'use document' command for updating the document.
-            <SYNTAX> => `update doc UPDATE_NAME`
+           We can update multiple keys in a document.
+            <SYNTAX> => `update doc KEY:VALUE`
 
 - Clear:
            Used to clear the screen.
