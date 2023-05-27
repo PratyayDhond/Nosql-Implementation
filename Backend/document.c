@@ -801,7 +801,7 @@ int exportDocument(char* username, char* collectionName, char* documentId)
     return 1;
 } 
 
-int exportCollection(char* username, char *collectionName)
+int exportCollectionHelper(char* username, char *collectionName)
 {
     FILE* fileptr;
 
@@ -829,10 +829,15 @@ int exportCollection(char* username, char *collectionName)
 
     fprintf(fileptr,"%s", exportJSONString);
     fclose(fileptr);
-    convertExportedDirectoryIntoTarFile(username);
 
     printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
     return 1;
+}
+
+int exportCollection(char* username, char *collectionName)
+{
+    int x = exportCollectionHelper(username, collectionName);
+    convertExportedDirectoryIntoTarFile(username);
 }
 
 int exportUser(char *username)
@@ -852,12 +857,13 @@ int exportUser(char *username)
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
-        exportCollection(username, line);
+        printf("%s\n", line);
+        exportCollectionHelper(username, line);
     }
+    fclose(fp);
     convertExportedDirectoryIntoTarFile(username);
     printf("Data of user `%s` exported successfully to `exports_%s.tar`.\n", username, username);
     free(line);
-    fclose(fp);
     return 1;
 }
 
