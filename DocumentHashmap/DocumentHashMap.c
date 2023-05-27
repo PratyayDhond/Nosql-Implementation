@@ -69,11 +69,9 @@ void LLRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumen
     A->left = BR;
     if (BR)
         BR->parent = A;
-    A->bf = 0;
-    B->bf = 0;
+    A->bf = B->bf = 0;
 
     reassignBalanceFactor(&A);          //We have rotated the tree using pointers , now reassingning its bf
-
     return;
 }
 
@@ -98,8 +96,7 @@ void RRRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumen
     A->right = BR;
     if (BR)
         BR->parent = A;
-    A->bf = 0;
-    B->bf = 0;
+    A->bf = B->bf = 0;
     reassignBalanceFactor(&A);  //We have rotated the tree using pointers , now reassingning its bf
 }
 void LRRotation(DocumentHashMap *tdocumentHashmap, DocumentHashMap *mainTdocumentHashmap)
@@ -149,26 +146,15 @@ char* key,char* value,char* datatype)
     strcpy(newdocumentHashmap -> value ,value);
     strcpy(newdocumentHashmap -> datatype ,datatype);
 
-    newdocumentHashmap->left = NULL;
-    newdocumentHashmap->right = NULL;
-    newdocumentHashmap->parent = NULL;
+    newdocumentHashmap->left = newdocumentHashmap->right = newdocumentHashmap->parent = NULL;
     newdocumentHashmap->bf = 0;
     return newdocumentHashmap;
 }
-void insertIntoDocumentFile(document* doc){
 
-    char* key = doc -> key;
-    DocumentHashMap tnode;
-    initDocumentHashMap(&tnode);
-  
-}
 void insertIntoDocumentHashMap(DocumentHashMap *tdocumentHashmap,char* key,char* value,char* datatype)
 {
-    // printf("Get : %s\n",data.key);
 
     documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap(tdocumentHashmap, key,value,datatype);
-    // printf("%s",newdocumentHashmap -> data ->pairs -> key);
-    // printf("Print : %s\n",newdocumentHashmap -> data -> key);
 
     if (!*tdocumentHashmap)
     {

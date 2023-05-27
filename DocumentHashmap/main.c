@@ -18,8 +18,6 @@ int main(){
     insertIntoDocumentHashMap(&t,"address","COEP","string");
     removedocumentHashmap(&t,"Name");
     updateValue(&t,"Name","Raul","string");
-
-
      preOrder(t);
 
     return 0;
