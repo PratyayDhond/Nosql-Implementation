@@ -333,23 +333,28 @@ void removedocumentHashmapHelper(DocumentHashMap* parent)
     if((tdocumentHashmap) && (tdocumentHashmap) -> parent &&  (tdocumentHashmap) -> parent == (*parent))
         tdocumentHashmap = *parent;
 }
-
+int getDocumentInHashMap(DocumentHashMap *tnode){
+    char collectionPath[100]  = "";
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    document* fetchData =  getDocument(collectionPath,globals.document);
+    Pair newPair = fetchData -> pairs;
+        while(newPair){
+            int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
+            if(status == INT_MIN){
+                destroyTree(tnode);
+                return 0;
+            }
+            newPair = newPair -> next;
+        }
+    return 1;
+}
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
  char collectionPath[100]  = "";
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     if(!tnode){
-   
-    document* fetchData =  getDocument(collectionPath,globals.document);
-        Pair newPair = fetchData -> pairs;
-        while(newPair){
-        int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
-        if(status == INT_MIN){
-            destroyTree(&tnode);
+        int result = getDocumentInHashMap(&tnode);
+        if(!result)
             return INT_MIN;
-        }
-        newPair = newPair -> next;
-    }
-    return 1;
     }
     Pair getDocuemnt = findAndFetchDocument(key);
     if(!getDocuemnt){
@@ -543,27 +548,57 @@ Pair findAndFetchDocument(char* key){
     return temp;
 }
 
-void helpUpdatingField(char* key,char* value,char* datatype){
-    // char* collectionName = globals.collection;
-    // char* documentName = globals.document;
+int helpUpdatingField(char* key,char* value,char* datatype){
+    char collectionPath[100]  = "";
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+     if(!tnode){
+        int result = getDocumentInHashMap(&tnode);
+        if(!result){
+            return INT_MIN;
+        }
+     }
+    preOrder(tnode);
 
-    // insertIntoDocumentHashMap(key,value,datatype);
+    Pair result = updateValue(key,value,datatype);
+    if(!result){
+        return 0;
+    }
+    document* docs = (document*)malloc(sizeof(document));
+    docs->documentId = globals.document;
+    initPair(&docs->pairs);
+    DocumentHashMap temp = tnode;
+    createPairToInsertIntoDocument(&docs->pairs,tnode);
+    int status = updateDocument( collectionPath, docs);
+    if(status == 0 || status == INT_MIN){
+        printf("sar");
+    }
+    if(!status){
+        return INT_MIN;
+    }
+    showFieldsDocuments();
+    return 1;
 }
 
-void updateValue(char* key,char* value,char* datatype){
-    DocumentHashMap tdocumentHashmap = tnode;
-    documentHashmap* p = tdocumentHashmap;
+Pair updateValue(char* key,char* value,char* datatype){
+    Pair newPair;
+    initPair(&newPair);
+
+    documentHashmap* p = tnode;
     while(p){
+        printf("\nKEY : %s" , p -> key);
         int result = strcmp(key,p -> key);
         if(result == 0){
+            appendToPair(&newPair,key,value,datatype);
             strcpy(p -> value, value);
             strcpy(p -> datatype, datatype);
-            return ; 
+            return newPair; 
         }
-        else if(result > 0)
-            p = p -> left;
-        else 
+        else if(result > 0){
+            printf("SAR");
             p = p -> right;
+        }
+        else 
+            p = p -> left;
     }
-    return ;
+    return 0;
 }
