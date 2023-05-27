@@ -861,6 +861,16 @@ void createDocument_FrontEnd()
                 return;
             }
 
+            if( strcmp(dataType,"STRING") == 0 || strcmp(dataType,"CHARACTER") == 0 ){
+                int i = 0;
+                for(; i < getLength(value) -2; i++){
+                    value[i] = value[i+1];
+                }
+                value[i-1] = '\0';
+            }            
+
+
+
             appendToPair(&pairs, key, value, dataType);
         }
 
