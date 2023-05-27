@@ -663,6 +663,8 @@ void openDocument_FrontEnd()
         return;
     }
 
+    showFieldsDocuments();
+
     return;
 }
 
@@ -1103,6 +1105,8 @@ return;
 }
 
 void exportDocument_FrontEnd(){
+
+
 
     if (strcmp(globals.user, "") == 0)
     {
