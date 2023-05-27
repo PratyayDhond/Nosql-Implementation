@@ -225,7 +225,7 @@ char * getPassword(char * str){
 int checkIfUserExists(char * username, char * str, char * declaration){
     char command[100] = "ls -d .root/";
     strcat(command,username);
-    strcat(command, " >nul 2>nul");
+    strcat(command, COMMAND_POSTFIX);
     int x = system(command);
 
     system("clear");
@@ -242,11 +242,13 @@ void createUserDirectoryAndFiles(char * username,char * password){
     char command[100] = "mkdir '.root/";
     strcat(command,username);
     strcat(command,"'");
+    strcat(command,COMMAND_POSTFIX);
     system(command);
 
     strcpy(command,"touch .root/");
     strcat(command,username);
     strcat(command,"/.pass");
+    strcat(command, COMMAND_POSTFIX);
     system(command);
 
     char * encryptedPassword = Encrypt(password);
@@ -396,7 +398,7 @@ void showUsers(){
     }
     printf("\n");
     fclose(fptr);
-    system("rm users ");
+    system("rm users >nul 2>nul");
 }
 
 void showCollections(){
@@ -408,7 +410,7 @@ void showCollections(){
     char command[100] = "";
     strcpy(command,"ls '.root/");
     strcat(command,globals.user);
-    strcat(command,"' >> collections");
+    strcat(command,"/' >> collections");
     system(command);
 
     FILE *fptr = fopen("collections","r");
@@ -424,7 +426,7 @@ void showCollections(){
     }
     printf("\n");
     fclose(fptr);
-    system("rm collections ");
+    system("rm collections >nul 2>nul");
     return;
 }
 
@@ -462,7 +464,7 @@ void showDocuments(){
     }
     printf("\n");
     fclose(fptr);
-    system("rm documents");
+    system("rm documents >nul 2>nul");
     return;
 
 }
@@ -527,6 +529,7 @@ void removeUser(){
             strcpy(command,"rm -r '.root/");
             strcat(command, username);
             strcat(command, "'");
+            strcat(command, COMMAND_POSTFIX);
             system(command);
             printf("User `%s` deleted successfully!\n",username);
         }else{
@@ -545,6 +548,7 @@ void removeUser(){
 int checkUser(char * username){
         char command[100] = "ls -d .root/";
     strcat(command,username);
+    strcat(command, COMMAND_POSTFIX);
     int x = system(command);
     if(x == 0)
         return USER_ALREADY_EXISTS;
@@ -563,6 +567,7 @@ void loginUser(){
         code = validateUser(username);
         if( code == PASSWORDS_DO_NOT_MATCH){
             printf("Incorrect password! Login failed.\n");
+            getchSafe();
         }else{
             printf("Welcome `%s`, you have now successfully logged in.\n",username);
             strcpy(globals.user,username);
@@ -570,6 +575,7 @@ void loginUser(){
         }
     }else{
         printf("User does not exists. Try `ls users` command to see the list of existing users.\n");
+        getchSafe();
     }
 return;
 }
@@ -592,7 +598,7 @@ void createCollection(){
     strcat(location,globals.user);
     strcat(location,"/");
     strcat(location,collectionName);
-    strcat(location , " >nul 2>nul");
+    strcat(location , COMMAND_POSTFIX);
     strcat(command,location);
     int x = system(command);
     if(x == 0){
@@ -728,7 +734,7 @@ void useCollection(){
     strcat(location,globals.user);
     strcat(location,"/");
     strcat(location,collectionName);
-    strcat(location, " >nul 2>nul");
+    strcat(location, COMMAND_POSTFIX);
     strcat(command,location);
     int x = system(command);
     
@@ -764,7 +770,7 @@ void useDocument(){
     strcat(location,globals.collection);
     strcat(location,"/");
     strcat(location,documentName);
-    strcat(location, " >nul 2>nul");
+    strcat(location, COMMAND_POSTFIX);
     strcat(command,location);
     int x = system(command);
     if(x == 0){
