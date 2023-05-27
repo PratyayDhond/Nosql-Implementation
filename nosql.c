@@ -9,7 +9,8 @@
 #include <string.h> // for strcmp
 #include <ctype.h>  // for toLower
 #include <unistd.h> // for getPassword command
-#include "Backend/document.h"
+// #include "Backend/document.h"
+#include "DocumentHashmap/DocumentHashMap.h"
 #include "globals/globals.h"
 
 #define SIZE 32
@@ -847,6 +848,7 @@ void createDocument_FrontEnd()
                         printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
                         printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
                         // #BOOKMARK -> FREE PAIR HERE
+                        freePairs(&pairs);
                         return;
                     }
                     if (isInteger == 0 && *p == '.')
@@ -873,7 +875,8 @@ void createDocument_FrontEnd()
 
             appendToPair(&pairs, key, value, dataType);
         }
-
+        
+        helpInsertingIntoDocumentFile(&pairs);
         // #BOOKMARK -> Give PAIR to SARVESH HERE
     }
     return;
