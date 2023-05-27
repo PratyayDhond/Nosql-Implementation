@@ -323,14 +323,13 @@ Collection getAllDocumentFromCollection(char* collectionName)
         document *doc = getDocument(collectionName, line);
         if(!doc)
         {
-            freeCollection(collection);
+            freeDocument(doc);
             return 0;
         }
         addDocumentToCollection(&collection, doc);
     }
 
     fclose(fp);
-
     return collection;
 
 }
@@ -481,7 +480,7 @@ int updateDocument(char* collection, document* doc)
 
     while(temp)
     {
-        fprintf(fp,"(%s) %s: %s", temp->datatype, temp->key, temp->value);
+        fprintf(fp,"(%s) %s: %s\n", temp->datatype, temp->key, temp->value);
         temp = temp -> next;
     }
 
@@ -769,11 +768,12 @@ char* jsonfiyCollection(char *collectionName)
     return collectionJSONString;
 }
 
-int exportDocument(char* documentId)
+int exportDocument(char* collectionName, char* documentId)
 {
     if(strlen(documentId) == 0) return 0;
 
-    char* exportJSONString = convertSingleDocumentIntoJSONString(documentId);
+    document* document = getDocument(collectionName, documentId);
+    char* exportJSONString = convertSingleDocumentIntoJSONString(document);
 
     if(strlen(exportJSONString) == 0) return 0;
 
@@ -781,6 +781,7 @@ int exportDocument(char* documentId)
     strcat(filename, documentId);
     strcat(filename, "_exported.json");
 
+    FILE* fileptr;
     fileptr = fopen(filename, "w+");
 
     if(!fileptr) return 0;
@@ -821,6 +822,7 @@ int exportCollection(char *collectionName)
 int exportUser(char *username)
 {
 
+    FILE* fp;
     char listCommand[200] = "ls ./";
     strcat(listCommand, username);
     fp = popen(listCommand, "r");
@@ -830,17 +832,12 @@ int exportUser(char *username)
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
     
-        if(!collection)
-        {
-            char filename[200];
-            strcat(filename, "exports_");
-            strcat(filename, username);
-            strcat(filename, "/");
+        char filename[200];
+        strcat(filename, "exports_");
+        strcat(filename, username);
+        strcat(filename, "/");
 
-            exportCollection(filename);
-            freeCollection(collection);
-            return 0;
-        }
+        exportCollection(filename);
     }
 
     fclose(fp);

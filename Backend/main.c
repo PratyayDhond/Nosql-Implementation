@@ -41,7 +41,7 @@ int main()
     // int status = deleteDocument("Posts", "newpost");
 
     // Code for deleting a single field from a document
-    // int status = deleteFieldFromDocument("Posts", "post1", "im");
+    int status = deleteFieldFromDocument("Posts", "post1", "name");
 
 
     // Code for converting document structure into json object string
@@ -60,7 +60,8 @@ int main()
 
     // printf("%s\n", jsonfiyCollection("Posts"));
 
-    exportCollection("Posts");
+    // exportCollection("Posts");
+    // exportUser("sohel");
 
     return 0;
 }
