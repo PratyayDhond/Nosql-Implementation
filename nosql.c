@@ -830,7 +830,6 @@ void createDocument_FrontEnd()
                 carriageReturnCount = 0;
             }
 
-            FILE *fptr = fopen("testop", "a+");
             while (*p != '\0')
             {
                 if (*p == ':')
@@ -1509,6 +1508,11 @@ void noSQLMenu()
         default:
             break;
         }
+    }
+
+    int x = system("ls -d nul >nul 2>nul");
+    if(x == 0){
+        system("rm nul  ");
     }
 }
 
