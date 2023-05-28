@@ -1322,8 +1322,8 @@ void test1(){
     // showFieldsDocuments();
     // exit(0);
     strcpy(globals.user,"test");
-    strcpy(globals.collection,"1");
-    strcpy(globals.document,"");
+    // strcpy(globals.collection,"1");
+    // strcpy(globals.document,"");
     // strcpy(globals.user,"sohel");
     // strcpy(globals.collection,"col1");
     // strcpy(globals.document,"doc1");

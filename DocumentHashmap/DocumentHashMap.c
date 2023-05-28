@@ -311,6 +311,7 @@ void showFieldsDocuments()
             return;
     }
     printf("\n");
+// preOrder(tnode);
     showDocs(tnode);
     printf("\n");
 }
@@ -515,8 +516,15 @@ int removedocumentHashmap( char *key)
                 preecedingPointer = temp;
                 temp = temp->right;
             }
-            char *tempo = temp-> key;
+            
+            p -> key = (char*)realloc(p -> key,sizeof(char)*strlen(temp -> key));
+            p -> value = (char*)realloc(p -> value,sizeof(char)*strlen(temp -> value));
+            p -> datatype = (char*)realloc(p -> datatype,sizeof(char)*strlen(temp ->datatype));
+
             strcpy(p-> key, temp-> key);
+            strcpy(p-> value, temp-> value);
+            strcpy(p-> datatype, temp-> datatype);
+
 
             parentOfTemp = preecedingPointer;
             if(temp -> left){

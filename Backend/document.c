@@ -714,6 +714,7 @@ char* convertSinglePairIntoJSONString(node* singlePair)
         printf("Error generating JSON string\n");
         return NULL;
     }
+
     return pairJSONString;
 }
 
@@ -761,7 +762,7 @@ char* convertSingleDocumentIntoJSONString(document *doc)
 char* jsonfiyCollection(char *collectionName)
 {
     if(strlen(collectionName) == 0) return NULL;
-
+    perror("NIGGA 1.11");
     Collection collection = getAllDocumentFromCollection(collectionName);
     if(!collection) return NULL;
 
@@ -820,7 +821,7 @@ int exportDocument(char* username, char* collectionName, char* documentId)
 
     if(!fileptr) return 0;
     fprintf(fileptr,"%s", exportJSONString);
-
+    free(exportJSONString);
     fclose(fileptr);
     convertExportedDirectoryIntoTarFile(username);
     printf("Document: `%s` exported successfully to `exports_%s.tar`.\n", documentId, username);
@@ -855,7 +856,6 @@ int exportCollectionHelper(char* username, char *collectionName)
 
     fprintf(fileptr,"%s", exportJSONString);
     fclose(fileptr);
-    free(exportJSONString);
     return 1;
 }
 
