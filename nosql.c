@@ -21,6 +21,8 @@
 #define VALID_USER_NAME 1
 #define INVALID_USER_NAME 0
 
+#define VALUE_SET 0
+#define VALUE_NOT_SET 1
 typedef enum Commands
 {
     ls,                //
@@ -38,23 +40,25 @@ typedef enum Commands
     delete_user,       //
     delete_collection, //
     delete_document,   //
-    delete_data,        // remove working just need to update AVL deletion, when root is deleted, and leaf swaps value with root, also swap key
+    delete_data,        // 
     export,             //
     export_user,        //
     export_collection,  //
     export_document,    //
     use_document,   //
     use_collection, //
-    update_document,    //  Partially working, AVL SEG FAULT
+    update_document,    // 
     clear,              //
     quit,               //
     open_document,      //
+    find_field,
     show_current_user,
     NOP // Command used to indicate that the command inputted by the user is Not a Proper command
 } commands;
 
 struct winsize sz;
 Globals globals; // declaring global structure for cross library fields
+
 
 void println()
 {
@@ -461,6 +465,8 @@ int getInput()
         command = update_document;
     else if (strcmp(input, "rm field") == 0 || strcmp(input, "remove field") == 0)
         command = delete_data;
+    else if (strcmp(input, "find field") == 0 || strcmp(input, "find key") == 0)
+        command = find_field;
     else
         command = NOP;
     // use document
@@ -670,7 +676,7 @@ void openDocument_FrontEnd()
     }
 
     showFieldsDocuments();
-
+    destroyTreeHelper();
     return;
 }
 
@@ -794,9 +800,6 @@ void createDocument_FrontEnd()
     }
     else
     {
-        strcpy(command, "touch ");
-        strcat(command, location);
-        strcat(command, COMMAND_POSTFIX);
 
         printf("Document `%s` created successfully. You are into Data insertion mode now.\n Press enter twice to save your changes to the document.\n\n", documentName);
         int carriageReturnCount = 0;
@@ -859,7 +862,7 @@ void createDocument_FrontEnd()
                     {
                         printf("Error! Incorrect Input type. Please refer to manual page for more details about syntax to follow.\n");
                         printf("ERROR CODE: failed to parse data type. Assumed INTEGER but input contains CHARACTER\n");
-                        // #BOOKMARK -> FREE PAIR HERE
+                        freePairs(&pairs);
                         return;
                     }
                     if (isInteger == 0 && *p == '.')
@@ -887,6 +890,7 @@ void createDocument_FrontEnd()
             appendToPair(&pairs, key, value, dataType);
         }
         char command[100];
+        destroyTreeHelper();
         helpInsertingIntoDocumentFile(&pairs);
         freePairs(&pairs);
     }
@@ -1001,7 +1005,7 @@ void removeCollection()
         }
         else
         {
-            printf("Incorrect Password! Collection cannot be deleted with incorrect credentials.");
+            printf("Incorrect Password! Collection cannot be deleted with incorrect credentials.\n");
         }
     }
     else
@@ -1287,7 +1291,35 @@ void deleteData_frontEnd(){
     char key[100];
     fscanf(stdin,"%s",key);
     int status = helpRemoveFieldFromDocument(globals.collection,globals.document,key);
-    
+return;
+}
+
+void findField_FrontEnd(){
+
+    if (strcmp(globals.user, "") == 0)
+    {
+        printf("You need to login in order to export User data.\n");
+        return;
+    }
+
+    if (strcmp(globals.collection, "") == 0)
+    {
+        printf("You need to select a collection in order to export the collection.\n");
+        return;
+    }
+
+    if (strcmp(globals.document, "") == 0)
+    {
+        printf("You need to select a document in order to export the document.\n");
+        return;
+    }
+
+    showFieldsDocuments();
+    printf("\nEnter `key` of the data to be searched.\n >> ");
+    char key[100];
+    fscanf(stdin,"%s",key);
+    int status = searchTheDocumentInFile(key);
+
 return;
 }
 
@@ -1346,8 +1378,8 @@ return;
 void noSQLMenu()
 {
     initGlobals();
+    // test1();
     ioctl(0, TIOCGWINSZ, &sz);
-    test1();
     printWelcomeMessage();
     int command;
     int programRunning = 1;
@@ -1455,6 +1487,7 @@ void noSQLMenu()
             logOut();
             break;
         case clear:
+            ioctl(0, TIOCGWINSZ, &sz);
             system("clear");
             printWelcomeMessage();
             break;
@@ -1471,6 +1504,8 @@ void noSQLMenu()
         case delete_data:
             deleteData_frontEnd();
             break;
+        case find_field:
+            findField_FrontEnd();
         default:
             break;
         }

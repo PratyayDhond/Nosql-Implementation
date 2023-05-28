@@ -1,7 +1,6 @@
 #include "cipher.h"
 #include <stdio.h>
 #include<stdlib.h>
-
 #include <unistd.h> // for implementing getch
 #include <termios.h>
 
@@ -32,16 +31,6 @@ Key * getPolyAlphabeticKey(Key * key){
     return key;
 }
 
-// int getLength(char * str){
-//     int l = 0;
-//     char * p = str;
-//     while(*p != '\0'){
-//         p++;
-//         l++;
-//     }
-//     return l+1;
-// }
-
 char * Encrypt(char * str){
     
     int length = getLength(str);
@@ -53,7 +42,6 @@ char * Encrypt(char * str){
             j = 0;
 
         encryptedKey[i] = ((str[i] + key.key[j])) % MODULO;
-        // encryptedKey[i] = (((str[i] - MODULO) + (key.key[j] - MODULO)) % 26) + MODULO;
     }
     encryptedKey[length-1] = '\0';
     free(key.key);      

@@ -422,11 +422,15 @@ int createDocument(char* collection, document* doc)
         return 0;
     }
 
+    node* temp = doc->pairs;
+
+    if(!temp)
+        return 0;
+
     fp = fopen(documentpath, "w");
 
     if(!fp) return 0;
 
-    node* temp = doc->pairs;
 
     char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH);
 
@@ -580,12 +584,24 @@ int deleteFieldFromDocument(char* collection, char* documentKey, char *pairkey)
 
     if(!doc) return 0;
 
-    if(!(doc->pairs)) return 0;
+    if(!(doc->pairs)){
+        deleteDocument(collection,documentKey); 
+        return 0;
+    }
 
     if(!deletePair(&(doc->pairs), pairkey))
     {
         printf("Associateeed value for given key not found\n");
         return 0;
+    }
+    else
+    {
+        if(!(doc->pairs)){
+            deleteDocument(collection,documentKey); 
+            printf("Field Deleted successfully. No fields in the Document. Document Removed.\n");
+            strcpy(globals.document,"");
+            return 0;
+        }
     }
     if(updateDocument(collection, doc))
     {
@@ -762,7 +778,6 @@ char* convertSingleDocumentIntoJSONString(document *doc)
 char* jsonfiyCollection(char *collectionName)
 {
     if(strlen(collectionName) == 0) return NULL;
-    perror("NIGGA 1.11");
     Collection collection = getAllDocumentFromCollection(collectionName);
     if(!collection) return NULL;
 

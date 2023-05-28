@@ -5,13 +5,17 @@
 #include <limits.h>
 #include "../globals/globals.h"
 
-int getDocumentInHashMap(DocumentHashMap *tnode);
-
+#define STRING 1 
+#define CHARACTER 2
+int getDocumentInHashMap(DocumentHashMap *);
 DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
+char documentName[100] = "";
 
-
-int getDocumentInHashMap(DocumentHashMap *tnode);
+int getDocumentInHashMap(DocumentHashMap *);
+int validateDocument(char* docname);
+Pair findAndFetchDocument(char*);
+Pair updateValue(char* ,char* ,char* );
 
 int max(int a, int b)
 {
@@ -237,7 +241,8 @@ void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
     createPairToInsertIntoDocument(pair,temp -> right);
 }
 int helpInsertingIntoDocumentFile(Pair* pair){
-     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    strcpy(documentName,globals.document);
     node* temp = *pair;
     
     while(temp){
@@ -264,21 +269,21 @@ int helpInsertingIntoDocumentFile(Pair* pair){
     return 1;
 }
  void getBrackets(int brackets){
-        if(brackets == 1){
+        if(brackets == STRING){
             printf("\"");
         } 
-        else if(brackets == 2){
+        else if(brackets == CHARACTER){
             printf("\'");
         }
     }
 void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
     int brackets = 0;
     if(strcmp(tdocumentHashmap -> datatype , "STRING") == 0){
-        brackets = 1;
+        brackets = STRING;
     }
     else if(strcmp(tdocumentHashmap -> datatype , "CHARACTER ") == 0)
     {
-        brackets = 2;
+        brackets = CHARACTER;
     }
     getBrackets(brackets);
     if(tdocumentHashmap -> datatype == "BOOLEAN"){
@@ -305,13 +310,14 @@ void showDocs(DocumentHashMap tdocumentHashmap)
 }
 void showFieldsDocuments()
 {
+    if(!validateDocument(globals.document))
+        destroyTreeHelper();
     if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result)
             return;
     }
     printf("\n");
-// preOrder(tnode);
     showDocs(tnode);
     printf("\n");
 }
@@ -356,9 +362,14 @@ int getDocumentInHashMap(DocumentHashMap *tnode){
         }
     return 1;
 }
+int validateDocument(char* docname){
+    return (strcmp(docname,documentName)  == 0);
+}
 int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
  char collectionPath[100]  = "";
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    if(!validateDocument(globals.document))
+        destroyTreeHelper();
     if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result)
@@ -544,9 +555,17 @@ void destroyTree(DocumentHashMap *deleteNode)
 {
     if (!(*deleteNode))
         return;
+
+    destroyTree(&(*deleteNode) -> left);
+    destroyTree(&(*deleteNode) -> right);
+
     free(*deleteNode);
+
     *deleteNode = NULL;
     return;
+}
+void destroyTreeHelper(){
+    destroyTree(&tnode);
 }
 
 
@@ -571,9 +590,31 @@ Pair findAndFetchDocument(char* key){
     }
     return temp;
 }
+void displayPair(Pair newPair){
+    if(!newPair){
+        printf("Field does not exist\n");
+        return ;
+    }
 
+    printf("%s:", newPair -> key);
+    printf("%s\n", newPair -> value);
+}
+int searchTheDocumentInFile(char* key){
+        if(!validateDocument(globals.document))
+            destroyTreeHelper();
+        int result = getDocumentInHashMap(&tnode);
+        if(!result){
+            return INT_MIN;
+        }
+        Pair getDoc = findAndFetchDocument(key);
+        // printf("\nField Found\n");
+        displayPair(getDoc);
+    return 1;
+}
 int helpUpdatingField(char* key,char* value,char* datatype){
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
+    if(!validateDocument(globals.document))
+        destroyTreeHelper();
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result){

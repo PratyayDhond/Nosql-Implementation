@@ -14,17 +14,16 @@ typedef documentHashmap* DocumentHashMap;
 // Basic Tree functions
 void initDocumentHashMap();
 int helpInsertingIntoDocumentFile(Pair*);
-int helpUpdatingTheDocument(Pair newPair);
+int helpUpdatingTheDocument(Pair );
 
-int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key);
+int helpRemoveFieldFromDocument(char* ,char* ,char* );
 void destroyTree();
 void showFieldsDocuments();
 int removedocumentHashmap(char* );
 
-Pair findAndFetchDocument(char* );
-Pair updateValue(char*,char*,char*);
-void destroyTree();
+void destroyTreeHelper();
+void destroyTree(DocumentHashMap*);
+int searchTheDocumentInFile(char*);
 
 //Traversals
 void preOrder();
-
