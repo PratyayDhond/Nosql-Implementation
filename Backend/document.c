@@ -332,8 +332,7 @@ Collection getAllDocumentFromCollection(char* collectionName)
     char line[MAX_LINE_LENGTH];
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         document *doc = getDocument(collectionName, line);
-        displayDocument(* doc);
-        printf("\n\n");
+        
         if(!doc)
         {
             freeCollection(&collection);
@@ -736,10 +735,12 @@ char* convertSingleDocumentIntoJSONString(document *doc)
         strcat(documentJSONString, doc->documentId);
         strcat(documentJSONString, "\",\n");
     }
+
+    char* pairJSONString;
     while(temp)
     {
-        char* pairJSONString = convertSinglePairIntoJSONString(temp);
-        printf("%s",pairJSONString);
+        pairJSONString = convertSinglePairIntoJSONString(temp);
+        
         if(!pairJSONString) return NULL;
         if(!temp->next)
         {
@@ -748,10 +749,10 @@ char* convertSingleDocumentIntoJSONString(document *doc)
             strcat(pairJSONString, ",\n");
         }
         strcat(documentJSONString, pairJSONString);
-        free(pairJSONString);
         temp = temp -> next;
     }
 
+    free(pairJSONString);
     strcat(documentJSONString, "    }");
     return documentJSONString;
 }
@@ -762,18 +763,18 @@ char* jsonfiyCollection(char *collectionName)
     if(strlen(collectionName) == 0) return NULL;
 
     Collection collection = getAllDocumentFromCollection(collectionName);
-
     if(!collection) return NULL;
 
     collectionNode* temp = collection;
 
     char* collectionJSONString= (char*) calloc(MAX_LINE_LENGTH, sizeof(char));
     strcat(collectionJSONString, "[\n");
-
+    
+    char* documentJSONString;
     while(temp)
     {
         document* doc = temp->document;
-        char* documentJSONString = convertSingleDocumentIntoJSONString(doc);
+        documentJSONString = convertSingleDocumentIntoJSONString(doc);
         if(!documentJSONString) return NULL;
         if(!temp->next){       
             strcat(documentJSONString, "\n");
@@ -781,10 +782,10 @@ char* jsonfiyCollection(char *collectionName)
             strcat(documentJSONString, ",\n");
         }
         strcat(collectionJSONString, documentJSONString);
-        free(documentJSONString);
         temp = temp -> next;
     }
 
+    free(documentJSONString);
     strcat(collectionJSONString, "]");
 
     return collectionJSONString;
@@ -838,8 +839,6 @@ int exportCollectionHelper(char* username, char *collectionName)
     strcat(filename, collectionName);
 
     char* exportJSONString = jsonfiyCollection(filename);
-    perror("NIGGA3");
-    printf("%s",exportJSONString);
     if(!exportJSONString)
         return 0;
 
@@ -857,16 +856,14 @@ int exportCollectionHelper(char* username, char *collectionName)
     fprintf(fileptr,"%s", exportJSONString);
     fclose(fileptr);
     free(exportJSONString);
-    printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
     return 1;
 }
 
 int exportCollection(char* username, char *collectionName)
 {
-    perror("NIGGA");
     int x = exportCollectionHelper(username, collectionName);
-    perror("NIGGA2");
     convertExportedDirectoryIntoTarFile(username);
+    printf("Collection: `%s` exported successfully to `exports_%s.tar`.\n", collectionName, username);
 }
 
 int exportUser(char *username)
@@ -883,11 +880,10 @@ int exportUser(char *username)
 
     while(fgets(line, MAX_LINE_LENGTH, fp)){
         line = trim_spaces(line);
-        printf("%s\n", line);
         exportCollectionHelper(username, line);
     }
     fclose(fp);
-    // convertExportedDirectoryIntoTarFile(username);
+    convertExportedDirectoryIntoTarFile(username);
     printf("Data of user `%s` exported successfully to `exports_%s.tar`.\n", username, username);
     free(line);
     return 1;
