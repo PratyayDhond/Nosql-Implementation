@@ -137,5 +137,4 @@ Available Commands:
             <SYNTAX> => 'whoami'
             
 - man:
-           Used to Invoke the Manual Page instruction- man:
-           Used to Invoke the Manual Page instruction
+           Used to Invoke the Manual Page instruction.

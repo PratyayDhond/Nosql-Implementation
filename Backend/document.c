@@ -168,7 +168,7 @@ document* getDocument(char *collection,char* documentId)
         printf("document not found\n");
         return NULL;
     }
-   
+    
     Pair pairs = getAllPairsOfDocument(file);
 
     if(!pairs)
@@ -176,7 +176,6 @@ document* getDocument(char *collection,char* documentId)
         printf("Pairs not found\n");
         return NULL;
     }
-
     document *doc = (document*) malloc(sizeof(document));
     
     if(!doc)
@@ -232,6 +231,7 @@ Pair getAllPairsOfDocument(FILE *file)
     int counter = 0;
 
     // To fetch data from file line by line 
+
     char *line = (char*) malloc(sizeof(char)*MAX_LINE_LENGTH); 
 
     // For extracting key, values and datatype fields from line
@@ -242,7 +242,7 @@ Pair getAllPairsOfDocument(FILE *file)
 
         line = dataDecrypt(line);
         line = trim_spaces(line);
-        // printf("%s\n", line);
+
 
         if(validateDataFormatProtocol(line) == REG_NOMATCH) 
         {
@@ -290,7 +290,7 @@ Pair getAllPairsOfDocument(FILE *file)
             value[len - 2] = '\0';
         }
        
-        // value = trim_spaces(value);
+        value = trim_spaces(value);
         // printf("`%s` `%s` `%s`\n", key, value, datatype);
         appendToPair(&pairs, key, value, datatype);
 
@@ -300,7 +300,7 @@ Pair getAllPairsOfDocument(FILE *file)
     free(value);
     free(line);
 
-    fclose(file);
+    // fclose(file);
 
     return pairs;
 }

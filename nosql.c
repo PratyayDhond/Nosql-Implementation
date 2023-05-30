@@ -12,7 +12,7 @@
 #include "globals/globals.h"
 #include "DocumentHashmap/DocumentHashMap.h"
 
-#define SIZE 32
+#define SIZE 256
 
 #define USER_ALREADY_EXISTS 0
 #define PASSWORDS_MATCH 1
@@ -676,6 +676,8 @@ void openDocument_FrontEnd()
     }
 
     showFieldsDocuments();
+    // exit(0);
+
     destroyHashMap();
     return;
 }
@@ -1326,42 +1328,42 @@ void test1(){
     // insertIntoDocumentHashMap("sarvesh","aserv","datra");
     // preOrder(tnode);
     // exit(0);
-    globals.collection = "sar";
-    globals.user = "sar";
-    // globals.document = "sar";
+    globals.collection = "Pets";
+    globals.user = "sarvesh";
+    globals.document = "Dog";
 
     // Pair new;
-    // initPair(&new);
-    // appendToPair(&new,"name","COEP","STRING");
-    // appendToPair(&new,"yesorno","T","BOOLEAN");
-    // appendToPair(&new,"yeda","1","INTEGER");
+//     // initPair(&new);
+//     // appendToPair(&new,"name","COEP","STRING");
+//     // appendToPair(&new,"yesorno","T","BOOLEAN");
+//     // appendToPair(&new,"yeda","1","INTEGER");
 
-    //  Pair upadtePair;
-    // initPair(&upadtePair);
-    // appendToPair(&upadtePair,"name","YES","STRING");
-    // appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
-    // appendToPair(&upadtePair,"yeda","YES","STRING");
+//     //  Pair upadtePair;
+//     // initPair(&upadtePair);
+//     // appendToPair(&upadtePair,"name","YES","STRING");
+//     // appendToPair(&upadtePair,"yesorno","Y","BOOLEAN");
+//     // appendToPair(&upadtePair,"yeda","YES","STRING");
 
-    // helpInsertingIntoDocumentFile(&new);
-    // showFieldsDocuments();   
-    // exit(0);
-    // helpUpdatingTheDocument(upadtePair);
+//     // helpInsertingIntoDocumentFile(&new);
+//     // showFieldsDocuments();   
+//     // exit(0);
+//     // helpUpdatingTheDocument(upadtePair);
     
-    // helpUpdatingField("name","Sarvesh", "STRING");
-    // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
-    // showFieldsDocuments();
-    // exit(0);
-    // strcpy(globals.user,"test");
-    // strcpy(globals.collection,"1");
-    // strcpy(globals.document,"");
-    // strcpy(globals.user,"sohel");
-    // strcpy(globals.collection,"col1");
-    // strcpy(globals.document,"doc1");
+//     // helpUpdatingField("name","Sarvesh", "STRING");
+//     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
+//     // showFieldsDocuments();
+//     // exit(0);
+//     strcpy(globals.user,"test");
+//     strcpy(globals.collection,"1");
+//     // strcpy(globals.document,"");
+//     // strcpy(globals.user,"sohel");
+//     // strcpy(globals.collection,"col1");
+//     // strcpy(globals.document,"doc1");
 
-    // exportDocument_FrontEnd();
-    // exportUser_FrontEnd();
-    // updateDocument_frontEnd();
-    // test1();
+//     // exportDocument_FrontEnd();
+//     // exportUser_FrontEnd();
+//     // updateDocument_frontEnd();
+//     // test1();
 }
 
 void displayCurrentUser(){
@@ -1376,7 +1378,8 @@ return;
 void noSQLMenu()
 {
     initGlobals();
-    test1();
+    // test1();
+
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;

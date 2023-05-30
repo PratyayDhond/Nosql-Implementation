@@ -9,7 +9,7 @@ typedef struct Globals{
 }Globals;
 
 extern Globals globals;
-#define SIZE 32
+#define SIZE 256
 
 void initGlobals();
 void destroyGlobals();

@@ -212,6 +212,8 @@ int helpInsertingIntoDocumentHashmap(char* key,char* value,char* datatype)
         int result = strcmp(dataDecrypt( p -> key) ,dataDecrypt(key));     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
+            p -> value = (char*)realloc(p -> value , sizeof(char)*strlen(value));
+            p -> datatype = (char*)realloc(p -> datatype , sizeof(char)*strlen(datatype));
             strcpy(p -> value, value) ;
             strcpy(p -> datatype,datatype) ;        //If same value present just UPDATE
             free(newdocumentHashmap);
@@ -313,7 +315,7 @@ void showDocs(DocumentHashMap tdocumentHashmap)
     showDocs(tdocumentHashmap->right);
 }
 void showFieldsDocuments()
-{
+{   
     if(!validateDocument(globals.document))
         destroyHashMap();
     if(!tnode){
@@ -321,6 +323,7 @@ void showFieldsDocuments()
         if(!result)
             return;
     }
+
     printf("\n");
     showDocs(tnode);
     printf("\n");
@@ -354,7 +357,6 @@ void helperForDeletion(DocumentHashMap* parent)
 int getDocumentInHashMap(DocumentHashMap *tnode){
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     document* fetchData =  getDocument(collectionPath,globals.document);
-
     Pair newPair = fetchData -> pairs;
         while(newPair){
             int status = helpInsertingIntoDocumentHashmap(dataEncrypt( newPair->key),dataEncrypt(newPair->value),dataEncrypt (newPair-> datatype));
