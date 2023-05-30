@@ -676,7 +676,7 @@ void openDocument_FrontEnd()
     }
 
     showFieldsDocuments();
-    destroyTreeHelper();
+    destroyHashMap();
     return;
 }
 
@@ -889,8 +889,8 @@ void createDocument_FrontEnd()
             appendToPair(&pairs, key, value, dataType);
         }
         char command[100];
-        destroyTreeHelper();
-        helpInsertingIntoDocumentFile(&pairs);
+        destroyHashMap();
+        insertIntoDocumentHashmap(&pairs);
         freePairs(&pairs);
     }
     strcpy(globals.document, "");
@@ -1262,7 +1262,7 @@ void updateDocument_frontEnd()
 
             appendToPair(&pairs, key, value, dataType);
         }
-    helpUpdatingTheDocument(pairs);
+    updateDocumentHashMap(pairs);
 }
 
 void deleteData_frontEnd(){
@@ -1289,7 +1289,7 @@ void deleteData_frontEnd(){
     printf("\nEnter `key` of the data to be deleted.\n >> ");
     char key[100];
     fscanf(stdin,"%s",key);
-    int status = helpRemoveFieldFromDocument(globals.collection,globals.document,key);
+    int status = removeFieldFromDocument(globals.collection,globals.document,key);
 return;
 }
 
@@ -1326,16 +1326,15 @@ void test1(){
     // insertIntoDocumentHashMap("sarvesh","aserv","datra");
     // preOrder(tnode);
     // exit(0);
-    // globals.collection = "a";
-    // globals.user = "a";
-    // globals.document = "a";
+    globals.collection = "sar";
+    globals.user = "sar";
+    // globals.document = "sar";
 
     // Pair new;
     // initPair(&new);
     // appendToPair(&new,"name","COEP","STRING");
     // appendToPair(&new,"yesorno","T","BOOLEAN");
     // appendToPair(&new,"yeda","1","INTEGER");
-
 
     //  Pair upadtePair;
     // initPair(&upadtePair);
@@ -1352,7 +1351,7 @@ void test1(){
     // // helpRemoveFieldFromDocument(globals.collection,globals.document,"yeda");     
     // showFieldsDocuments();
     // exit(0);
-    strcpy(globals.user,"test");
+    // strcpy(globals.user,"test");
     // strcpy(globals.collection,"1");
     // strcpy(globals.document,"");
     // strcpy(globals.user,"sohel");
@@ -1377,7 +1376,7 @@ return;
 void noSQLMenu()
 {
     initGlobals();
-    // test1();
+    test1();
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;

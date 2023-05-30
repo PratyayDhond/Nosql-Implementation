@@ -12,18 +12,10 @@ typedef struct documentHashmap{
 typedef documentHashmap* DocumentHashMap;
 
 // Basic Tree functions
-void initDocumentHashMap();
-int helpInsertingIntoDocumentFile(Pair*);
-int helpUpdatingTheDocument(Pair );
+int insertIntoDocumentHashmap(Pair*);
+int updateDocumentHashMap(Pair );
+int removeFieldFromDocument(char* ,char* ,char* );
 
-int helpRemoveFieldFromDocument(char* ,char* ,char* );
-void destroyTree();
 void showFieldsDocuments();
-int removedocumentHashmap(char* );
-
-void destroyTreeHelper();
-void destroyTree(DocumentHashMap*);
+void destroyHashMap();
 int searchTheDocumentInFile(char*);
-
-//Traversals
-void preOrder();

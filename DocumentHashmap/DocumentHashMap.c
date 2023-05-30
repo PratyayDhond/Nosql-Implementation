@@ -7,15 +7,18 @@
 
 #define STRING 1 
 #define CHARACTER 2
-int getDocumentInHashMap(DocumentHashMap *);
+
 DocumentHashMap tnode = NULL;
 char collectionPath[100]  = "";
 char documentName[100] = "";
 
 int getDocumentInHashMap(DocumentHashMap *);
+int getDocumentInHashMap(DocumentHashMap *);
 int validateDocument(char* docname);
 Pair findAndFetchDocument(char*);
 Pair updateValue(char* ,char* ,char* );
+int removedocumentHashmapHelper(char* );
+void destroyTree();
 
 int max(int a, int b)
 {
@@ -48,7 +51,6 @@ void reassignBalanceFactor(DocumentHashMap* Qnode)
 
 DocumentHashMap getimBalancedNode(DocumentHashMap tdocumentHashmap)
 {
-    // DocumentHashMap tdocumentHashmap = tnode;
     if (!tdocumentHashmap)
         return NULL;
     documentHashmap* temp = tdocumentHashmap; // Imbalanaced documentHashmap is that documentHashmap who has balance factor apart from 0,1,-1
@@ -189,7 +191,7 @@ DocumentHashMap mallocateAdocumentHashmap(char* key,char* value,char* datatype)
     return newdocumentHashmap;
 }
 
-int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
+int helpInsertingIntoDocumentHashmap(char* key,char* value,char* datatype)
 {
     documentHashmap* newdocumentHashmap = mallocateAdocumentHashmap( key,value,datatype);
     if(!newdocumentHashmap){
@@ -207,10 +209,10 @@ int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
     while (p)
     {
         q = p;
-        int result = strcmp(p -> key , key);     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
+        int result = strcmp(dataDecrypt( p -> key) ,dataDecrypt(key));     //Return 0 -> strings are equal , 1 -> First string is greater, 2 -> second string is greater
         if (result == 0)
         {
-            strcpy(p -> value,value) ;
+            strcpy(p -> value, value) ;
             strcpy(p -> datatype,datatype) ;        //If same value present just UPDATE
             free(newdocumentHashmap);
             return -1;
@@ -220,7 +222,7 @@ int insertIntoDocumentHashMap(char* key,char* value,char* datatype)
         else
             p = p->right;
     }
-    int res = strcmp(q-> key, key);
+    int res = strcmp(dataDecrypt(q-> key) , dataDecrypt( key));
     if (res > 0)
         q->left = newdocumentHashmap;
     else
@@ -237,16 +239,18 @@ void createPairToInsertIntoDocument(Pair* pair, documentHashmap* temp){
         return ;
     }    
     createPairToInsertIntoDocument(pair,temp -> left);
-    appendToPair(pair,temp -> key,temp -> value,temp -> datatype);
+    appendToPair(pair,dataDecrypt( temp -> key),dataDecrypt(temp -> value),dataDecrypt( temp -> datatype));
     createPairToInsertIntoDocument(pair,temp -> right);
 }
-int helpInsertingIntoDocumentFile(Pair* pair){
+int insertIntoDocumentHashmap(Pair* pair){
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     strcpy(documentName,globals.document);
     node* temp = *pair;
     
     while(temp){
-        int status = insertIntoDocumentHashMap(temp->key,temp->value,temp -> datatype);
+        // dataEncrypt();
+        int status = helpInsertingIntoDocumentHashmap(dataEncrypt(temp->key)
+        ,dataEncrypt(temp->value),dataEncrypt(temp -> datatype));
         if(status == INT_MIN){
             destroyTree(&tnode);
             return INT_MIN;
@@ -287,15 +291,15 @@ void displayValueWithBrackets(DocumentHashMap tdocumentHashmap){
     }
     getBrackets(brackets);
     if(tdocumentHashmap -> datatype == "BOOLEAN"){
-        if(strcmp(tdocumentHashmap -> value,"T") == 0){
+        if(strcmp(dataDecrypt( tdocumentHashmap -> value),"T") == 0){
             printf("TRUE");
         }
-        else if(strcmp(tdocumentHashmap -> value,"F") == 0){
+        else if(strcmp(dataDecrypt(tdocumentHashmap -> value),"F") == 0){
             printf("FALSE");
         }
     }
     else
-        printf("%s",tdocumentHashmap -> value );
+        printf("%s",dataDecrypt(tdocumentHashmap -> value));
     getBrackets(brackets);
 }
 void showDocs(DocumentHashMap tdocumentHashmap)
@@ -304,14 +308,14 @@ void showDocs(DocumentHashMap tdocumentHashmap)
         return;
 
     showDocs(tdocumentHashmap->left);
-    printf("%s : %s",tdocumentHashmap -> key ,tdocumentHashmap -> value);
+    printf("%s : %s",dataDecrypt( tdocumentHashmap -> key) ,dataDecrypt(tdocumentHashmap -> value));
     printf("\n");
     showDocs(tdocumentHashmap->right);
 }
 void showFieldsDocuments()
 {
     if(!validateDocument(globals.document))
-        destroyTreeHelper();
+        destroyHashMap();
     if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result)
@@ -329,13 +333,14 @@ void preOrder(DocumentHashMap tdocumentHashmap)
     if (!tdocumentHashmap)
         return;
 
-    printf(" { KEY : %s , BF : %d  , L : %s , R : %s  } \n",tdocumentHashmap->key ,tdocumentHashmap -> bf,tdocumentHashmap -> left ? tdocumentHashmap -> left -> key : NULL,
-    tdocumentHashmap -> right ? tdocumentHashmap -> right -> key : NULL);
+    printf(" { KEY : %s , BF : %d  , L : %s , R : %s  } \n",dataDecrypt( tdocumentHashmap->key) 
+    ,tdocumentHashmap -> bf,tdocumentHashmap -> left ? dataDecrypt( tdocumentHashmap -> left -> key) : NULL,
+    tdocumentHashmap -> right ? dataDecrypt( tdocumentHashmap -> right -> key ): NULL);
     preOrder(tdocumentHashmap->left);
     preOrder(tdocumentHashmap->right);
 }
 
-void removedocumentHashmapHelper(DocumentHashMap* parent)
+void helperForDeletion(DocumentHashMap* parent)
 {
     DocumentHashMap tdocumentHashmap = tnode;
     if(!(*parent))
@@ -352,8 +357,7 @@ int getDocumentInHashMap(DocumentHashMap *tnode){
 
     Pair newPair = fetchData -> pairs;
         while(newPair){
-            // printf("\nDEBUG : %s",newPair -> value);
-            int status = insertIntoDocumentHashMap(newPair->key,newPair->value,newPair-> datatype);
+            int status = helpInsertingIntoDocumentHashmap(dataEncrypt( newPair->key),dataEncrypt(newPair->value),dataEncrypt (newPair-> datatype));
             if(status == INT_MIN){
                 destroyTree(tnode);
                 return 0;
@@ -365,11 +369,11 @@ int getDocumentInHashMap(DocumentHashMap *tnode){
 int validateDocument(char* docname){
     return (strcmp(docname,documentName)  == 0);
 }
-int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* key){
+int removeFieldFromDocument(char* collectionName,char* documentName,char* key){
  char collectionPath[100]  = "";
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     if(!validateDocument(globals.document))
-        destroyTreeHelper();
+        destroyHashMap();
     if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result)
@@ -379,7 +383,7 @@ int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* ke
     if(!getDocuemnt){
         return 0;
     }
-    int result = removedocumentHashmap(key);
+    int result = removedocumentHashmapHelper(key);
     if(!result)
         return 0;
 
@@ -390,11 +394,12 @@ int helpRemoveFieldFromDocument(char* collectionName,char* documentName,char* ke
     
     int status = deleteFieldFromDocument(collectionPath, documentName, key); 
     if(!status){
-        insertIntoDocumentHashMap(getDocuemnt->key,getDocuemnt->value,getDocuemnt->datatype);
+        helpInsertingIntoDocumentHashmap(dataEncrypt(getDocuemnt->key),dataEncrypt( getDocuemnt->value),
+        dataEncrypt( getDocuemnt->datatype));
         return INT_MIN;
     }
 }
-int removedocumentHashmap( char *key)
+int removedocumentHashmapHelper( char *key)
 {
     DocumentHashMap tdocumentHashmap = tnode;
     documentHashmap *p, *q;
@@ -404,7 +409,7 @@ int removedocumentHashmap( char *key)
     p = tdocumentHashmap;
     while (p)
     {
-        int result = strcmp(p -> key, key);
+        int result = strcmp(dataDecrypt( p -> key), key);
         if (result == 0)
             break;
         q = p; // Search for presence of documentHashmap and make pointer q following p
@@ -446,7 +451,7 @@ int removedocumentHashmap( char *key)
             p -> parent = NULL;
         }
          free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        helperForDeletion(&temp);
 
         return 1;
     }
@@ -473,7 +478,7 @@ int removedocumentHashmap( char *key)
         }
 
          free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        helperForDeletion(&temp);
 
         return 1;
     }
@@ -500,7 +505,7 @@ int removedocumentHashmap( char *key)
             p -> right -> parent = q;
         }
         free(deletedocumentHashmap);
-        removedocumentHashmapHelper(&temp);
+        helperForDeletion(&temp);
 
         return 1;
     }
@@ -528,9 +533,9 @@ int removedocumentHashmap( char *key)
                 temp = temp->right;
             }
             
-            p -> key = (char*)realloc(p -> key,sizeof(char)*strlen(temp -> key));
-            p -> value = (char*)realloc(p -> value,sizeof(char)*strlen(temp -> value));
-            p -> datatype = (char*)realloc(p -> datatype,sizeof(char)*strlen(temp ->datatype));
+            p -> key = (char*)realloc(p -> key,sizeof(char)*strlen((temp -> key)));
+            p -> value = (char*)realloc(p -> value,sizeof(char)*strlen((temp -> value)));
+            p -> datatype = (char*)realloc(p -> datatype,sizeof(char)*strlen((temp ->datatype)));
 
             strcpy(p-> key, temp-> key);
             strcpy(p-> value, temp-> value);
@@ -546,7 +551,7 @@ int removedocumentHashmap( char *key)
             preecedingPointer->right = NULL;
              free(temp);
         }
-        removedocumentHashmapHelper(&parentOfTemp);
+        helperForDeletion(&parentOfTemp);
         return 1;
     }
 }
@@ -564,7 +569,7 @@ void destroyTree(DocumentHashMap *deleteNode)
     *deleteNode = NULL;
     return;
 }
-void destroyTreeHelper(){
+void destroyHashMap(){
     destroyTree(&tnode);
 }
 
@@ -575,10 +580,10 @@ Pair findAndFetchDocument(char* key){
     DocumentHashMap tdocumentHashmap = tnode;
     documentHashmap* p = tdocumentHashmap;
     while(p){
-        int result = strcmp(key,p -> key);
+        int result = strcmp(dataEncrypt (key),( p -> key));
         if(result == 0){
-            appendToPair(&temp,p -> key, p -> value,
-            p -> datatype);
+            appendToPair(&temp,dataDecrypt( p -> key),dataDecrypt( p -> value),
+            dataDecrypt(p -> datatype));
             return temp; 
         }
         else if(result > 0){
@@ -601,20 +606,21 @@ void displayPair(Pair newPair){
 }
 int searchTheDocumentInFile(char* key){
         if(!validateDocument(globals.document))
-            destroyTreeHelper();
-        int result = getDocumentInHashMap(&tnode);
-        if(!result){
-            return INT_MIN;
+            destroyHashMap();
+        if(!tnode){
+            int result = getDocumentInHashMap(&tnode);
+            if(!result){
+                return INT_MIN;
+            }
         }
         Pair getDoc = findAndFetchDocument(key);
-        // printf("\nField Found\n");
         displayPair(getDoc);
     return 1;
 }
 int helpUpdatingField(char* key,char* value,char* datatype){
     sprintf(collectionPath, ".root/%s/%s", globals.user, globals.collection);
     if(!validateDocument(globals.document))
-        destroyTreeHelper();
+        destroyHashMap();
      if(!tnode){
         int result = getDocumentInHashMap(&tnode);
         if(!result){
@@ -624,9 +630,11 @@ int helpUpdatingField(char* key,char* value,char* datatype){
 
     Pair result = updateValue(key,value,datatype);
     if(!result){
-        insertIntoDocumentHashMap(key,value,datatype);
+        helpInsertingIntoDocumentHashmap(dataEncrypt(key),dataEncrypt(value),dataEncrypt( datatype));
     }
     document* docs = (document*)malloc(sizeof(document));
+    if(!docs)
+        return INT_MIN;
     docs->documentId = globals.document;
     initPair(&docs->pairs);
     DocumentHashMap temp = tnode;
@@ -639,7 +647,7 @@ int helpUpdatingField(char* key,char* value,char* datatype){
     return 1;
 }
 
-int helpUpdatingTheDocument(Pair newPair){
+int updateDocumentHashMap(Pair newPair){
     Pair mainPair = newPair;
     int result = 0;
     while(mainPair ){
@@ -659,11 +667,11 @@ Pair updateValue(char* key,char* value,char* datatype){
 
     documentHashmap* p = tnode;
     while(p){
-        int result = strcmp(key,p -> key);
+        int result = strcmp(key,dataDecrypt(p -> key));
         if(result == 0){
-            appendToPair(&newPair,key,value,datatype);
-            strcpy(p -> value, value);
-            strcpy(p -> datatype, datatype);
+            appendToPair(&newPair,key, value,datatype);
+            strcpy( p -> value,dataEncrypt(value));
+            strcpy(p -> datatype, dataEncrypt( datatype));
             return newPair; 
         }
         else if(result > 0){
