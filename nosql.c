@@ -1379,7 +1379,6 @@ void noSQLMenu()
 {
     initGlobals();
     // test1();
-
     ioctl(0, TIOCGWINSZ, &sz);
     printWelcomeMessage();
     int command;
