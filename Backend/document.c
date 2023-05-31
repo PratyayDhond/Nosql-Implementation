@@ -300,7 +300,7 @@ Pair getAllPairsOfDocument(FILE *file)
     free(value);
     free(line);
 
-    // fclose(file);
+    fclose(file);
 
     return pairs;
 }

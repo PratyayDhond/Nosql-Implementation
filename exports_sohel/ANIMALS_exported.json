@@ -1,0 +1,35 @@
+[
+    {
+        "_docId":"cat",
+        "age":0.3,
+        "breed":"Persian",
+        "name":"Kitty"
+    },
+    {
+        "_docId":"DOG",
+        "age":1.9,
+        "breed":"Labrador",
+        "name":"Tommy"
+    },
+    {
+        "_docId":"Hamster",
+        "age":0.5,
+        "breed":"Russian",
+        "name":"George",
+        "specialFeature":"O(n)"
+    },
+    {
+        "_docId":"_pets",
+        "CombinedHeight":5.73,
+        "catDescription":"Cat loves to Purrr and cuddle!",
+        "combinedWeight":45.43,
+        "location":"Pune",
+        "numberOfPets":3,
+        "pet1":"Dog",
+        "pet1Gender":"M",
+        "pet2":"Cat",
+        "pet2Gender":"F",
+        "pet3":"Hamster",
+        "pet3Gender":"M"
+    }
+]
