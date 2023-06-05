@@ -7,4 +7,4 @@ All the data in the project is encrypted and so is the password.
 There are two encryption algos used in the project one for encryption of data (Ceaser Cipher Modified) and one for encryption of passwords(PolyAplhabetic Encryption).
 
 
-[NoSQL Implementation Demonstration](https://github.com/PratyayDhond/Nosql-Implementation/assets/80563848/e44d2304-6300-4eed-91f2-b6b066a9dec5)
+[NoSQL Implementation Demonstration ](https://github.com/PratyayDhond/Nosql-Implementation/assets/80563848/e44d2304-6300-4eed-91f2-b6b066a9dec5)
