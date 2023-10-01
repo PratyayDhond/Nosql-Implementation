@@ -8,3 +8,8 @@ There are two encryption algos used in the project one for encryption of data (C
 
 
 [NoSQL Implementation Demonstration ](https://github.com/PratyayDhond/Nosql-Implementation/assets/80563848/e44d2304-6300-4eed-91f2-b6b066a9dec5)
+
+Data structures used
+-[x] Hashmap
+-[x] Linked List
+-[x] Encryption Algorithms (Ceaser Cipher and Polyalphabetic cipher)
